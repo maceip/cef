@@ -48,6 +48,7 @@ class ZunDriver(BrowserDriver):
                 [
                     self._binary,
                     f"--remote-debugging-port={self._port}",
+                    "--external-message-pump",
                     "--no-sandbox",
                     "--disable-gpu",
                     "--headless",

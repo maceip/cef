@@ -19,6 +19,7 @@ PERF_SUITES=(
   "SecurityPolicy"
   "DirtyTracking"
   "SessionPool"
+  "LinuxExternalMessagePump"
 )
 
 if [ ! -f "$TEST_BINARY" ]; then
@@ -60,6 +61,13 @@ echo "Running: $TEST_BINARY --gtest_filter=$FILTER $VERBOSE --no-sandbox"
 echo "---"
 
 "$TEST_BINARY" --gtest_filter="$FILTER" $VERBOSE --no-sandbox 2>&1
+
+if [ -z "$SUITE_FILTER" ] || [ "$SUITE_FILTER" = "LinuxExternalMessagePump.*" ] || \
+   [ "$SUITE_FILTER" = "LinuxExternalMessagePump" ]; then
+  echo "---"
+  echo "Running Linux headless external pump CDP validation..."
+  python3 "$CEF_DIR/tools/claude/test-linux-headless-pump.py"
+fi
 
 echo "---"
 echo "Done."

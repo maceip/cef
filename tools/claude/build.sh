@@ -5,6 +5,7 @@
 #   ./tools/claude/build.sh build    # Build CEF (debug)
 #   ./tools/claude/build.sh release  # Build CEF (release)
 #   ./tools/claude/build.sh test     # Run ceftests
+#   ./tools/claude/build.sh test-headless-pump  # Run Linux headless pump checks
 #   ./tools/claude/build.sh quick    # Incremental build + test (fastest iteration)
 #   ./tools/claude/build.sh check    # Syntax/compilation check only (no link)
 #   ./tools/claude/build.sh all      # Full build + test
@@ -141,6 +142,11 @@ cmd_test_perf() {
   log "Results saved to /tmp/ceftests-perf.log"
 }
 
+cmd_test_headless_pump() {
+  log "Running Linux headless pump validation..."
+  python3 "$CEF_DIR/tools/claude/test-linux-headless-pump.py"
+}
+
 cmd_quick() {
   ensure_depot_tools
   log "Quick incremental build + test..."
@@ -183,6 +189,7 @@ cmd_help() {
   echo "  release    Release/official build"
   echo "  test [F]   Run ceftests (optional gtest filter F)"
   echo "  test-perf  Run only performance optimization tests"
+  echo "  test-headless-pump  Run Linux headless pump validation"
   echo "  quick      Incremental build + run perf tests (fastest iteration)"
   echo "  check      Compile-only check for new files (no link)"
   echo "  all        Full build + test"
@@ -201,6 +208,7 @@ case "${1:-help}" in
   release)   cmd_release ;;
   test)      cmd_test "${2:-*}" ;;
   test-perf) cmd_test_perf ;;
+  test-headless-pump) cmd_test_headless_pump ;;
   quick)     cmd_quick ;;
   check)     cmd_check ;;
   all)       cmd_all ;;
