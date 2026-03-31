@@ -1,9 +1,0 @@
-diff a/include/cef_auth_vault.h b/include/cef_auth_vault.h	(rejected hunks)
-@@ -41,6 +41,7 @@
- #include <vector>
- 
- #include "include/cef_base.h"
-+#include "include/internal/cef_types.h"
- #include "include/cef_values.h"
- 
- class CefAuthProfileVisitor;
