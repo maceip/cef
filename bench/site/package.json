@@ -5,10 +5,13 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc --watch",
+    "test": "tsx --test src/**/*.test.ts"
   },
   "devDependencies": {
+    "@types/node": "^22.19.15",
+    "tsx": "^4.21.0",
     "typescript": "^5.7.0"
   }
 }

@@ -47,6 +47,18 @@ python run.py --output results/my_run.json
 python run.py --warmup 0
 ```
 
+## Benchmark site (TypeScript data layer)
+
+The `bench/site` package holds types, mock results, and **trajectory distillation** helpers that summarize only **trusted** first-party accuracy runs. External leaderboard scores are listed separately and never blended into aggregates.
+
+```bash
+cd bench/site
+npm ci
+npm run typecheck   # strict TypeScript
+npm test            # distillation + stats unit tests
+npm run build       # emit dist/
+```
+
 ## Generating Reports
 
 ```bash
