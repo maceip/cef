@@ -520,7 +520,7 @@ void CefFrameImpl::ConnectBrowserFrame(ConnectReason reason) {
   // connection.
   browser_frame->FrameAttached(receiver_.BindNewPipeAndPassRemote(),
                                reattached);
-  receiver_.set_disconnect_with_reason_and_result_handler(
+  receiver_.set_disconnect_with_reason_handler(
       base::BindOnce(&CefFrameImpl::OnRenderFrameDisconnect, this));
 }
 
@@ -535,7 +535,7 @@ const mojo::Remote<cef::mojom::BrowserFrame>& CefFrameImpl::GetBrowserFrame(
       // Triggers creation of a CefBrowserFrame in the browser process.
       render_frame->GetBrowserInterfaceBroker().GetInterface(
           browser_frame_.BindNewPipeAndPassReceiver());
-      browser_frame_.set_disconnect_with_reason_and_result_handler(
+      browser_frame_.set_disconnect_with_reason_handler(
           base::BindOnce(&CefFrameImpl::OnBrowserFrameDisconnect, this));
     }
   }
@@ -543,17 +543,15 @@ const mojo::Remote<cef::mojom::BrowserFrame>& CefFrameImpl::GetBrowserFrame(
 }
 
 void CefFrameImpl::OnBrowserFrameDisconnect(uint32_t custom_reason,
-                                            const std::string& description,
-                                            MojoResult error_result) {
+                                            const std::string& description) {
   OnDisconnect(DisconnectReason::BROWSER_FRAME_DISCONNECT, custom_reason,
-               description, error_result);
+               description, MOJO_RESULT_OK);
 }
 
 void CefFrameImpl::OnRenderFrameDisconnect(uint32_t custom_reason,
-                                           const std::string& description,
-                                           MojoResult error_result) {
+                                           const std::string& description) {
   OnDisconnect(DisconnectReason::RENDER_FRAME_DISCONNECT, custom_reason,
-               description, error_result);
+               description, MOJO_RESULT_OK);
 }
 
 // static

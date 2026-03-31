@@ -40,41 +40,75 @@ class ZunDriver(BrowserDriver):
         self._ws = None
         self._ws_url: Optional[str] = None
         self._msg_id = 0
+        self._launch_mode: Optional[str] = None
+        # Try Chromium's headless Ozone backend first. If unavailable, fall back
+        # to the legacy headless launch.
+        self._launch_variants = [
+            (
+                "ozone-headless",
+                [
+                    "--enable-features=UseOzonePlatform",
+                    "--ozone-platform=headless",
+                    "--headless=new",
+                ],
+            ),
+            ("legacy-headless", ["--headless"]),
+        ]
 
     async def setup(self) -> TimedResult:
         start = time.perf_counter()
         try:
-            self._process = subprocess.Popen(
-                [
-                    self._binary,
-                    f"--remote-debugging-port={self._port}",
-                    "--no-sandbox",
-                    "--disable-gpu",
-                    "--headless",
-                ],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
-            # Poll for DevTools endpoint
-            for _ in range(50):
-                try:
-                    resp = urllib.request.urlopen(
-                        f"http://127.0.0.1:{self._port}/json"
-                    )
-                    targets = json.loads(resp.read())
-                    if targets:
-                        self._ws_url = targets[0]["webSocketDebuggerUrl"]
-                        self._ws = await websockets.connect(self._ws_url)
-                        break
-                except Exception:
-                    await asyncio.sleep(0.1)
+            last_error = None
+            for mode_name, mode_args in self._launch_variants:
+                self._process = subprocess.Popen(
+                    [
+                        self._binary,
+                        f"--remote-debugging-port={self._port}",
+                        "--no-sandbox",
+                        "--disable-gpu",
+                        *mode_args,
+                    ],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+
+                # Poll for DevTools endpoint.
+                for _ in range(50):
+                    try:
+                        resp = urllib.request.urlopen(
+                            f"http://127.0.0.1:{self._port}/json"
+                        )
+                        targets = json.loads(resp.read())
+                        if targets:
+                            self._ws_url = targets[0]["webSocketDebuggerUrl"]
+                            self._ws = await websockets.connect(self._ws_url)
+                            self._launch_mode = mode_name
+                            break
+                    except Exception as e:
+                        last_error = e
+                        await asyncio.sleep(0.1)
+
+                if self._ws:
+                    break
+
+                # Failed with this launch mode. Clean up and try the next mode.
+                if self._process:
+                    self._process.terminate()
+                    try:
+                        self._process.wait(timeout=2)
+                    except subprocess.TimeoutExpired:
+                        self._process.kill()
+                self._process = None
 
             elapsed = (time.perf_counter() - start) * 1000
             if not self._ws:
                 return TimedResult(
                     duration_ms=elapsed,
                     success=False,
-                    error="Failed to connect to CDP WebSocket",
+                    error=(
+                        "Failed to connect to CDP WebSocket "
+                        f"(last error: {last_error})"
+                    ),
                 )
             # Enable required domains
             await self._send("Page.enable")
