@@ -485,7 +485,7 @@ pref_helper::Registrar* CefContext::GetPrefRegistrar() {
   return pref_registrar_.get();
 }
 
-CefAuthVault* CefContext::GetAuthVault() {
+CefRefPtr<CefAuthVault> CefContext::GetAuthVault() {
   if (!auth_vault_) {
     auth_vault_ = new CefAuthVaultImpl();
   }

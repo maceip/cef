@@ -64,6 +64,7 @@ int main(int argc, char* argv[]) {
 // use of the sandbox.
 #if !defined(CEF_USE_SANDBOX)
   settings.no_sandbox = true;
+  settings.multi_threaded_message_loop = true;
 #endif
 
   // SimpleApp implements application-level callbacks for the browser process.
@@ -78,9 +79,11 @@ int main(int argc, char* argv[]) {
     return CefGetExitCode();
   }
 
-  // Run the CEF message loop. This will block until CefQuitMessageLoop() is
-  // called.
-  CefRunMessageLoop();
+  // Use multi_threaded_message_loop - just sleep while CEF processes on its own thread.
+  // This keeps the main thread alive while the browser thread handles CDP.
+  while (true) {
+    sleep(1);
+  }
 
   // Shut down CEF.
   CefShutdown();

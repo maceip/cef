@@ -1,145 +1,156 @@
 # CEF Agent-Browser Project Journal
-**Date:** 2026-03-28
+**Last updated:** 2026-03-31
 **Branch:** `zero-user-native` on `github.com/maceip/cef`
-**Build machine:** `ec2-3-120-153-36.eu-central-1.compute.amazonaws.com` (32-core AMD EPYC, 123GB RAM, 1.2TB NVMe)
+**Build machine:** `ec2-3-120-153-36.eu-central-1.compute.amazonaws.com` (32-core AMD EPYC 7571, 123GB RAM, 1.2TB NVMe)
 
 ---
 
-## Where We Are
+## Current State
 
-### What's Built and Committed (2 commits, pushed)
+### Release Build: SUCCEEDED ✓
+- **Date:** 2026-03-31 13:23 UTC
+- **Location:** `/home/ubuntu/cef-build/chromium/src/out/Release_GN_x64/`
+- **Binaries:** `libcef.so` (618MB), `cefclient` (2.8MB), `cefsimple` (1.5MB)
+- **Chromium:** 147.0.7727.0
+- **GN flags:** proprietary_codecs=true, ffmpeg_branding="Chrome", enable_nacl=false, blink_symbol_level=0, v8_symbol_level=0, symbol_level=0, enable_remoting=false, use_vaapi=false, rtc_use_pipewire=false
+
+### What's Built and Committed (3 commits + journal, pushed to GitHub)
 - **19 performance features** from the `.landmines` catalog — all implemented and wired
 - **6 benchmark-informed features** from Browser Use Mind2Web analysis
 - **Element reference system** (`@e1`/`@e2` style refs)
-- **Benchmark harness** — 6 real agentic tasks × 4 frameworks, Python + TypeScript data layer
+- **Benchmark harness** — 6 real agentic tasks × 4 frameworks
 - **Build scripts** — `tools/claude/build.sh`, `test-perf.sh`, `apply-patches.sh`
-- **6 test suites** (42 tests) — written but disabled from ceftests (need libcef_static linkage)
+- **6 test suites** (42 tests) — written but disabled from ceftests
 
-### What's On the Remote Build Machine (NOT committed)
-Chromium 147.0.7727.0 checkout with CEF patches applied. The build is at ~90% compilation but stuck on cascading errors from the mojo disconnect handler removal. All the Chromium core objects (~37,000) compile fine. The failures are in CEF's own renderer code.
-
----
-
-## Where We're Stuck
-
-### 1. The Mojo Disconnect Handler Cascade (Build Blocker)
-
-**Root cause:** CEF's `mojo_connect_result_3664.patch` added a `set_disconnect_with_reason_and_result_handler` method to mojo that passes 3 args to disconnect callbacks (`uint32_t reason, const std::string& description, MojoResult error_result`). In Chromium 147, the upstream mojo already has `set_disconnect_with_reason_handler` which passes only 2 args (`uint32_t, const std::string&`).
-
-When we revert the CEF patch (because it causes redefinition errors), every call site that uses the 3-arg version breaks. The fix cascade touches:
-
-- `libcef/renderer/frame_impl.h` — handler declarations
-- `libcef/renderer/frame_impl.cc` — handler implementations + `OnDisconnect` + `GetDisconnectDebugString`
-- The `OnDisconnect` function internally uses `error_result` for logging and connection-retry logic
-
-**What I tried:** Removing the 3rd parameter and adding `const int error_result = 0;` as a local variable. This partially works but there are ~7 call sites where the argument count mismatch cascades through `OnDisconnect` → `GetDisconnectDebugString` → logging functions.
-
-**What the fix should be:** Instead of removing `MojoResult error_result` from everything, keep the `OnDisconnect` function signature with 4 args, and have the 2-arg mojo disconnect callbacks wrap the call with `0` for the 4th arg:
-```cpp
-receiver_.set_disconnect_with_reason_handler(
-    base::BindOnce([](CefFrameImpl* self, uint32_t reason, const std::string& desc) {
-        self->OnRenderFrameDisconnect(reason, desc, MOJO_RESULT_OK);
-    }, base::Unretained(this)));
-```
-This preserves all internal logic without needing to change every function in the chain.
-
-### 2. CEF Headless CDP Message Pump (Runtime Blocker)
-
-**The problem:** When CEF runs headlessly (even with Xvfb), the DevTools CDP server stops responding after a few seconds. The UI thread message pump starves because the X11 event stream is empty.
-
-**Why it matters:** We can't benchmark ourselves without headless CDP. Every other framework (agent-browser, playwright, stagehand) runs headless fine.
-
-**Potential fixes (untried):**
-1. `--enable-features=UseOzonePlatform --ozone-platform=headless` — uses Chromium's headless Ozone backend instead of X11
-2. `CefSettings.multi_threaded_message_loop = true` — moves pump to background thread
-3. Write a minimal CEF app that calls `CefDoMessageLoopWork()` in a timer loop
-4. Use Chrome's `--headless=new` flag which has its own message pump
-
-### 3. CEF Translator Chokes on Inner Enums
-
-`CefAutomationProgram::InstructionType` is an enum inside a class. The CEF translator (`translator.py`) can't parse it. This blocks CAPI header generation, which blocks cef-rs Rust bindings.
-
-**Fix:** Move `InstructionType` to a top-level enum (`cef_automation_instruction_type_t` in `cef_types.h`), reference it from the class.
+### Benchmark Results (3 of 5 frameworks)
+| Framework | Wall Time | Tasks | Notes |
+|-----------|-----------|-------|-------|
+| CDP Raw | **4.2s** | 6/6, ~95% pass | Raw DevTools Protocol baseline |
+| agent-browser | **14.9s** | 6/6, ~70% pass | CLI overhead ~150ms/cmd |
+| Playwright | **127s** | 6/6, ~80% pass | 90s of timeouts on bot-blocked sites |
+| browser-use | ran | 6/6 | Standalone run completed |
+| Stagehand | crashed | 0/6 | CHROME_PATH + init config issues (fixable) |
+| **CEF (us)** | **NOT YET** | — | Headless CDP message pump issue |
 
 ---
 
-## What I'm Architecturally Proud Of
+## Resolved Issues
 
-### 1. The Performance Catalog Methodology
-Starting from `.landmines` → fingerprinting analysis → agent-safety review → scrapping 3 items that would break trained agents → implementing the remaining 13 with clear rationale for each. The decision to keep `Runtime.evaluate` intact (item 1.2 scrapped) was validated by Browser Use's #1 finding.
+### ✅ Mojo Disconnect Handler Cascade
+**Solution:** Keep `OnDisconnect` with 4 args (including `MojoResult error_result`), keep `GetDisconnectDebugString` with 7 args. The 2-arg mojo `set_disconnect_with_reason_handler` callbacks pass `MOJO_RESULT_OK` as the 4th arg to `OnDisconnect`. This preserves all internal logging and retry logic without modifying the function chain.
 
-### 2. The Policy Enforcement Pipeline
-`ShouldBlockRequest()` with pre-compiled domain matchers injected into `OnBeforeRequest()` BEFORE expensive handler/cookie setup. Returns `net::ERR_BLOCKED_BY_CLIENT` (standard Chrome error shape). This is real security infrastructure, not a stub.
-
-### 3. The Element Reference System
-`CefElementRefIndex` with `ParseRefId()` handling `@e5`, `e5`, and `5` formats. `BuildRefText()` generating `[1] @e1 button "Submit"` format. This is the foundation for agent-browser CLI ref commands and it's clean, thread-safe, and fast.
-
-### 4. The Stealth Config
-9 independently toggleable anti-detection patches, all using `Object.defineProperty` with `configurable: true`. Designed for `Page.addScriptToEvaluateOnNewDocument`. Each patch is a self-contained JS block with no dependencies. The WebGL vendor/renderer strings are real-world NVIDIA values.
-
-### 5. The Action Trace System
-Three levels of progressive disclosure (summary → detail → full). UTF-8 check/cross marks in output. Generation-tracked. This is exactly what Browser Use's "three-level hierarchical CLI" describes, and it's built into the browser layer where it can capture everything.
-
----
-
-## What's Concerning
-
-### 1. Build Fragility
-Every CEF build attempt on a new machine requires re-discovering and re-applying ~15 API compatibility fixes (base::Value::Dict → base::DictValue, string_view conversions, FileEnumerator API, JSONReader args, FrameTreeNodeId, etc.). These fixes exist on the GPU cluster's build but were never committed because they modify files that exist in the upstream CEF fork.
-
-**What should happen:** Create a `patch/chromium147-compat.patch` that captures ALL these fixes and auto-apply it as part of the build script. Or better: commit the fixed files to our fork.
-
-### 2. Annotated Screenshot Pipeline Stripped
-The full Skia annotation rendering (AnnotatedScreenshotHelper, WalkAXTree, EncodeAndSaveOnBlockingThread) was built but had to be stripped from the build because it uses `content/browser/accessibility/browser_accessibility.h` — an internal Chromium header not accessible from `libcef_static`.
-
-**What should happen:** Re-implement using CDP `Accessibility.getFullAXTree` for the AX tree walk (public API, no internal headers needed). Keep the Skia rendering but feed it data from CDP instead of BrowserAccessibility pointers.
-
-### 3. Test Suites Disabled
-All 6 test suites (42 tests) are disabled because they `#include` internal `libcef/browser/` headers from the `ceftests` target, which links `libcef_dll_wrapper` (not `libcef_static`). The partition_alloc headers aren't available.
-
-**What should happen:** Either create a separate `cef_internal_tests` GN target that links `libcef_static`, or rewrite the tests to use the public C++ API only.
-
-### 4. No CEF Benchmark Numbers
-After 4 days of work and 2 build machines, we still don't have our own perf numbers. We have numbers for agent-browser (14.9s), Playwright (127s), and CDP Raw (4.2s), but not for ourselves. This is because of the headless CDP message pump issue (concern #2 above).
-
-### 5. The `cef_api_untracked.json` Hack
-We're using a fake API version (999999) with the Linux 14700 hash. This works but it's a hack — the version manager should compute real hashes. Any API change will cause a hash mismatch at runtime.
-
----
-
-## The Remote Build Machine State
-
-**Location:** `/home/ubuntu/cef-build/` on `ec2-3-120-153-36.eu-central-1.compute.amazonaws.com`
-
-```
-chromium/src/                     # Chromium 147.0.7727.0
-chromium/src/cef/                 # Our fork (copied from git, with build fixes applied)
-chromium/src/out/Release_GN_x64/ # Partially compiled (~37k of ~44k objects done)
-cef/                              # Clean clone of github.com/maceip/cef zero-user-native
-depot_tools/                      # Fresh clone
-```
-
-**Installed frameworks:** agent-browser 0.22.3, browser-use 0.12.5, Playwright 1.58.0, Stagehand 3.2.0, Chrome DevTools MCP 0.20.3
-
-**What's NOT committed from the remote:**
-- All `base::Value::Dict → base::DictValue` renames
-- `CefAuthProfileTraits` in `cef_types_wrappers.h`
+### ✅ Build Compilation (~15 API Compat Fixes)
+All fixed on the remote. The complete list:
+- `base::Value::Dict` → `base::DictValue` (9 files)
+- `base::Value::List` → `base::ListValue` (2 files)
+- `base::JSONReader::ReadDict(json)` → `ReadDict(json, base::JSON_PARSE_RFC)` (4 files)
+- `FrameTreeNodeId` → `.value()` only for `BumpGeneration()` calls
+- `FileEnumerator::FileInfo` uses `GetSize()`/`GetLastModifiedTime()` (not `.size`/`.last_modified`)
+- `base::File::Info` uses `.size`/`.last_modified` (not methods)
+- `string_view` → explicit `std::string()` construction (3 sites)
+- `base::Environment::GetVar` → returns `optional<string>` (new API)
+- `crypto::Aead::AuthTagLength()` → hardcoded 16 (AES-256-GCM)
+- `crypto::Aead::Init(key)` → `Init(base::span<const uint8_t>(key))`
+- Nested struct default initializers removed (C++ standard issue with enclosing class)
+- `EvalResult.metadata` → `std::string metadata_json` (base::DictValue is move-only)
+- `CefAuthProfileTraits` added to `cef_types_wrappers.h` (proper CefStructBase)
+- `IMPLEMENT_REFCOUNTING_DELETE_ON_UIT` → `IMPLEMENT_REFCOUNTING`
+- `ExecuteJavaScriptWithResult` stub added to renderer `frame_impl.h`
+- `DevToolsAgentAttached/Detached` implementations inside `namespace content`
+- `gpu/webgpu/DAWN_VERSION` created with git hash
+- `gpu/webgpu/dawn_commit_hash.h` created
 - `cef_api_untracked.json` with version 999999
-- `gpu/webgpu/DAWN_VERSION` + `dawn_commit_hash.h`
-- Disabled mojo patch (`mojo_connect_result_3664.patch.disabled`)
-- `.npmrc` fix for devtools-frontend (registry + omit=optional)
-- browser_capture_impl.cc rewritten as clean stub
-- All frame_impl.h/cc disconnect handler changes
+- Disabled `mojo_connect_result_3664.patch`
+- Disabled npm Skia registry, enabled optional deps for rollup
+- Re-applied `content_2015.patch` for renderer + `chrome_browser_context_menus.patch`
+
+### ✅ Proprietary Codecs + PDF
+Added to GN args: `proprietary_codecs=true`, `ffmpeg_branding="Chrome"`. Build succeeds with H264/AAC/MP3/MP4 support.
+
+---
+
+## Remaining Issues
+
+### 1. CEF Headless CDP Message Pump (BLOCKS BENCHMARKS)
+When CEF runs headlessly (with Xvfb), the DevTools CDP WebSocket server stops responding after a few seconds. The UI thread message pump starves because X11 events are empty.
+
+**Untried fixes:**
+1. `--enable-features=UseOzonePlatform --ozone-platform=headless` — Chromium's headless Ozone backend
+2. `CefSettings.multi_threaded_message_loop = true` — background thread pump
+3. Custom minimal app with `CefDoMessageLoopWork()` timer
+4. Chrome's `--headless=new` flag
+
+### 2. Annotated Screenshot Pipeline
+Full Skia pipeline built locally but stripped from remote build (internal `content/browser/accessibility/` headers not accessible from `libcef_static`). Needs CDP-based AX tree walk.
+
+### 3. CEF Translator + Inner Enums
+`CefAutomationProgram::InstructionType` breaks `translator.py`. Move to top-level enum.
+
+### 4. Test Suites Disabled
+42 tests written but disabled (need `libcef_static` linkage).
+
+### 5. Build Fixes Not in Git
+All the API compat fixes exist only on the remote's copy of CEF. Need to be committed.
+
+### 6. Stagehand Benchmark
+Crashed on init. Needs `CHROME_PATH` set + local npm install (both done on remote).
+
+---
+
+## Architecture Notes
+
+### Proud Of
+1. **Performance catalog methodology** — `.landmines` → fingerprinting review → agent-safety → scrapping 3 items → implementing 13
+2. **Policy enforcement pipeline** — `ShouldBlockRequest()` with pre-compiled domain matchers in `OnBeforeRequest()`, returns `net::ERR_BLOCKED_BY_CLIENT`
+3. **Element reference system** — `@e1`/`e1`/`1` parsing, `BuildRefText()`, thread-safe, generation-tracked
+4. **Stealth config** — 9 toggleable anti-detection JS patches, `Object.defineProperty` with `configurable: true`
+5. **Action trace** — 3-level progressive disclosure (summary → detail → full with snapshots)
+6. **Mojo fix approach** — lambda wrapper preserving 4-arg internal API while using 2-arg upstream callbacks
+
+### Concerning
+1. **Build fragility** — 15+ manual fixes per fresh checkout. Need a single compat patch.
+2. **No CEF benchmark numbers** — headless CDP is the blocker
+3. **`cef_api_untracked.json` hack** — fake version 999999 with borrowed hash
+4. **Annotated screenshot stripped** — the production Skia pipeline exists locally but can't compile on the build machine
+
+---
+
+## Remote Machine State
+
+```
+/home/ubuntu/cef-build/
+├── chromium/src/                           # Chromium 147.0.7727.0
+│   ├── cef/                                # Our fork (with build fixes applied)
+│   └── out/Release_GN_x64/                 # RELEASE BUILD ✓
+│       ├── libcef.so                       # 618MB
+│       ├── cefclient                       # 2.8MB
+│       └── cefsimple                       # 1.5MB
+├── cef/                                    # Clean clone of zero-user-native
+└── depot_tools/                            # Fresh clone
+```
+
+**Installed frameworks:** agent-browser 0.22.3, browser-use 0.12.5, Playwright 1.58.0, Stagehand 3.2.0 (local), Chrome DevTools MCP 0.20.3
 
 ---
 
 ## Next Steps (Prioritized)
 
-1. **Fix the mojo disconnect cascade** using the lambda wrapper approach (keeps internal API stable)
-2. **Get the build to succeed** on the EPYC machine
-3. **Fix the headless CDP issue** (try Ozone headless backend)
-4. **Get our benchmark numbers** — the whole point
-5. **Commit the build fixes** to git so we stop re-discovering them
-6. **Add proprietary codecs + PDF** to the GN args and rebuild
-7. **Run Stagehand + browser-use benchmarks** on the EPYC machine
-8. **Write the blog post** with the benchmark results
+### P0 — Get Our Numbers
+1. ~~Fix mojo disconnect cascade~~ ✅
+2. ~~Get the build to succeed~~ ✅
+3. ~~Add proprietary codecs + PDF~~ ✅
+4. **Fix headless CDP** — try `--ozone-platform=headless` on EPYC machine
+5. **Run our benchmark** — 6 real agentic tasks via CDP against cefsimple
+6. **Run Stagehand + browser-use benchmarks** on EPYC machine
+
+### P1 — Ship
+7. **Commit build fixes** to git (diff from remote CEF copy)
+8. **Write the blog post** with benchmark results + architecture overview
+9. **Build surfcomp website** — COSS style, Pachinko viz, Cladogram viz
+
+### P2 — Harden
+10. **Fix CEF translator** — move InstructionType to top-level
+11. **Generate CAPI headers** → enable cef-rs Rust bindings
+12. **Re-enable test suites** — separate GN target or public API only
+13. **Implement annotated screenshot via CDP** — replace internal headers
+14. **WebAuthn/passkey support** — wire credential storage

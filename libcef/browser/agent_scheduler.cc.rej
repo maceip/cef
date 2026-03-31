@@ -1,0 +1,9 @@
+diff a/libcef/browser/agent_scheduler.cc b/libcef/browser/agent_scheduler.cc	(rejected hunks)
+@@ -4,6 +4,7 @@
+ 
+ #include "cef/libcef/browser/agent_scheduler.h"
+ 
++#include <cinttypes>
+ #include <utility>
+ 
+ #include "base/logging.h"

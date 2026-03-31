@@ -520,7 +520,7 @@ void CefFrameImpl::ConnectBrowserFrame(ConnectReason reason) {
   // connection.
   browser_frame->FrameAttached(receiver_.BindNewPipeAndPassRemote(),
                                reattached);
-  receiver_.set_disconnect_with_reason_and_result_handler(
+  receiver_.set_disconnect_with_reason_handler(
       base::BindOnce(&CefFrameImpl::OnRenderFrameDisconnect, this));
 }
 
@@ -535,7 +535,7 @@ const mojo::Remote<cef::mojom::BrowserFrame>& CefFrameImpl::GetBrowserFrame(
       // Triggers creation of a CefBrowserFrame in the browser process.
       render_frame->GetBrowserInterfaceBroker().GetInterface(
           browser_frame_.BindNewPipeAndPassReceiver());
-      browser_frame_.set_disconnect_with_reason_and_result_handler(
+      browser_frame_.set_disconnect_with_reason_handler(
           base::BindOnce(&CefFrameImpl::OnBrowserFrameDisconnect, this));
     }
   }
@@ -543,17 +543,15 @@ const mojo::Remote<cef::mojom::BrowserFrame>& CefFrameImpl::GetBrowserFrame(
 }
 
 void CefFrameImpl::OnBrowserFrameDisconnect(uint32_t custom_reason,
-                                            const std::string& description,
-                                            MojoResult error_result) {
+                                            const std::string& description) {
   OnDisconnect(DisconnectReason::BROWSER_FRAME_DISCONNECT, custom_reason,
-               description, error_result);
+               description, MOJO_RESULT_OK);
 }
 
 void CefFrameImpl::OnRenderFrameDisconnect(uint32_t custom_reason,
-                                           const std::string& description,
-                                           MojoResult error_result) {
+                                           const std::string& description) {
   OnDisconnect(DisconnectReason::RENDER_FRAME_DISCONNECT, custom_reason,
-               description, error_result);
+               description, MOJO_RESULT_OK);
 }
 
 // static
@@ -643,7 +641,7 @@ void CefFrameImpl::OnDisconnect(DisconnectReason reason,
   DVLOG(1) << __func__ << ": " << frame_debug_str_ << " disconnected "
            << GetDisconnectDebugString(connection_state, frame_is_valid,
                                        frame_is_main, reason, custom_reason,
-                                       description, error_result);
+                                       description, 0);
 
   browser_frame_.reset();
   receiver_.reset();
@@ -689,7 +687,7 @@ void CefFrameImpl::OnDisconnect(DisconnectReason reason,
     }
     browser_connect_retry_log_ += GetDisconnectDebugString(
         connection_state, frame_is_valid, frame_is_main, reason, custom_reason,
-        description, error_result);
+        description, 0);
 
     // Use a shorter delay for the first retry attempt after the browser process
     // intentionally declines the connection. This will improve load performance

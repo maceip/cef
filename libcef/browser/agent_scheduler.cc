@@ -4,6 +4,7 @@
 
 #include "cef/libcef/browser/agent_scheduler.h"
 
+#include <cinttypes>
 #include <utility>
 
 #include "base/logging.h"

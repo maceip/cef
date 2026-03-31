@@ -1,0 +1,27 @@
+diff a/libcef/browser/agent_scheduler.h b/libcef/browser/agent_scheduler.h	(rejected hunks)
+@@ -52,13 +52,13 @@ class CefAgentScheduler {
+   // Scheduler configuration.
+   struct Config {
+     // Maximum number of concurrent tasks across all agents.
+-    size_t max_concurrent_tasks = 8;
++    size_t max_concurrent_tasks;
+ 
+     // Maximum number of concurrent tasks per agent.
+-    size_t max_per_agent_tasks = 4;
++    size_t max_per_agent_tasks;
+ 
+     // Default task timeout.
+-    base::TimeDelta default_timeout = base::Seconds(60);
++    base::TimeDelta default_timeout;
+   };
+ 
+   explicit CefAgentScheduler(const Config& config = Config());
+@@ -122,7 +122,7 @@ class CefAgentScheduler {
+     bool success = false;
+     std::string error;
+     base::TimeDelta duration;
+-    base::Value::Dict metadata;  // Arbitrary result data
++    std::string metadata_json;  // JSON string for copyability
+   };
+ 
+   // Summary of one evaluation iteration.

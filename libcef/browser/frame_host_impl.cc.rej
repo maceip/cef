@@ -1,0 +1,68 @@
+diff a/libcef/browser/frame_host_impl.cc b/libcef/browser/frame_host_impl.cc	(rejected hunks)
+@@ -219,7 +219,7 @@ class EvalResultObserver : public CefDevToolsMessageObserver {
+       std::string error_str;
+       if (result && result_size > 0) {
+         std::string result_json(static_cast<const char*>(result), result_size);
+-        auto parsed = base::JSONReader::ReadDict(result_json);
++        auto parsed = base::JSONReader::ReadDict(result_json, base::JSON_PARSE_RFC);
+         if (parsed) {
+           const std::string* msg = parsed->FindString("message");
+           error_str = msg ? *msg : result_json;
+@@ -243,7 +243,7 @@ class EvalResultObserver : public CefDevToolsMessageObserver {
+     }
+ 
+     std::string result_json(static_cast<const char*>(result), result_size);
+-    auto parsed = base::JSONReader::ReadDict(result_json);
++    auto parsed = base::JSONReader::ReadDict(result_json, base::JSON_PARSE_RFC);
+     if (!parsed) {
+       callback_->OnComplete(false, nullptr, "Failed to parse CDP response.");
+       registration_ = nullptr;
+@@ -251,10 +251,10 @@ class EvalResultObserver : public CefDevToolsMessageObserver {
+     }
+ 
+     // Check for exception details.
+-    const base::Value::Dict* exception_details =
++    const base::DictValue* exception_details =
+         parsed->FindDict("exceptionDetails");
+     if (exception_details) {
+-      const base::Value::Dict* exception_obj =
++      const base::DictValue* exception_obj =
+           exception_details->FindDict("exception");
+       std::string error_msg = "JavaScript exception";
+       if (exception_obj) {
+@@ -279,7 +279,7 @@ class EvalResultObserver : public CefDevToolsMessageObserver {
+     }
+ 
+     // Extract result.value from the CDP response.
+-    const base::Value::Dict* result_obj = parsed->FindDict("result");
++    const base::DictValue* result_obj = parsed->FindDict("result");
+     if (result_obj) {
+       const std::string* type = result_obj->FindString("type");
+       if (type && *type == "undefined") {
+@@ -523,7 +523,7 @@ void CefFrameHostImpl::RefreshAttributes() {
+   // after navigation, meaning the DOM content has changed.
+   if (auto browser = GetBrowserHostBase()) {
+     browser->GetPageModelCache().BumpGeneration(
+-        render_frame_host_->GetFrameTreeNodeId());
++        render_frame_host_->GetFrameTreeNodeId().value());
+   }
+ 
+   url_ = render_frame_host_->GetLastCommittedURL().spec();
+@@ -586,7 +586,7 @@ void CefFrameHostImpl::LoadURLWithExtras(const std::string& url,
+       // Invalidate the page model cache -- a new navigation is starting.
+       if (render_frame_host_) {
+         browser->GetPageModelCache().BumpGeneration(
+-            render_frame_host_->GetFrameTreeNodeId());
++            render_frame_host_->GetFrameTreeNodeId().value());
+       }
+ 
+       content::OpenURLParams params(
+@@ -930,7 +930,7 @@ void CefFrameHostImpl::FrameAttached(
+   if (render_frame_host_) {
+     if (auto browser = browser_info->browser()) {
+       browser->GetPageModelCache().BumpGeneration(
+-          render_frame_host_->GetFrameTreeNodeId());
++          render_frame_host_->GetFrameTreeNodeId().value());
+     }
+   }
+ 

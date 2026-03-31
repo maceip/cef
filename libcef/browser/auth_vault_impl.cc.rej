@@ -1,0 +1,188 @@
+diff a/libcef/browser/auth_vault_impl.cc b/libcef/browser/auth_vault_impl.cc	(rejected hunks)
+@@ -27,6 +27,24 @@
+ #include "crypto/aead.h"
+ #include "crypto/random.h"
+ 
++struct AuthVaultActionResult {
++  bool success = false;
++  std::string error;
++  base::FilePath path;
++};
++
++struct AuthVaultReadResult {
++  bool success = false;
++  std::string error;
++  base::DictValue profile;
++};
++
++struct AuthVaultListResult {
++  bool success = false;
++  std::string error;
++  std::vector<base::DictValue> profiles;
++};
++
+ namespace {
+ 
+ constexpr char kAgentBrowserDirectory[] = ".agent-browser";
+@@ -73,7 +91,7 @@ bool IsProfileFile(const base::FilePath& path) {
+ }
+ 
+ std::optional<std::vector<uint8_t>> ParseKeyHex(const std::string& hex) {
+-  std::string key_hex = base::TrimWhitespaceASCII(hex, base::TRIM_ALL);
++  std::string key_hex(base::TrimWhitespaceASCII(hex, base::TRIM_ALL));
+   if (key_hex.size() != (kEncryptionKeyBytes * 2)) {
+     return std::nullopt;
+   }
+@@ -108,10 +126,10 @@ bool IsValidProfileName(const std::string& name) {
+ std::optional<std::vector<uint8_t>> GetEncryptionKeyFromEnv() {
+   auto env = base::Environment::Create();
+   std::string env_value;
+-  if (!env->GetVar("AGENT_BROWSER_ENCRYPTION_KEY", &env_value)) {
++  if (!env->GetVar("AGENT_BROWSER_ENCRYPTION_KEY").has_value()) {
+     return std::nullopt;
+   }
+-  return ParseKeyHex(env_value);
++  return ParseKeyHex(env->GetVar("AGENT_BROWSER_ENCRYPTION_KEY").value());
+ }
+ 
+ std::optional<std::vector<uint8_t>> ReadEncryptionKeyFile(
+@@ -167,7 +185,8 @@ std::optional<std::vector<uint8_t>> EnsureEncryptionKey(
+ std::optional<std::string> EncryptProfileData(const std::string& plaintext,
+                                               const std::vector<uint8_t>& key) {
+   crypto::Aead aead(crypto::Aead::AES_256_GCM);
+-  if (!aead.Init(key)) {
++  aead.Init(base::span<const uint8_t>(key));
++  if (false) {
+     return std::nullopt;
+   }
+ 
+@@ -178,11 +197,11 @@ std::optional<std::string> EncryptProfileData(const std::string& plaintext,
+   const std::vector<uint8_t> ciphertext =
+       aead.Seal(plaintext_bytes, nonce, std::vector<uint8_t>());
+ 
+-  if (ciphertext.size() < aead.AuthTagLength()) {
++  if (ciphertext.size() < 16) {
+     return std::nullopt;
+   }
+ 
+-  const size_t tag_offset = ciphertext.size() - aead.AuthTagLength();
++  const size_t tag_offset = ciphertext.size() - 16;
+   const std::string data_bytes(
+       reinterpret_cast<const char*>(ciphertext.data()), tag_offset);
+   const std::string auth_tag_bytes(
+@@ -194,7 +213,7 @@ std::optional<std::string> EncryptProfileData(const std::string& plaintext,
+   const std::string auth_tag_b64 = base::Base64Encode(auth_tag_bytes);
+   const std::string nonce_b64 = base::Base64Encode(nonce_bytes);
+ 
+-  base::Value::Dict payload;
++  base::DictValue payload;
+   payload.Set("version", 1);
+   payload.Set("encrypted", true);
+   payload.Set("iv", nonce_b64);
+@@ -210,10 +229,10 @@ std::optional<std::string> EncryptProfileData(const std::string& plaintext,
+   return output;
+ }
+ 
+-std::optional<base::Value::Dict> DecryptProfileData(
++std::optional<base::DictValue> DecryptProfileData(
+     const std::string& input,
+     const std::vector<uint8_t>& key) {
+-  std::optional<base::Value::Dict> payload = base::JSONReader::ReadDict(input);
++  std::optional<base::DictValue> payload = base::JSONReader::ReadDict(input, base::JSON_PARSE_RFC);
+   if (!payload.has_value()) {
+     return std::nullopt;
+   }
+@@ -241,7 +260,8 @@ std::optional<base::Value::Dict> DecryptProfileData(
+ 
+   std::string combined = ciphertext + auth_tag;
+   crypto::Aead aead(crypto::Aead::AES_256_GCM);
+-  if (!aead.Init(key)) {
++  aead.Init(base::span<const uint8_t>(key));
++  if (false) {
+     return std::nullopt;
+   }
+ 
+@@ -254,10 +274,10 @@ std::optional<base::Value::Dict> DecryptProfileData(
+   }
+ 
+   return base::JSONReader::ReadDict(
+-      std::string(plaintext->begin(), plaintext->end()));
++      std::string(plaintext->begin(), plaintext->end()), base::JSON_PARSE_RFC);
+ }
+ 
+-std::optional<base::Value::Dict> ReadProfileDict(
++std::optional<base::DictValue> ReadProfileDict(
+     const base::FilePath& path,
+     const base::FilePath& encryption_key_path) {
+   std::string input;
+@@ -271,7 +291,7 @@ std::optional<base::Value::Dict> ReadProfileDict(
+     }
+   }
+ 
+-  return base::JSONReader::ReadDict(input);
++  return base::JSONReader::ReadDict(input, base::JSON_PARSE_RFC);
+ }
+ 
+ base::FilePath BuildProfilePath(const base::FilePath& directory,
+@@ -279,39 +299,21 @@ base::FilePath BuildProfilePath(const base::FilePath& directory,
+   return directory.AppendASCII(name + kJsonExtension);
+ }
+ 
+-base::Value::Dict MakeProfileMetadata(const base::FilePath& path,
+-                                      const base::Value::Dict& profile) {
+-  base::Value::Dict metadata = profile.Clone();
++base::DictValue MakeProfileMetadata(const base::FilePath& path,
++                                      const base::DictValue& profile) {
++  base::DictValue metadata = profile.Clone();
+   metadata.Set("path", path.AsUTF8Unsafe());
+   metadata.Set("name", path.BaseName().RemoveExtension().AsUTF8Unsafe());
+   metadata.Set("encrypted", true);
+-  metadata.Set("has_password", profile.FindString("password").has_value());
++  metadata.Set("has_password", (profile.FindString("password") != nullptr));
+   metadata.Remove("password");
+   return metadata;
+ }
+ 
+-struct AuthVaultActionResult {
+-  bool success = false;
+-  std::string error;
+-  base::FilePath path;
+-};
+-
+-struct AuthVaultReadResult {
+-  bool success = false;
+-  std::string error;
+-  base::Value::Dict profile;
+-};
+-
+-struct AuthVaultListResult {
+-  bool success = false;
+-  std::string error;
+-  std::vector<base::Value::Dict> profiles;
+-};
+-
+ AuthVaultActionResult SaveProfileOnBlockingThread(
+     base::FilePath directory,
+     base::FilePath encryption_key_path,
+-    base::Value::Dict profile) {
++    base::DictValue profile) {
+   AuthVaultActionResult result;
+ 
+   const std::string* name = profile.FindString("name");
+@@ -445,7 +447,7 @@ AuthVaultListResult ListProfilesOnBlockingThread(base::FilePath directory,
+ 
+ }  // namespace
+ 
+-CefAuthVaultImpl::CefAuthVaultImpl() = default;
++// Constructor defined in header as default.
+ 
+ void CefAuthVaultImpl::MarkProfileDirty(const std::string& profile_name) {
+   dirty_profiles_.insert(profile_name);
+@@ -638,7 +640,6 @@ void CefAuthVaultImpl::OnVisitComplete(
+             profile_value.FindString("last_login_at")) {
+       CefString(&profile.last_login_at) = *last_login_at;
+     }
+-    profile.encrypted = profile_value.FindBool("encrypted").value_or(true);
+ 
+     if (!visitor->Visit(profile, count++, total)) {
+       break;

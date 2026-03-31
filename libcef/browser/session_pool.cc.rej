@@ -1,0 +1,12 @@
+diff a/libcef/browser/session_pool.cc b/libcef/browser/session_pool.cc	(rejected hunks)
+@@ -3,8 +3,10 @@
+ // can be found in the LICENSE file.
+ 
+ #include "cef/libcef/browser/session_pool.h"
++#include "cef/include/cef_request_context_handler.h"
+ 
+ #include <algorithm>
++#include <cinttypes>
+ 
+ #include "base/logging.h"
+ #include "base/strings/stringprintf.h"

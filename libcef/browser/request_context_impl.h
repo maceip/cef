@@ -246,6 +246,7 @@ class CefRequestContextImpl : public CefRequestContext {
 
   Config config_;
   mutable base::Lock state_lock_;
+  mutable base::Lock service_lock_;
 
   std::unique_ptr<pref_helper::Registrar> pref_registrar_;
   std::unique_ptr<setting_helper::Registrar> setting_registrar_;

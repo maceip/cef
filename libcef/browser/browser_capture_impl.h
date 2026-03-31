@@ -45,7 +45,7 @@ class CefBrowserCaptureImpl : public CefBrowserCapture {
   raw_ptr<CefBrowserHostBase> browser_;
   CefElementRefIndex ref_index_;
 
-  IMPLEMENT_REFCOUNTING_DELETE_ON_UIT(CefBrowserCaptureImpl);
+  IMPLEMENT_REFCOUNTING(CefBrowserCaptureImpl);
 };
 
 #endif  // CEF_LIBCEF_BROWSER_BROWSER_CAPTURE_IMPL_H_
