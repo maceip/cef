@@ -7,8 +7,9 @@
 #include <optional>
 #include <utility>
 
+#include <algorithm>
+
 #include "base/base_paths.h"
-#include "base/logging.h"
 #include "base/files/file_enumerator.h"
 #include "base/files/file_path.h"
 #include "base/files/file_util.h"
@@ -48,6 +49,20 @@ bool IsStateFile(const base::FilePath& path) {
   const auto filename = path.BaseName().AsUTF8Unsafe();
   return base::EndsWith(filename, kJsonExtension) ||
          base::EndsWith(filename, kJsonEncryptedExtension);
+}
+
+bool IsValidSessionName(const std::string& session_name) {
+  if (session_name.empty()) {
+    return true;
+  }
+
+  for (const char c : session_name) {
+    if (!(base::IsAsciiAlphaNumeric(c) || c == '_' || c == '-')) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 base::Value::Dict MakeEntryDict(const base::FilePath& path,
@@ -150,6 +165,11 @@ StorageStateActionResult RenameStateOnBlockingThread(base::FilePath old_path,
 
   if (new_name.empty()) {
     result.error = "New state name is empty.";
+    return result;
+  }
+
+  if (!IsValidSessionName(new_name)) {
+    result.error = "State name must match /^[A-Za-z0-9_-]+$/.";
     return result;
   }
 
@@ -263,27 +283,6 @@ StorageStateReadResult CleanStatesOnBlockingThread(base::FilePath directory,
 
 CefStorageStateManagerImpl::CefStorageStateManagerImpl() = default;
 
-void CefStorageStateManagerImpl::MarkDirty(const std::string& origin) {
-  dirty_ = true;
-  if (!origin.empty()) {
-    modified_origins_.insert(origin);
-  }
-}
-
-void CefStorageStateManagerImpl::ClearDirty() {
-  dirty_ = false;
-  modified_origins_.clear();
-}
-
-bool CefStorageStateManagerImpl::IsDirty() const {
-  return dirty_;
-}
-
-const std::set<std::string>&
-CefStorageStateManagerImpl::GetModifiedOrigins() const {
-  return modified_origins_;
-}
-
 void CefStorageStateManagerImpl::Initialize(
     const CefBrowserContext::Getter& browser_context_getter,
     CefRefPtr<CefCompletionCallback> callback) {
@@ -292,29 +291,14 @@ void CefStorageStateManagerImpl::Initialize(
 
   if (initialized_) {
     if (callback) {
-      CEF_POST_TASK(CEF_UIT, base::BindOnce(&CefCompletionCallback::OnComplete,
-                                            callback.get()));
+      CEF_POST_TASK(CEF_UIT,
+                    base::BindOnce(&CefCompletionCallback::OnComplete, callback));
     }
     return;
   }
 
   browser_context_getter_ = browser_context_getter;
   initialized_ = true;
-
-  // Initialize the state journal for incremental persistence.
-  const auto journal_dir = GetDefaultStateDirectoryPath();
-  if (!journal_dir.empty()) {
-    journal_ = std::make_unique<CefStateJournal>();
-    const auto journal_path =
-        journal_dir.AppendASCII(
-            (session_name_.empty() ? std::string(kDefaultSessionName)
-                                   : session_name_) + ".journal");
-    if (!journal_->Initialize(journal_path)) {
-      LOG(WARNING) << "Failed to initialize state journal at "
-                   << journal_path.AsUTF8Unsafe();
-      journal_.reset();
-    }
-  }
 
   if (!init_callbacks_.empty()) {
     for (auto& init_callback : init_callbacks_) {
@@ -324,13 +308,9 @@ void CefStorageStateManagerImpl::Initialize(
   }
 
   if (callback) {
-    CEF_POST_TASK(CEF_UIT, base::BindOnce(&CefCompletionCallback::OnComplete,
-                                          callback.get()));
+    CEF_POST_TASK(CEF_UIT,
+                  base::BindOnce(&CefCompletionCallback::OnComplete, callback));
   }
-}
-
-bool CefStorageStateManagerImpl::IsInitialized() const {
-  return initialized_;
 }
 
 void CefStorageStateManagerImpl::Save(
@@ -392,12 +372,19 @@ void CefStorageStateManagerImpl::SetSessionName(const CefString& session_name) {
   if (!CEF_CURRENTLY_ON_UIT()) {
     CEF_POST_TASK(
         CEF_UIT,
-        base::BindOnce(&CefStorageStateManagerImpl::SetSessionName, this,
+        base::BindOnce(&CefStorageStateManagerImpl::SetSessionName,
+                       CefRefPtr<CefStorageStateManagerImpl>(this),
                        session_name));
     return;
   }
 
-  session_name_ = session_name.ToString();
+  const std::string value = session_name.ToString();
+  if (!IsValidSessionName(value)) {
+    DCHECK(false) << "invalid session name";
+    return;
+  }
+
+  session_name_ = value;
 }
 
 CefString CefStorageStateManagerImpl::GetSessionName() {
@@ -421,46 +408,19 @@ void CefStorageStateManagerImpl::SaveInternal(
     CefRefPtr<CefBrowser> browser,
     CefRefPtr<CefStorageStateActionCallback> callback) {
   CEF_REQUIRE_UIT();
-
-  // Skip the save if nothing has changed since the last successful save.
-  if (!IsDirty()) {
-    LOG(INFO) << "StorageStateManager: skipping save, state is not dirty.";
-    base::FilePath output_path =
-        path.empty() ? GetDefaultStateFilePath()
-                     : base::FilePath(path.ToString());
-    RunActionCallback(callback, true, std::string(), output_path);
-    return;
-  }
-
   base::FilePath output_path =
-      path.empty() ? GetDefaultStateFilePath() : base::FilePath(path.ToString());
+      path.empty() ? GetDefaultStateFilePath() : ResolveManagedStatePath(path);
   if (output_path.empty()) {
-    RunActionCallback(callback, false,
-                      "Default state path is unavailable.", base::FilePath());
+    const std::string error = path.empty() ? "Default state path is unavailable."
+                                           : "State path must reference a managed session file.";
+    RunActionCallback(callback, false, error, base::FilePath());
     return;
   }
 
-  // Use the journal for incremental persistence if available.
-  if (journal_ && journal_->IsOpen()) {
-    // Flush the journal to ensure all pending writes are on disk.
-    if (journal_->Flush()) {
-      // Compact if needed to keep journal file bounded.
-      if (journal_->NeedsCompaction()) {
-        journal_->Compact();
-      }
-      ClearDirty();
-      RunActionCallback(callback, true, std::string(), output_path);
-    } else {
-      RunActionCallback(callback, false,
-                        "Failed to flush state journal.", output_path);
-    }
-  } else {
-    // Fallback: journal not available.
-    RunActionCallback(
-        callback, false,
-        "Storage state save requires journal initialization.",
-        output_path);
-  }
+  RunActionCallback(
+      callback, false,
+      "Storage state save is not implemented in this scaffold.",
+      output_path);
 }
 
 void CefStorageStateManagerImpl::LoadInternal(
@@ -473,40 +433,18 @@ void CefStorageStateManagerImpl::LoadInternal(
     return;
   }
 
-  // Load state from journal if available.
-  if (journal_ && journal_->IsOpen()) {
-    // The journal already has the current state in memory from replay.
-    // State is accessible via journal_->GetAll().
-    const auto state = journal_->GetAll();
-    if (!state.empty()) {
-      MarkDirty();  // Mark dirty since we loaded new state.
-      RunActionCallback(callback, true, std::string(),
-                        base::FilePath(path.ToString()));
-    } else {
-      RunActionCallback(callback, true, std::string(),
-                        base::FilePath(path.ToString()));
-    }
-  } else {
-    // Fallback: try to initialize a journal from the given path.
-    auto load_journal = std::make_unique<CefStateJournal>();
-    base::FilePath load_path(path.ToString());
-    // Convert .json path to .journal path.
-    if (load_path.FinalExtension() == FILE_PATH_LITERAL(".json")) {
-      load_path = load_path.RemoveFinalExtension()
-                      .AddExtensionASCII("journal");
-    }
-    if (load_journal->Initialize(load_path) &&
-        load_journal->GetEntryCount() > 0) {
-      journal_ = std::move(load_journal);
-      MarkDirty();
-      RunActionCallback(callback, true, std::string(),
-                        base::FilePath(path.ToString()));
-    } else {
-      RunActionCallback(callback, false,
-                        "No journal found at the specified path.",
-                        base::FilePath(path.ToString()));
-    }
+  const auto input_path = ResolveManagedStatePath(path);
+  if (input_path.empty()) {
+    RunActionCallback(callback, false,
+                      "State path must reference a managed session file.",
+                      base::FilePath());
+    return;
   }
+
+  RunActionCallback(
+      callback, false,
+      "Storage state load is not implemented in this scaffold.",
+      input_path);
 }
 
 void CefStorageStateManagerImpl::ListInternal(
@@ -514,37 +452,30 @@ void CefStorageStateManagerImpl::ListInternal(
   CEF_REQUIRE_UIT();
   const auto directory = GetDefaultStateDirectoryPath();
 
-  // Return cached results if still valid (less than 5 seconds old).
-  if (cached_directory_state_.valid &&
-      cached_directory_state_.directory == directory &&
-      (base::TimeTicks::Now() - cached_directory_state_.last_enumerated) <
-          base::Seconds(5)) {
-    StorageStateListResult cached_result;
-    cached_result.success = true;
-    cached_result.directory = cached_directory_state_.directory;
-    for (const auto& entry : cached_directory_state_.entries) {
-      cached_result.entries.push_back(entry.Clone());
-    }
-    OnListComplete(callback, std::move(cached_result));
-    return;
-  }
-
   base::ThreadPool::PostTaskAndReplyWithResult(
       FROM_HERE, {base::MayBlock()},
       base::BindOnce(&ListStatesOnBlockingThread, directory),
-      base::BindOnce(&CefStorageStateManagerImpl::OnListComplete, this,
-                     callback));
+      base::BindOnce(&CefStorageStateManagerImpl::OnListComplete,
+                     CefRefPtr<CefStorageStateManagerImpl>(this), callback));
 }
 
 void CefStorageStateManagerImpl::ShowInternal(
     const CefString& path,
     CefRefPtr<CefStorageStateReadCallback> callback) {
   CEF_REQUIRE_UIT();
+  const auto state_path = ResolveManagedStatePath(path);
+  if (state_path.empty()) {
+    StorageStateReadResult result;
+    result.error = "State path must reference a managed session file.";
+    OnReadComplete(callback, std::move(result));
+    return;
+  }
+
   base::ThreadPool::PostTaskAndReplyWithResult(
       FROM_HERE, {base::MayBlock()},
-      base::BindOnce(&ShowStateOnBlockingThread, base::FilePath(path.ToString())),
-      base::BindOnce(&CefStorageStateManagerImpl::OnReadComplete, this,
-                     callback));
+      base::BindOnce(&ShowStateOnBlockingThread, state_path),
+      base::BindOnce(&CefStorageStateManagerImpl::OnReadComplete,
+                     CefRefPtr<CefStorageStateManagerImpl>(this), callback));
 }
 
 void CefStorageStateManagerImpl::RenameInternal(
@@ -552,12 +483,19 @@ void CefStorageStateManagerImpl::RenameInternal(
     const CefString& new_name,
     CefRefPtr<CefStorageStateActionCallback> callback) {
   CEF_REQUIRE_UIT();
+  const auto old_path = ResolveManagedStatePath(path);
+  if (old_path.empty()) {
+    RunActionCallback(callback, false,
+                      "State path must reference a managed session file.",
+                      base::FilePath());
+    return;
+  }
+
   base::ThreadPool::PostTaskAndReplyWithResult(
       FROM_HERE, {base::MayBlock()},
-      base::BindOnce(&RenameStateOnBlockingThread,
-                     base::FilePath(path.ToString()), new_name.ToString()),
-      base::BindOnce(&CefStorageStateManagerImpl::OnActionComplete, this,
-                     callback));
+      base::BindOnce(&RenameStateOnBlockingThread, old_path, new_name.ToString()),
+      base::BindOnce(&CefStorageStateManagerImpl::OnActionComplete,
+                     CefRefPtr<CefStorageStateManagerImpl>(this), callback));
 }
 
 void CefStorageStateManagerImpl::ClearInternal(
@@ -567,14 +505,21 @@ void CefStorageStateManagerImpl::ClearInternal(
   const auto directory = GetDefaultStateDirectoryPath();
   std::optional<base::FilePath> file_path;
   if (!path.empty()) {
-    file_path = base::FilePath(path.ToString());
+    const auto resolved_path = ResolveManagedStatePath(path);
+    if (resolved_path.empty()) {
+      RunActionCallback(callback, false,
+                        "State path must reference a managed session file.",
+                        base::FilePath());
+      return;
+    }
+    file_path = resolved_path;
   }
 
   base::ThreadPool::PostTaskAndReplyWithResult(
       FROM_HERE, {base::MayBlock()},
       base::BindOnce(&ClearStatesOnBlockingThread, directory, file_path),
-      base::BindOnce(&CefStorageStateManagerImpl::OnActionComplete, this,
-                     callback));
+      base::BindOnce(&CefStorageStateManagerImpl::OnActionComplete,
+                     CefRefPtr<CefStorageStateManagerImpl>(this), callback));
 }
 
 void CefStorageStateManagerImpl::CleanOlderThanInternal(
@@ -585,26 +530,14 @@ void CefStorageStateManagerImpl::CleanOlderThanInternal(
   base::ThreadPool::PostTaskAndReplyWithResult(
       FROM_HERE, {base::MayBlock()},
       base::BindOnce(&CleanStatesOnBlockingThread, directory, days),
-      base::BindOnce(&CefStorageStateManagerImpl::OnReadComplete, this,
-                     callback));
+      base::BindOnce(&CefStorageStateManagerImpl::OnReadComplete,
+                     CefRefPtr<CefStorageStateManagerImpl>(this), callback));
 }
 
 void CefStorageStateManagerImpl::OnListComplete(
     CefRefPtr<CefStorageStateListCallback> callback,
     StorageStateListResult result) {
   CEF_REQUIRE_UIT();
-
-  // Update the directory cache with fresh results.
-  if (result.success) {
-    cached_directory_state_.valid = true;
-    cached_directory_state_.last_enumerated = base::TimeTicks::Now();
-    cached_directory_state_.directory = result.directory;
-    cached_directory_state_.entries.clear();
-    for (const auto& entry : result.entries) {
-      cached_directory_state_.entries.push_back(entry.Clone());
-    }
-  }
-
   if (!callback) {
     return;
   }
@@ -639,11 +572,6 @@ void CefStorageStateManagerImpl::OnActionComplete(
     CefRefPtr<CefStorageStateActionCallback> callback,
     StorageStateActionResult result) {
   CEF_REQUIRE_UIT();
-  if (result.success) {
-    ClearDirty();
-    // Invalidate directory cache since state files may have changed.
-    cached_directory_state_.valid = false;
-  }
   RunActionCallback(callback, result.success, result.error, result.path);
 }
 
@@ -653,7 +581,8 @@ void CefStorageStateManagerImpl::StoreOrTriggerInitCallback(
     CEF_POST_TASK(
         CEF_UIT,
         base::BindOnce(&CefStorageStateManagerImpl::StoreOrTriggerInitCallback,
-                       this, std::move(callback)));
+                       CefRefPtr<CefStorageStateManagerImpl>(this),
+                       std::move(callback)));
     return;
   }
 
@@ -686,4 +615,30 @@ void CefStorageStateManagerImpl::RunActionCallback(
   }
 
   callback->OnComplete(success, error, path.AsUTF8Unsafe());
+}
+
+base::FilePath CefStorageStateManagerImpl::ResolveManagedStatePath(
+    const CefString& path) const {
+  const auto directory = GetDefaultStateDirectoryPath();
+  if (directory.empty()) {
+    return base::FilePath();
+  }
+
+  const base::FilePath input_path(path.ToString());
+  if (input_path.empty()) {
+    return base::FilePath();
+  }
+
+  if (input_path.IsAbsolute()) {
+    if (input_path.DirName() != directory || !IsStateFile(input_path)) {
+      return base::FilePath();
+    }
+    return input_path;
+  }
+
+  if (input_path.BaseName() != input_path || !IsStateFile(input_path)) {
+    return base::FilePath();
+  }
+
+  return directory.Append(input_path);
 }
