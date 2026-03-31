@@ -561,6 +561,7 @@
     'ceftests_sources_common': [
       'tests/ceftests/api_version_unittest.cc',
       'tests/ceftests/agent_scheduler_unittest.cc',
+      'tests/ceftests/automation_program_unittest.cc',
       'tests/ceftests/audio_output_unittest.cc',
       'tests/ceftests/auth_vault_unittest.cc',
       'tests/ceftests/base/atomic_flag_unittest.cc',

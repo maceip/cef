@@ -41,6 +41,7 @@
 #include <vector>
 
 #include "include/cef_base.h"
+#include "include/cef_automation_program.h"
 #include "include/cef_browser_capture.h"
 #include "include/cef_devtools_message_observer.h"
 #include "include/cef_drag_data.h"
@@ -451,6 +452,18 @@ class CefBrowserHost : public virtual CefBaseRefCounted {
   ///
   /*--cef()--*/
   virtual CefRefPtr<CefBrowserCapture> GetCapture() = 0;
+
+  ///
+  /// Execute an automation program against this browser. The program's
+  /// instructions are dispatched sequentially. The result callback receives one
+  /// entry per instruction. Current implementations may return placeholder
+  /// results for instructions that are not yet backed by a concrete execution
+  /// engine.
+  ///
+  /*--cef()--*/
+  virtual void ExecuteAutomationProgram(
+      CefRefPtr<CefAutomationProgram> program,
+      CefRefPtr<CefAutomationProgramCallback> callback) = 0;
 
   ///
   /// Returns true if this browser can execute the specified zoom command. This

@@ -42,6 +42,58 @@
 #include "include/cef_values.h"
 
 ///
+/// Instruction types that can be added to a CefAutomationProgram.
+///
+typedef enum {
+  ///
+  /// Navigate to a URL.
+  /// Params: "url" (string, required).
+  ///
+  CEF_AUTOMATION_INSTRUCTION_NAVIGATE = 0,
+  ///
+  /// Wait for a condition (load, networkidle, selector).
+  /// Params: "condition" (string: "load"|"networkidle"|"selector"),
+  ///         "selector" (string, required when condition is "selector"),
+  ///         "timeout" (int, optional, milliseconds).
+  ///
+  CEF_AUTOMATION_INSTRUCTION_WAIT,
+  ///
+  /// Click an element by selector.
+  /// Params: "selector" (string, required),
+  ///         "button" (string, optional: "left"|"right"|"middle").
+  ///
+  CEF_AUTOMATION_INSTRUCTION_CLICK,
+  ///
+  /// Type text into the focused element.
+  /// Params: "text" (string, required),
+  ///         "delay" (int, optional, milliseconds between keystrokes).
+  ///
+  CEF_AUTOMATION_INSTRUCTION_TYPE,
+  ///
+  /// Capture a text snapshot of the page.
+  /// Params: none.
+  ///
+  CEF_AUTOMATION_INSTRUCTION_SNAPSHOT,
+  ///
+  /// Capture a screenshot.
+  /// Params: "format" (string, optional: "png"|"jpeg"),
+  ///         "quality" (int, optional, 0-100 for jpeg).
+  ///
+  CEF_AUTOMATION_INSTRUCTION_SCREENSHOT,
+  ///
+  /// Execute JavaScript (goes through normal Runtime.evaluate path).
+  /// Params: "expression" (string, required),
+  ///         "await_promise" (bool, optional).
+  ///
+  CEF_AUTOMATION_INSTRUCTION_EVALUATE,
+  ///
+  /// Wait for a specified duration.
+  /// Params: "milliseconds" (int, required).
+  ///
+  CEF_AUTOMATION_INSTRUCTION_DELAY,
+} cef_automation_instruction_type_t;
+
+///
 /// Represents a sequence of automation instructions that can be executed
 /// as a single batch, reducing IPC round-trips. Each instruction in the
 /// program is dispatched through the normal Blink event pipeline with
@@ -53,58 +105,6 @@
 /*--cef(source=library)--*/
 class CefAutomationProgram : public virtual CefBaseRefCounted {
  public:
-  ///
-  /// Instruction types that can be added to the program.
-  ///
-  typedef enum {
-    ///
-    /// Navigate to a URL.
-    /// Params: "url" (string, required).
-    ///
-    INSTRUCTION_NAVIGATE = 0,
-    ///
-    /// Wait for a condition (load, networkidle, selector).
-    /// Params: "condition" (string: "load"|"networkidle"|"selector"),
-    ///         "selector" (string, required when condition is "selector"),
-    ///         "timeout" (int, optional, milliseconds).
-    ///
-    INSTRUCTION_WAIT,
-    ///
-    /// Click an element by selector.
-    /// Params: "selector" (string, required),
-    ///         "button" (string, optional: "left"|"right"|"middle").
-    ///
-    INSTRUCTION_CLICK,
-    ///
-    /// Type text into the focused element.
-    /// Params: "text" (string, required),
-    ///         "delay" (int, optional, milliseconds between keystrokes).
-    ///
-    INSTRUCTION_TYPE,
-    ///
-    /// Capture a text snapshot of the page.
-    /// Params: none.
-    ///
-    INSTRUCTION_SNAPSHOT,
-    ///
-    /// Capture a screenshot.
-    /// Params: "format" (string, optional: "png"|"jpeg"),
-    ///         "quality" (int, optional, 0-100 for jpeg).
-    ///
-    INSTRUCTION_SCREENSHOT,
-    ///
-    /// Execute JavaScript (goes through normal Runtime.evaluate path).
-    /// Params: "expression" (string, required),
-    ///         "await_promise" (bool, optional).
-    ///
-    INSTRUCTION_EVALUATE,
-    ///
-    /// Wait for a specified duration.
-    /// Params: "milliseconds" (int, required).
-    ///
-    INSTRUCTION_DELAY,
-  } InstructionType;
-
   ///
   /// Create a new empty automation program.
   ///
@@ -118,7 +118,7 @@ class CefAutomationProgram : public virtual CefBaseRefCounted {
   /// Returns the instruction index.
   ///
   /*--cef()--*/
-  virtual int AddInstruction(InstructionType type,
+  virtual int AddInstruction(cef_automation_instruction_type_t type,
                              CefRefPtr<CefDictionaryValue> params) = 0;
 
   ///
