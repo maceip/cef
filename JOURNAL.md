@@ -9,7 +9,7 @@ This file tracks blockers, risks, and prioritized work for the `bench/site` accu
 ## What's concerning
 
 - **Untrusted external scores**: Vendor and leaderboard numbers in `bench/site/src/data/contestants.ts` must stay out of aggregates. The distillation report keeps them in `excludedExternalScores` only; any future UI must not fold them into rankings.
-- **Mock vs real data**: `MOCK_REPORT` is synthetic. Production paths should load real `bench/results/*.json` once the schema is stable.
+- **Mock vs real data**: `MOCK_REPORT` is synthetic. Production paths should load real benchmark result JSON once a stable export path exists (the Python `bench/` runner was removed on `master`; define a new ingestion path when runs resume).
 - **Strict TypeScript**: `noUncheckedIndexedAccess` is on; new code should avoid silent undefined access (tests use non-null assertions only where guarded).
 
 ## Completed this iteration
@@ -18,7 +18,7 @@ This file tracks blockers, risks, and prioritized work for the `bench/site` accu
 - **Removed dead code**: Deleted unused `emptyDifficultyBreakdown` in `stats.ts`.
 - **Automated tests**: Added `bench/site/src/data/stats.test.ts` (Node test runner + `tsx`). Run `npm test` from `bench/site`.
 - **Build split**: `tsconfig.build.json` excludes `*.test.ts` so `npm run build` emits only library output.
-- **Documentation**: `bench/README.md` documents the site package, typecheck, test, and build commands.
+- **Documentation**: `bench/site/README.md` documents the site package, typecheck, test, and build commands (repo `master` removed the top-level `bench/README.md` with the old Python suite).
 
 ## # Next Steps (Prioritized)
 
