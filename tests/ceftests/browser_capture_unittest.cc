@@ -3,13 +3,14 @@
 // can be found in the LICENSE file.
 
 #include "include/cef_browser_capture.h"
-#include "include/cef_waitable_event.h"
+#include "include/wrapper/cef_closure_task.h"
 #include "tests/ceftests/test_handler.h"
 #include "tests/gtest/include/gtest/gtest.h"
 
 namespace {
 
 const char kCaptureTestUrl[] = "https://tests/capture.html";
+const char kExpectedScreenshotPath[] = "capture.png";
 
 class BrowserCaptureTestHandler;
 
@@ -87,12 +88,13 @@ class BrowserCaptureTestHandler : public TestHandler {
   void OnScreenshot(const CefString& path, const CefString& error) {
     EXPECT_UI_THREAD();
     EXPECT_FALSE(got_screenshot_);
-    EXPECT_STREQ("capture.png", path.ToString().c_str());
-    EXPECT_STREQ(
-        "Browser capture screenshot scaffolding is not implemented.",
-        error.ToString().c_str());
+    EXPECT_STREQ(kExpectedScreenshotPath, path.ToString().c_str());
+    EXPECT_TRUE(error.empty()) << error.ToString();
     got_screenshot_.yes();
-    DestroyTest();
+
+    // Allow the screenshot pipeline to unwind posted tasks before teardown.
+    CefPostTask(TID_UI,
+                base::BindOnce(&BrowserCaptureTestHandler::DestroyTest, this));
   }
 
  private:

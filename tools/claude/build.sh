@@ -25,6 +25,32 @@ JOBS="${JOBS:-$(nproc 2>/dev/null || echo 8)}"
 log() { echo "==> $*"; }
 err() { echo "ERROR: $*" >&2; exit 1; }
 
+run_gn_gen() {
+  local build_dir="$1"
+  if command -v gn &>/dev/null; then
+    gn gen "$build_dir"
+  else
+    log "gn not found. Ensure depot_tools is in PATH or run:"
+    log "  export PATH=\$HOME/depot_tools:\$PATH"
+    log "  gn gen $build_dir"
+  fi
+}
+
+cmd_translator() {
+  ensure_depot_tools
+  log "Running the CEF translator..."
+
+  if [ ! -f "$CEF_DIR/VERSION.stamp" ]; then
+    err "VERSION.stamp is missing. Run GN generation first (for example: ./tools/claude/build.sh setup)"
+  fi
+
+  (
+    cd "$CEF_DIR"
+    python3 tools/translator.py --root-dir . "$@"
+  )
+  log "Translator run complete."
+}
+
 ensure_depot_tools() {
   if [ ! -d "$DEPOT_TOOLS" ]; then
     log "Fetching depot_tools..."
@@ -67,13 +93,7 @@ treat_warnings_as_errors = false
 ARGS
 
   log "Running GN gen..."
-  if command -v gn &>/dev/null; then
-    gn gen "$BUILD_DIR_DEBUG"
-  else
-    log "gn not found. Ensure depot_tools is in PATH or run:"
-    log "  export PATH=\$HOME/depot_tools:\$PATH"
-    log "  gn gen $BUILD_DIR_DEBUG"
-  fi
+  run_gn_gen "$BUILD_DIR_DEBUG"
 
   log "Setup complete. Run: ./tools/claude/build.sh build"
 }
@@ -102,9 +122,13 @@ is_component_build = false
 symbol_level = 0
 is_official_build = true
 use_sysroot = true
+ffmpeg_branding = "Chrome"
+proprietary_codecs = true
+enable_basic_printing = true
+enable_print_preview = true
 treat_warnings_as_errors = false
 ARGS
-    gn gen "$BUILD_DIR_RELEASE"
+    run_gn_gen "$BUILD_DIR_RELEASE"
   fi
 
   autoninja -C "$BUILD_DIR_RELEASE" cef cefclient cefsimple -j "$JOBS"
@@ -183,6 +207,7 @@ cmd_help() {
   echo "  release    Release/official build"
   echo "  test [F]   Run ceftests (optional gtest filter F)"
   echo "  test-perf  Run only performance optimization tests"
+  echo "  translator [args]  Run tools/translator.py from the repo root"
   echo "  quick      Incremental build + run perf tests (fastest iteration)"
   echo "  check      Compile-only check for new files (no link)"
   echo "  all        Full build + test"
@@ -201,6 +226,7 @@ case "${1:-help}" in
   release)   cmd_release ;;
   test)      cmd_test "${2:-*}" ;;
   test-perf) cmd_test_perf ;;
+  translator) shift; cmd_translator "$@" ;;
   quick)     cmd_quick ;;
   check)     cmd_check ;;
   all)       cmd_all ;;
