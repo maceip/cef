@@ -64,6 +64,26 @@ For complete API documentation, see [General Usage](https://chromiumembedded.git
 - **Helper window** - Creates a browser window with navigation controls
 - **Error handling** - Displays error pages for failed navigations
 - **Cross-platform UI** - Uses Views framework for consistent UI
+- **Headless Ozone mode (Linux)** - Supports `--ozone-platform=headless` to
+  run without relying on X11 event traffic for message pumping.
+
+## Headless CDP Stability (Linux)
+
+When running agent-style benchmarks on Linux, prefer Ozone headless over
+Xvfb+X11:
+
+```bash
+cefsimple \
+  --no-sandbox \
+  --remote-debugging-port=9333 \
+  --url=about:blank \
+  --enable-features=UseOzonePlatform \
+  --ozone-platform=headless \
+  --headless=new
+```
+
+If Ozone headless is unavailable in your build, benchmark tooling can fall back
+to legacy `--headless`.
 
 ## Maintenance Pattern
 

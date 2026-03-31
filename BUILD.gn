@@ -319,6 +319,7 @@ includes_win_capi = gypi_paths2.includes_win_capi
 group("cef") {
   testonly = true
   deps = [
+    ":cef_internal_perf_unittests",
     ":cefsimple",
     ":cefsimple_capi",
     ":ceftests",
@@ -442,6 +443,32 @@ test("libcef_static_unittests") {
 
   deps = [
     ":libcef_static_unittested",
+    "//base/test:run_all_unittests",
+    "//testing/gtest",
+  ]
+
+  configs += [
+    "libcef/features:config",
+    "//build/config:precompiled_headers",
+  ]
+}
+
+# Executable target for unit tests that validate libcef/browser internals and
+# therefore require direct linkage against libcef_static.
+test("cef_internal_perf_unittests") {
+  testonly = true
+
+  sources = [
+    "tests/ceftests/agent_scheduler_unittest.cc",
+    "tests/ceftests/dirty_tracking_unittest.cc",
+    "tests/ceftests/page_model_cache_unittest.cc",
+    "tests/ceftests/security_policy_unittest.cc",
+    "tests/ceftests/session_pool_unittest.cc",
+    "tests/ceftests/state_journal_unittest.cc",
+  ]
+
+  deps = [
+    ":libcef_static",
     "//base/test:run_all_unittests",
     "//testing/gtest",
   ]

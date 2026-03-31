@@ -7,12 +7,14 @@
 #include <string>
 
 #include "include/cef_browser.h"
+#include "include/base/cef_build.h"
 #include "include/cef_command_line.h"
 #include "include/views/cef_browser_view.h"
 #include "include/views/cef_window.h"
 #include "include/wrapper/cef_helpers.h"
 #include "tests/cefsimple/simple_handler.h"
 #include "tests/shared/browser/main_message_loop_external_pump.h"
+#include "tests/shared/common/client_switches.h"
 
 namespace {
 
@@ -134,6 +136,17 @@ void SimpleApp::OnContextInitialized() {
   if (url.empty()) {
     url = "https://www.google.com";
   }
+
+#if BUILDFLAG(IS_LINUX)
+  // Prefer Chromium's headless Ozone backend when explicitly requested.
+  if (command_line->HasSwitch(client::switches::kUseOzoneHeadless)) {
+    command_line->AppendSwitchASCII(client::switches::kOzonePlatform,
+                                    "headless");
+    command_line->AppendSwitch("headless");
+    command_line->AppendSwitch("headless=new");
+    command_line->AppendSwitchASCII("remote-debugging-address", "127.0.0.1");
+  }
+#endif
 
   // Views is enabled by default (add `--use-native` to disable).
   const bool use_views = !command_line->HasSwitch("use-native");

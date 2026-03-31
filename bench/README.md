@@ -47,6 +47,20 @@ python run.py --output results/my_run.json
 python run.py --warmup 0
 ```
 
+### Headless CEF launch behavior
+
+The `zun` driver now attempts two launch modes, in order:
+
+1. Ozone headless backend:
+   - `--enable-features=UseOzonePlatform`
+   - `--ozone-platform=headless`
+   - `--headless=new`
+2. Legacy fallback:
+   - `--headless`
+
+This improves benchmark reliability on Linux environments where X11 event-driven
+message pumping can starve in fully headless runs.
+
 ## Generating Reports
 
 ```bash

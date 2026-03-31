@@ -10,7 +10,7 @@ set -euo pipefail
 CEF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 CHROMIUM_DIR="${CHROMIUM_DIR:-$(dirname "$CEF_DIR")}"
 BUILD_DIR="${CHROMIUM_DIR}/out/Debug_GN_x64"
-TEST_BINARY="$BUILD_DIR/ceftests"
+TEST_BINARY="${TEST_BINARY:-$BUILD_DIR/cef_internal_perf_unittests}"
 
 PERF_SUITES=(
   "StateJournal"
@@ -22,8 +22,8 @@ PERF_SUITES=(
 )
 
 if [ ! -f "$TEST_BINARY" ]; then
-  echo "ERROR: ceftests not found at $TEST_BINARY"
-  echo "Run: ./tools/claude/build.sh build"
+  echo "ERROR: perf test binary not found at $TEST_BINARY"
+  echo "Run: ./tools/claude/build.sh build-internal-tests"
   exit 1
 fi
 

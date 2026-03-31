@@ -1,0 +1,20 @@
+diff --git a/.compat/README.chromium147.txt b/.compat/README.chromium147.txt
+new file mode 100644
+index 0000000000..1111111111
+--- /dev/null
++++ b/.compat/README.chromium147.txt
+@@ -0,0 +1,14 @@
++Chromium 147 compatibility patch placeholder.
++
++Purpose:
++- Keep a tracked, apply-able patch artifact in-tree so build scripts can
++  deterministically execute the same compatibility step on new machines.
++
++How to replace with real content:
++1) On a known-good Chromium 147 checkout:
++     git -C "$CHROMIUM_SRC" diff -- <compat files> > \
++       "$CEF_DIR/patch/chromium147-compat.patch"
++2) Keep this patch scoped to compatibility-only edits.
++3) Re-run tools/claude/build.sh (it auto-applies this patch).
++
++This README file exists only to make the placeholder patch syntactically valid.

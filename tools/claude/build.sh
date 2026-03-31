@@ -25,6 +25,52 @@ JOBS="${JOBS:-$(nproc 2>/dev/null || echo 8)}"
 log() { echo "==> $*"; }
 err() { echo "ERROR: $*" >&2; exit 1; }
 
+ensure_api_hash_files() {
+  if [ ! -f "$CEF_DIR/cef_api_untracked.json" ]; then
+    log "Generating missing cef_api_untracked.json via version_manager.py"
+    if [ -f "$CHROMIUM_DIR/chrome/VERSION" ]; then
+      (
+        cd "$CHROMIUM_DIR"
+        python3 cef/tools/version_manager.py -u
+      )
+    else
+      log "Chromium source tree not found at $CHROMIUM_DIR/chrome; skipping auto-generation"
+    fi
+  fi
+}
+
+apply_chromium147_compat_patch() {
+  local patch_file="$CEF_DIR/patch/chromium147-compat.patch"
+  if [ ! -f "$patch_file" ]; then
+    log "No chromium147 compatibility patch found at $patch_file (skipping)"
+    return 0
+  fi
+
+  if rg -q "compatibility patch placeholder" "$patch_file"; then
+    log "Placeholder compatibility patch detected, skipping"
+    return 0
+  fi
+
+  if ! rg -q "^diff --git " "$patch_file"; then
+    log "Patch file contains no hunks (documentation-only), skipping"
+    return 0
+  fi
+
+  log "Applying chromium147 compatibility patch if needed"
+  if git -C "$CHROMIUM_DIR" apply --check "$patch_file" >/dev/null 2>&1; then
+    git -C "$CHROMIUM_DIR" apply "$patch_file"
+    log "Applied $patch_file"
+    return 0
+  fi
+
+  if git -C "$CHROMIUM_DIR" apply --reverse --check "$patch_file" >/dev/null 2>&1; then
+    log "Patch already applied"
+    return 0
+  fi
+
+  err "Compatibility patch does not apply cleanly: $patch_file"
+}
+
 ensure_depot_tools() {
   if [ ! -d "$DEPOT_TOOLS" ]; then
     log "Fetching depot_tools..."
@@ -80,6 +126,8 @@ ARGS
 
 cmd_build() {
   ensure_depot_tools
+  ensure_api_hash_files
+  apply_chromium147_compat_patch
   log "Building CEF (debug)..."
 
   if [ ! -f "$BUILD_DIR_DEBUG/args.gn" ]; then
@@ -90,8 +138,24 @@ cmd_build() {
   log "Build complete."
 }
 
+cmd_build_internal_tests() {
+  ensure_depot_tools
+  ensure_api_hash_files
+  apply_chromium147_compat_patch
+  log "Building internal perf unit tests..."
+
+  if [ ! -f "$BUILD_DIR_DEBUG/args.gn" ]; then
+    err "Build directory not set up. Run: ./tools/claude/build.sh setup"
+  fi
+
+  autoninja -C "$BUILD_DIR_DEBUG" cef_internal_perf_unittests -j "$JOBS"
+  log "Internal perf unit test build complete."
+}
+
 cmd_release() {
   ensure_depot_tools
+  ensure_api_hash_files
+  apply_chromium147_compat_patch
   log "Building CEF (release)..."
 
   mkdir -p "$BUILD_DIR_RELEASE"
@@ -102,6 +166,9 @@ is_component_build = false
 symbol_level = 0
 is_official_build = true
 use_sysroot = true
+proprietary_codecs = true
+ffmpeg_branding = "Chrome"
+enable_pdf = true
 treat_warnings_as_errors = false
 ARGS
     gn gen "$BUILD_DIR_RELEASE"
@@ -129,9 +196,9 @@ cmd_test() {
 cmd_test_perf() {
   log "Running performance optimization tests only..."
 
-  local test_binary="$BUILD_DIR_DEBUG/ceftests"
+  local test_binary="$BUILD_DIR_DEBUG/cef_internal_perf_unittests"
   if [ ! -f "$test_binary" ]; then
-    err "ceftests binary not found. Run: ./tools/claude/build.sh build"
+    err "cef_internal_perf_unittests binary not found. Run: ./tools/claude/build.sh build-internal-tests"
   fi
 
   "$test_binary" \
@@ -143,15 +210,19 @@ cmd_test_perf() {
 
 cmd_quick() {
   ensure_depot_tools
+  ensure_api_hash_files
+  apply_chromium147_compat_patch
   log "Quick incremental build + test..."
 
-  # Build only ceftests target for fastest iteration
-  autoninja -C "$BUILD_DIR_DEBUG" ceftests -j "$JOBS"
+  # Build only internal perf unit tests for fastest iteration
+  autoninja -C "$BUILD_DIR_DEBUG" cef_internal_perf_unittests -j "$JOBS"
   cmd_test_perf
 }
 
 cmd_check() {
   ensure_depot_tools
+  ensure_api_hash_files
+  apply_chromium147_compat_patch
   log "Compilation check (no link)..."
 
   # Build just the object files for our new sources
@@ -180,6 +251,7 @@ cmd_help() {
   echo "Commands:"
   echo "  setup      First-time setup (fetch depot_tools, create build dirs)"
   echo "  build      Debug build (cef + cefclient + cefsimple + ceftests)"
+  echo "  build-internal-tests  Build cef_internal_perf_unittests only"
   echo "  release    Release/official build"
   echo "  test [F]   Run ceftests (optional gtest filter F)"
   echo "  test-perf  Run only performance optimization tests"
@@ -192,12 +264,17 @@ cmd_help() {
   echo "  CHROMIUM_DIR  Path to Chromium source (default: parent of CEF dir)"
   echo "  DEPOT_TOOLS   Path to depot_tools (default: ~/depot_tools)"
   echo "  JOBS          Parallel build jobs (default: nproc)"
+  echo ""
+  echo "Notes:"
+  echo "  - Auto-generates cef_api_untracked.json when missing"
+  echo "  - Auto-applies patch/chromium147-compat.patch when present"
 }
 
 # Main dispatch
 case "${1:-help}" in
   setup)     cmd_setup ;;
   build)     cmd_build ;;
+  build-internal-tests) cmd_build_internal_tests ;;
   release)   cmd_release ;;
   test)      cmd_test "${2:-*}" ;;
   test-perf) cmd_test_perf ;;

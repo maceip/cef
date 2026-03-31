@@ -1,6 +1,11 @@
 #!/usr/bin/env python3.11
 """CEF benchmark — standalone. Runs 6 agentic tasks via CDP."""
-import asyncio, json, os, subprocess, time, sys
+import asyncio
+import json
+import os
+import subprocess
+import sys
+import time
 
 CEF_BIN = "/home/ubuntu/cef-build/chromium/src/out/Release_GN_x64/cefsimple"
 CEF_LIB = "/home/ubuntu/cef-build/chromium/src/out/Release_GN_x64"
@@ -16,27 +21,55 @@ async def main():
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     await asyncio.sleep(1)
 
-    # Start CEF
+    # Start CEF. Try Ozone headless first; fall back to legacy headless.
     env = {**os.environ, "DISPLAY": ":99", "LD_LIBRARY_PATH": CEF_LIB}
-    cef = subprocess.Popen(
-        [CEF_BIN, "--no-sandbox", "--remote-debugging-port=9333", "--url=about:blank"],
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env)
-    await asyncio.sleep(4)
+    launch_variants = [
+        [
+            "--enable-features=UseOzonePlatform",
+            "--ozone-platform=headless",
+            "--headless=new",
+        ],
+        ["--headless"],
+    ]
+    cef = None
+    ws_url = None
+    for launch_args in launch_variants:
+        if cef:
+            cef.kill()
+            await asyncio.sleep(0.5)
+        cef = subprocess.Popen(
+            [CEF_BIN, "--no-sandbox", "--remote-debugging-port=9333",
+             "--url=about:blank", *launch_args],
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env)
+        await asyncio.sleep(4)
 
-    # Get page target via subprocess curl (urllib hangs on CEF)
-    r = subprocess.run(["curl", "-s", "http://127.0.0.1:9333/json"],
-                       capture_output=True, text=True, timeout=5)
-    if not r.stdout.strip():
+        # Get page target via subprocess curl (urllib hangs on CEF)
+        try:
+            r = subprocess.run(["curl", "-s", "http://127.0.0.1:9333/json"],
+                               capture_output=True, text=True, timeout=5)
+            if r.stdout.strip():
+                targets = json.loads(r.stdout)
+                if targets and targets[0].get("webSocketDebuggerUrl"):
+                    ws_url = targets[0]["webSocketDebuggerUrl"]
+                    print(f"  Connected: {ws_url} ({' '.join(launch_args)})")
+                    break
+        except Exception:
+            pass
+
+    if not ws_url:
         print("  FAIL: CEF not responding")
-        cef.kill(); xvfb.kill()
+        if cef:
+            cef.kill()
+        xvfb.kill()
         return
-
-    targets = json.loads(r.stdout)
-    ws_url = targets[0]["webSocketDebuggerUrl"]
-    print(f"  Connected: {ws_url}")
     sys.stdout.flush()
 
     import websockets
+    launch_mode = "unknown"
+    if "--ozone-platform=headless" in " ".join(launch_args):
+        launch_mode = "ozone-headless"
+    elif "--headless" in " ".join(launch_args):
+        launch_mode = "legacy-headless"
 
     msg_id = 0
     async with websockets.connect(ws_url, max_size=50*1024*1024) as ws:
@@ -125,6 +158,7 @@ async def main():
         s=time.perf_counter(); r = await evaluate("document.body.textContent.length"); step("read_result", (time.perf_counter()-s)*1000, extra=f"{r}b")
         s=time.perf_counter(); await send("Page.captureScreenshot", {"format":"png"}); step("screenshot", (time.perf_counter()-s)*1000)
 
+    print(f"\n  Launch mode used: {launch_mode}")
     cef.kill()
     xvfb.kill()
     print("\n  DONE")
