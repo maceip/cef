@@ -4,6 +4,7 @@
 
 #include "cef/libcef/browser/browser_message_loop.h"
 
+#include "cef/libcef/browser/context.h"
 #include "base/memory/ptr_util.h"
 #include "base/message_loop/message_pump.h"
 #include "base/message_loop/message_pump_for_ui.h"
@@ -121,6 +122,11 @@ void InitExternalMessagePumpFactoryForUI() {
 }
 
 void CefScheduleExternalMessagePumpWork(int64_t delay_ms) {
+  auto* context = CefContext::Get();
+  if (!context || !context->settings().external_message_pump) {
+    return;
+  }
+
   if (auto handler = GetBrowserProcessHandler()) {
     handler->OnScheduleMessagePumpWork(delay_ms);
   }
