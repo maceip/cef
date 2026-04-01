@@ -1,5 +1,5 @@
 # CEF Agent-Browser Project Journal
-**Last updated:** 2026-03-31
+**Last updated:** 2026-04-01
 **Branch:** `zero-user-native` on `github.com/maceip/cef` (canonical source for this journal; see addendum for `bench/site` on `cursor/journal-action-items-9cc6`)
 **Build machine:** `ec2-3-120-153-36.eu-central-1.compute.amazonaws.com` (32-core AMD EPYC 7571, 123GB RAM, 1.2TB NVMe)
 
@@ -31,6 +31,23 @@
 | browser-use | ran | 6/6 | Standalone run completed |
 | Stagehand | crashed | 0/6 | CHROME_PATH + init config issues (fixable) |
 | **CEF (us)** | **NOT YET** | — | Headless CDP message pump issue |
+
+---
+
+## What's Blocked
+
+### #1 — CEF headless CDP (primary blocker)
+The DevTools HTTP server posts responses to the UI thread via `GetUIThreadTaskRunner({})`, but the **UI thread message pump starves in headless mode**. Traced to `content/browser/devtools/devtools_http_handler.cc` around **line 473**.
+
+**Already tried (did not fix):** Ozone headless, `--disable-gpu`, `external_message_pump`, `multi_threaded_message_loop`.
+
+**Impact:** Blocks **our own benchmark numbers** and any workflow that relies on CDP over DevTools in headless/server environments.
+
+### #2 — Annotated screenshot pipeline
+Built locally but **stripped from the build** because it depended on **internal Chromium headers** not available from `libcef_static`. Needs a **CDP-based** reimplementation (no direct `content/browser/accessibility/` coupling).
+
+### #3 — CEF translator
+`tools/translator.py` chokes on **`CefAutomationProgram::InstructionType`** (inner enum). Blocks **clean CAPI header generation** and **Rust bindings** (cef-rs) until the enum is refactored (e.g. move to top-level).
 
 ---
 
@@ -69,31 +86,11 @@ Added to GN args: `proprietary_codecs=true`, `ffmpeg_branding="Chrome"`. Build s
 
 ---
 
-## Remaining Issues
+## Other open issues
 
-### 1. CEF Headless CDP Message Pump (BLOCKS BENCHMARKS)
-When CEF runs headlessly (with Xvfb), the DevTools CDP WebSocket server stops responding after a few seconds. The UI thread message pump starves because X11 events are empty.
-
-**Untried fixes:**
-1. `--enable-features=UseOzonePlatform --ozone-platform=headless` — Chromium's headless Ozone backend
-2. `CefSettings.multi_threaded_message_loop = true` — background thread pump
-3. Custom minimal app with `CefDoMessageLoopWork()` timer
-4. Chrome's `--headless=new` flag
-
-### 2. Annotated Screenshot Pipeline
-Full Skia pipeline built locally but stripped from remote build (internal `content/browser/accessibility/` headers not accessible from `libcef_static`). Needs CDP-based AX tree walk.
-
-### 3. CEF Translator + Inner Enums
-`CefAutomationProgram::InstructionType` breaks `translator.py`. Move to top-level enum.
-
-### 4. Test Suites Disabled
-42 tests written but disabled (need `libcef_static` linkage).
-
-### 5. Build Fixes Not in Git
-All the API compat fixes exist only on the remote's copy of CEF. Need to be committed.
-
-### 6. Stagehand Benchmark
-Crashed on init. Needs `CHROME_PATH` set + local npm install (both done on remote).
+- **Test suites disabled** — 42 tests written but not linked in ceftests (`libcef_static` / target wiring).
+- **Build fixes vs git** — Some API compat fixes may still need to be fully committed from the remote build tree.
+- **Stagehand benchmark** — Crashed on init; `CHROME_PATH` + local npm (addressed on remote) — lower priority than headless CDP.
 
 ---
 
@@ -133,27 +130,16 @@ Crashed on init. Needs `CHROME_PATH` set + local npm install (both done on remot
 
 ---
 
-## Next Steps (Prioritized)
+## What's next (priority order)
 
-### P0 — Get Our Numbers
-1. ~~Fix mojo disconnect cascade~~ ✅
-2. ~~Get the build to succeed~~ ✅
-3. ~~Add proprietary codecs + PDF~~ ✅
-4. **Fix headless CDP** — try `--ozone-platform=headless` on EPYC machine
-5. **Run our benchmark** — 6 real agentic tasks via CDP against cefsimple
-6. **Run Stagehand + browser-use benchmarks** on EPYC machine
+1. **Fix headless CDP** — #1 blocker for benchmarks and server/agent use; prior attempts (Ozone headless, disable-gpu, external pump, MT message loop) failed — needs a new approach (e.g. ensure UI tasks run: timer-driven `CefDoMessageLoopWork`, different DevTools posting path, or Chromium-side change around `devtools_http_handler.cc`).
+2. **Get our benchmark numbers** — 6 real agentic tasks via CDP against CEF once #1 is unblocked.
+3. **Ship the blog post** — benchmark results + architecture overview.
+4. **Rust bindings via cef-rs** — mostly mechanical once the **translator** issue (#3 above) is fixed and CAPI generation is clean.
+5. **WebAuthn / passkey support** — wire credential storage (~100 lines, prior estimate).
+6. **surfcomp website** — COSS style; Pachinko + Cladogram visualizations.
 
-### P1 — Ship
-7. **Commit build fixes** to git (diff from remote CEF copy)
-8. **Write the blog post** with benchmark results + architecture overview
-9. **Build surfcomp website** — COSS style, Pachinko viz, Cladogram viz
-
-### P2 — Harden
-10. **Fix CEF translator** — move InstructionType to top-level
-11. **Generate CAPI headers** → enable cef-rs Rust bindings
-12. **Re-enable test suites** — separate GN target or public API only
-13. **Implement annotated screenshot via CDP** — replace internal headers
-14. **WebAuthn/passkey support** — wire credential storage
+**Also on the backlog:** commit any remaining build-fix diffs; re-enable the 42 tests; **annotated screenshot via CDP** (replaces stripped Skia/internal-header path).
 
 ---
 
