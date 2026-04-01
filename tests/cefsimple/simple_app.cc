@@ -12,6 +12,8 @@
 #include "include/views/cef_window.h"
 #include "include/wrapper/cef_helpers.h"
 #include "tests/cefsimple/simple_handler.h"
+#include "tests/shared/browser/main_message_loop_external_pump.h"
+#include "tests/shared/common/client_switches.h"
 
 namespace {
 
@@ -134,6 +136,24 @@ void SimpleApp::OnContextInitialized() {
     url = "https://www.google.com";
   }
 
+#if defined(OS_LINUX)
+  if (command_line->HasSwitch(client::switches::kUseOzoneHeadless)) {
+    if (!command_line->HasSwitch("enable-features")) {
+      command_line->AppendSwitchASCII("enable-features", "UseOzonePlatform");
+    }
+    if (!command_line->HasSwitch(client::switches::kOzonePlatform)) {
+      command_line->AppendSwitchASCII(client::switches::kOzonePlatform,
+                                      "headless");
+    }
+    if (!command_line->HasSwitch("headless")) {
+      command_line->AppendSwitch("headless");
+    }
+    if (!command_line->HasSwitch("remote-debugging-address")) {
+      command_line->AppendSwitchASCII("remote-debugging-address", "127.0.0.1");
+    }
+  }
+#endif
+
   // Views is enabled by default (add `--use-native` to disable).
   const bool use_views = !command_line->HasSwitch("use-native");
 
@@ -187,4 +207,10 @@ void SimpleApp::OnContextInitialized() {
 CefRefPtr<CefClient> SimpleApp::GetDefaultClient() {
   // Called when a new browser window is created via Chrome style UI.
   return SimpleHandler::GetInstance();
+}
+
+void SimpleApp::OnScheduleMessagePumpWork(int64_t delay_ms) {
+  if (auto* message_pump = client::MainMessageLoopExternalPump::Get()) {
+    message_pump->OnScheduleMessagePumpWork(delay_ms);
+  }
 }
