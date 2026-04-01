@@ -579,6 +579,7 @@
       'tests/ceftests/cookie_unittest.cc',
       'tests/ceftests/cors_unittest.cc',
       'tests/ceftests/devtools_message_unittest.cc',
+      'tests/ceftests/devtools_remote_debugging_unittest.cc',
       'tests/ceftests/dialog_unittest.cc',
       'tests/ceftests/display_unittest.cc',
       'tests/ceftests/dom_unittest.cc',
