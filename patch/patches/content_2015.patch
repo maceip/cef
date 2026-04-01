@@ -1,7 +1,66 @@
 diff --git content/browser/devtools/devtools_http_handler.cc content/browser/devtools/devtools_http_handler.cc
-index 79bf965d5dd4a9466a518f29f55d4769d9cbb060..069d57d037a720f4a2570b2b1120d30e2fab654b 100644
+index 79bf965d5dd4a9466a518f29f55d4769d9cbb060..7af9f421e99e6f0ea10d5d1dc524a0ab2b8f3d8b 100644
 --- content/browser/devtools/devtools_http_handler.cc
 +++ content/browser/devtools/devtools_http_handler.cc
+@@ -35,6 +35,7 @@
+ #include "base/uuid.h"
+ #include "base/values.h"
+ #include "build/build_config.h"
++#include "cef/libcef/browser/browser_message_loop.h"
+ #include "build/util/chromium_git_revision.h"
+ #include "content/browser/devtools/devtools_manager.h"
+ #include "content/public/browser/browser_task_traits.h"
+@@ -470,17 +471,20 @@ void ServerWrapper::OnHttpRequest(int connection_id,
+
+   if (base::StartsWith(info.path, "/json", base::CompareCase::SENSITIVE)) {
+     GetUIThreadTaskRunner({})->PostTask(
+         FROM_HERE, base::BindOnce(&DevToolsHttpHandler::OnJsonRequest, handler_,
+                                   connection_id, info));
++    CefScheduleExternalMessagePumpWork(0);
+     return;
+   }
+
+   if (info.path.empty() || info.path == "/") {
+     // Discovery page request.
+     GetUIThreadTaskRunner({})->PostTask(
+         FROM_HERE, base::BindOnce(&DevToolsHttpHandler::OnDiscoveryPageRequest,
+                                   handler_, connection_id));
++    CefScheduleExternalMessagePumpWork(0);
+     return;
+   }
+
+   if (!base::StartsWith(info.path, "/devtools/",
+@@ -504,9 +508,10 @@ void ServerWrapper::OnHttpRequest(int connection_id,
+   if (bundles_resources_) {
+     GetUIThreadTaskRunner({})->PostTask(
+         FROM_HERE,
+         base::BindOnce(&DevToolsHttpHandler::OnFrontendResourceRequest,
+                        handler_, connection_id, std::string(filename)));
++    CefScheduleExternalMessagePumpWork(0);
+     return;
+   }
+   server_->Send404(connection_id, kDevtoolsHttpHandlerTrafficAnnotation);
+@@ -522,17 +527,20 @@ void ServerWrapper::OnWebSocketRequest(
+
+   GetUIThreadTaskRunner({})->PostTask(
+       FROM_HERE, base::BindOnce(&DevToolsHttpHandler::OnWebSocketRequest,
+                                 handler_, connection_id, request));
++  CefScheduleExternalMessagePumpWork(0);
+ }
+
+ void ServerWrapper::OnWebSocketMessage(int connection_id, std::string data) {
+   GetUIThreadTaskRunner({})->PostTask(
+       FROM_HERE, base::BindOnce(&DevToolsHttpHandler::OnWebSocketMessage,
+                                 handler_, connection_id, std::move(data)));
++  CefScheduleExternalMessagePumpWork(0);
+ }
+
+ void ServerWrapper::OnClose(int connection_id) {
+   GetUIThreadTaskRunner({})->PostTask(
+       FROM_HERE,
+       base::BindOnce(&DevToolsHttpHandler::OnClose, handler_, connection_id));
++  CefScheduleExternalMessagePumpWork(0);
+ }
 @@ -612,7 +612,7 @@ void DevToolsHttpHandler::OnJsonRequest(
      base::DictValue version;
      version.Set("Protocol-Version", DevToolsAgentHost::GetProtocolVersion());
@@ -53,7 +112,7 @@ index d2dccc29b0e13ab5c87b4c6803e79dc781e52ea2..5ea5e99d5d7cc4f6fb29c110c37c1a4a
 @@ -1219,7 +1219,7 @@ ContentBrowserClient::URLLoaderRequestHandler ContentBrowserClient::
  void ContentBrowserClient::OnNetworkServiceCreated(
      network::mojom::NetworkService* network_service) {}
- 
+
 -void ContentBrowserClient::ConfigureNetworkContextParams(
 +bool ContentBrowserClient::ConfigureNetworkContextParams(
      BrowserContext* context,
@@ -65,7 +124,7 @@ index d2dccc29b0e13ab5c87b4c6803e79dc781e52ea2..5ea5e99d5d7cc4f6fb29c110c37c1a4a
    network_context_params->accept_language = "en-us,en";
 +  return true;
  }
- 
+
  std::vector<base::FilePath>
 diff --git content/public/browser/content_browser_client.h content/public/browser/content_browser_client.h
 index 3b6c42b2c4cd5d9e5753af25b27925ff0d933568..62831b4bc35c2fefe41894ba0837b7223cb07329 100644
@@ -74,7 +133,7 @@ index 3b6c42b2c4cd5d9e5753af25b27925ff0d933568..62831b4bc35c2fefe41894ba0837b722
 @@ -1472,6 +1472,12 @@ class CONTENT_EXPORT ContentBrowserClient {
        bool opener_suppressed,
        bool* no_javascript_access);
- 
+
 +  // Called to report the result of new window creation after CanCreateWindow()
 +  // returns true. There are cases where the new window may still be canceled.
 +  virtual void CreateWindowResult(
@@ -96,7 +155,7 @@ index 3b6c42b2c4cd5d9e5753af25b27925ff0d933568..62831b4bc35c2fefe41894ba0837b722
 @@ -2566,6 +2572,22 @@ class CONTENT_EXPORT ContentBrowserClient {
        const net::IsolationInfo& isolation_info,
        mojo::PendingRemote<network::mojom::URLLoaderFactory>* out_factory);
- 
+
 +  // Same as above, but exposing the whole ResourceRequest object.
 +  virtual bool HandleExternalProtocol(
 +      base::RepeatingCallback<WebContents*()> web_contents_getter,
@@ -119,14 +178,14 @@ index 3b6c42b2c4cd5d9e5753af25b27925ff0d933568..62831b4bc35c2fefe41894ba0837b722
 @@ -2636,6 +2658,10 @@ class CONTENT_EXPORT ContentBrowserClient {
    // Used as part of the user agent string.
    virtual std::string GetProduct();
- 
+
 +  // Returns the Chrome-specific product string. This is used for compatibility
 +  // purposes with external tools like Selenium.
 +  virtual std::string GetChromeProduct() { return GetProduct(); }
 +
    // Returns the user agent. Content may cache this value.
    virtual std::string GetUserAgent();
- 
+
 diff --git content/public/renderer/content_renderer_client.h content/public/renderer/content_renderer_client.h
 index 1f6c015c361b3146db760643e3670a110634d75b..827b4616c3091265d564de35db8df44ae396b110 100644
 --- content/public/renderer/content_renderer_client.h
@@ -134,17 +193,17 @@ index 1f6c015c361b3146db760643e3670a110634d75b..827b4616c3091265d564de35db8df44a
 @@ -111,6 +111,9 @@ class CONTENT_EXPORT ContentRendererClient {
    // a crash handler (such as crashpad) is already in use.
    virtual void SetUpWebAssemblyTrapHandler();
- 
+
 +  // Notifies that the RenderThread can now send sync IPC messages.
 +  virtual void RenderThreadConnected() {}
 +
    // Notifies that a new RenderFrame has been created.
    virtual void RenderFrameCreated(RenderFrame* render_frame) {}
- 
+
 @@ -353,6 +356,10 @@ class CONTENT_EXPORT ContentRendererClient {
    // This method may invalidate the frame.
    virtual void RunScriptsAtDocumentIdle(RenderFrame* render_frame) {}
- 
+
 +  // Notifies that a DevTools agent has attached or detached.
 +  virtual void DevToolsAgentAttached() {}
 +  virtual void DevToolsAgentDetached() {}
@@ -159,7 +218,7 @@ index 1416e23beb20e7c18b5cfa61f922c68b7ce65c48..252c84709d2eed1b1feb52249142a582
 @@ -504,6 +504,8 @@ void RenderThreadImpl::Init() {
        GetContentClient()->renderer()->CreateURLLoaderThrottleProvider(
            blink::URLLoaderThrottleProviderType::kFrame);
- 
+
 +  GetContentClient()->renderer()->RenderThreadConnected();
 +
    GetAssociatedInterfaceRegistry()->AddInterface<mojom::Renderer>(
@@ -170,9 +229,9 @@ index 78f0ab75486f90ad9bda568cd28c20ec0c48f298..661d6735aff66a3b3f681f92f131c101
 --- content/renderer/renderer_blink_platform_impl.cc
 +++ content/renderer/renderer_blink_platform_impl.cc
 @@ -1103,6 +1103,15 @@ RendererBlinkPlatformImpl::GetCpuPerformanceTier() {
- 
+
  //------------------------------------------------------------------------------
- 
+
 +void RendererBlinkPlatformImpl::DevToolsAgentAttached() {
 +  GetContentClient()->renderer()->DevToolsAgentAttached();
 +}
@@ -192,7 +251,7 @@ index 4535d0bf0328301f6ed1a602f6ff97a0243f7685..6d2d06aae0a0f7c034b230b617bd87dd
 @@ -266,6 +266,9 @@ class CONTENT_EXPORT RendererBlinkPlatformImpl : public BlinkPlatformImpl {
  #endif  // BUILDFLAG(IS_ANDROID)
    void OnV8HeapLastResortGC() override;
- 
+
 +  void DevToolsAgentAttached() override;
 +  void DevToolsAgentDetached() override;
 +
@@ -206,7 +265,7 @@ index dc5d66c6b3d39c765c8b0fd9a32fac5cb6320185..6e14ff9b3b886b0bf5d080972baf751c
 @@ -759,7 +759,7 @@ void ShellContentBrowserClient::OnNetworkServiceCreated(
  #endif
  }
- 
+
 -void ShellContentBrowserClient::ConfigureNetworkContextParams(
 +bool ShellContentBrowserClient::ConfigureNetworkContextParams(
      BrowserContext* context,
@@ -218,7 +277,7 @@ index dc5d66c6b3d39c765c8b0fd9a32fac5cb6320185..6e14ff9b3b886b0bf5d080972baf751c
                                          cert_verifier_creation_params);
 +  return true;
  }
- 
+
  std::vector<base::FilePath>
 diff --git content/shell/browser/shell_content_browser_client.h content/shell/browser/shell_content_browser_client.h
 index 85577edaeb41e2035173a7f955deab47f734aa7b..96059a235511da342291377561306a8fbd873dce 100644
@@ -240,7 +299,7 @@ index f37eac9a6eb8c4c1582a177072a2e570dfa5a2ec..56979ecbc0a8e962dc63d1f860e20925
 @@ -420,7 +420,7 @@ bool HeadlessContentBrowserClient::IsFencedStorageReadAllowed(
    return true;
  }
- 
+
 -void HeadlessContentBrowserClient::ConfigureNetworkContextParams(
 +bool HeadlessContentBrowserClient::ConfigureNetworkContextParams(
      content::BrowserContext* context,
@@ -252,7 +311,7 @@ index f37eac9a6eb8c4c1582a177072a2e570dfa5a2ec..56979ecbc0a8e962dc63d1f860e20925
        cert_verifier_creation_params);
 +  return true;
  }
- 
+
  std::string HeadlessContentBrowserClient::GetProduct() {
 diff --git headless/lib/browser/headless_content_browser_client.h headless/lib/browser/headless_content_browser_client.h
 index 6ff0446b8f5bdb17cd259ec770448ccb2eddafa3..2ce9e359327d985f02ef09911392aa58a1d2155e 100644

@@ -119,3 +119,9 @@ std::unique_ptr<base::MessagePump> MessagePumpFactoryForUI() {
 void InitExternalMessagePumpFactoryForUI() {
   base::MessagePump::OverrideMessagePumpForUIFactory(MessagePumpFactoryForUI);
 }
+
+void CefScheduleExternalMessagePumpWork(int64_t delay_ms) {
+  if (auto handler = GetBrowserProcessHandler()) {
+    handler->OnScheduleMessagePumpWork(delay_ms);
+  }
+}
