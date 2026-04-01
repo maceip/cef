@@ -64,6 +64,28 @@ For complete API documentation, see [General Usage](https://chromiumembedded.git
 - **Helper window** - Creates a browser window with navigation controls
 - **Error handling** - Displays error pages for failed navigations
 - **Cross-platform UI** - Uses Views framework for consistent UI
+- **Linux external message pump** - Supports `--external-message-pump` to
+  exercise host-owned message loop integration.
+- **Headless Ozone mode (Linux)** - Supports `--use-ozone-headless` to prefer
+  the Ozone headless backend for remote-debugging and automation scenarios.
+
+## Linux Headless Remote Debugging
+
+When validating headless DevTools/remote-debugging flows on Linux, prefer the
+application-owned message loop plus Ozone headless:
+
+```bash
+cefsimple \
+  --external-message-pump \
+  --use-ozone-headless \
+  --remote-debugging-port=9333 \
+  --url=about:blank \
+  --no-sandbox
+```
+
+This configuration is intended for automation/debugging workflows where the
+browser must continue servicing DevTools traffic without relying on X11 event
+traffic.
 
 ## Maintenance Pattern
 

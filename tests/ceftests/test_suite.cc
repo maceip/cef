@@ -164,6 +164,18 @@ void CefTestSuite::GetSettings(CefSettings& settings) const {
   // Necessary for the OSRTest tests.
   settings.windowless_rendering_enabled = true;
 
+  // Enable the remote debugging server only for the dedicated transport
+  // coverage so the rest of the suite isn't forced to reserve a debugging
+  // port.
+  if (!command_line_->HasSwitch("remote-debugging-port")) {
+    const std::string gtest_filter =
+        command_line_->GetSwitchValue("gtest_filter");
+    if (gtest_filter.find("DevToolsRemoteDebuggingTest.") !=
+        std::string::npos) {
+      settings.remote_debugging_port = 9334;
+    }
+  }
+
   // For Accept-Language test
   CefString(&settings.accept_language_list) = CEF_SETTINGS_ACCEPT_LANGUAGE;
 }
