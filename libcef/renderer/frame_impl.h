@@ -118,12 +118,10 @@ class CefFrameImpl
 
   // Called if the BrowserFrame connection is disconnected.
   void OnBrowserFrameDisconnect(uint32_t custom_reason,
-                                const std::string& description,
-                                MojoResult error_result);
+                                const std::string& description);
   // Called if the RenderFrame connection is disconnected.
   void OnRenderFrameDisconnect(uint32_t custom_reason,
-                               const std::string& description,
-                               MojoResult error_result);
+                               const std::string& description);
 
   enum class DisconnectReason {
     DETACHED,
