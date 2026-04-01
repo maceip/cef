@@ -10,9 +10,6 @@
 
 #include "include/base/cef_logging.h"
 #include "include/cef_command_line.h"
-#include "tests/shared/browser/main_message_loop_external_pump.h"
-#include "tests/shared/browser/main_message_loop_std.h"
-#include "tests/shared/common/client_switches.h"
 
 #if defined(CEF_X11)
 namespace {
@@ -67,22 +64,13 @@ int main(int argc, char* argv[]) {
 // use of the sandbox.
 #if !defined(CEF_USE_SANDBOX)
   settings.no_sandbox = true;
+  settings.multi_threaded_message_loop = true;
 #endif
-
-  settings.external_message_pump =
-      command_line->HasSwitch(client::switches::kExternalMessagePump);
 
   // SimpleApp implements application-level callbacks for the browser process.
   // It will create the first browser instance in OnContextInitialized() after
   // CEF has initialized.
   CefRefPtr<SimpleApp> app(new SimpleApp);
-
-  std::unique_ptr<client::MainMessageLoop> message_loop;
-  if (settings.external_message_pump) {
-    message_loop = client::MainMessageLoopExternalPump::Create();
-  } else {
-    message_loop = std::make_unique<client::MainMessageLoopStd>();
-  }
 
   // Initialize the CEF browser process. May return false if initialization
   // fails or if early exit is desired (for example, due to process singleton
@@ -91,9 +79,11 @@ int main(int argc, char* argv[]) {
     return CefGetExitCode();
   }
 
-  // Run the selected application message loop. In external-pump mode this owns
-  // the outer loop and drives CefDoMessageLoopWork scheduling.
-  message_loop->Run();
+  // Use multi_threaded_message_loop - just sleep while CEF processes on its own thread.
+  // This keeps the main thread alive while the browser thread handles CDP.
+  while (true) {
+    sleep(1);
+  }
 
   // Shut down CEF.
   CefShutdown();

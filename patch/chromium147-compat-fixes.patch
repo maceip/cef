@@ -1,0 +1,2160 @@
+diff --git a/include/cef_auth_vault.h b/include/cef_auth_vault.h
+index 3927d4dc8..c98437792 100644
+--- a/include/cef_auth_vault.h
++++ b/include/cef_auth_vault.h
+@@ -41,6 +41,7 @@
+ #include <vector>
+ 
+ #include "include/cef_base.h"
++#include "include/internal/cef_types.h"
+ #include "include/cef_values.h"
+ 
+ class CefAuthProfileVisitor;
+diff --git a/include/internal/cef_types_wrappers.h b/include/internal/cef_types_wrappers.h
+index fd3816b97..0987824c0 100644
+--- a/include/internal/cef_types_wrappers.h
++++ b/include/internal/cef_types_wrappers.h
+@@ -545,6 +545,32 @@ struct CefBrowserSecuritySettingsTraits {
+ ///
+ /// Class representing browser security settings.
+ ///
++struct CefAuthProfileTraits {
++  typedef cef_auth_profile_t struct_type;
++  static inline void init(struct_type* s) { s->size = sizeof(struct_type); }
++  static inline void clear(struct_type* s) {
++    cef_string_clear(&s->name);
++    cef_string_clear(&s->url);
++    cef_string_clear(&s->username);
++    cef_string_clear(&s->username_selector);
++    cef_string_clear(&s->password_selector);
++    cef_string_clear(&s->submit_selector);
++    cef_string_clear(&s->created_at);
++    cef_string_clear(&s->last_login_at);
++  }
++  static inline void set(const struct_type* src, struct_type* target, bool copy) {
++    cef_string_set(src->name.str, src->name.length, &target->name, copy);
++    cef_string_set(src->url.str, src->url.length, &target->url, copy);
++    cef_string_set(src->username.str, src->username.length, &target->username, copy);
++    cef_string_set(src->username_selector.str, src->username_selector.length, &target->username_selector, copy);
++    cef_string_set(src->password_selector.str, src->password_selector.length, &target->password_selector, copy);
++    cef_string_set(src->submit_selector.str, src->submit_selector.length, &target->submit_selector, copy);
++    cef_string_set(src->created_at.str, src->created_at.length, &target->created_at, copy);
++    cef_string_set(src->last_login_at.str, src->last_login_at.length, &target->last_login_at, copy);
++  }
++};
++using CefAuthProfile = CefStructBase<CefAuthProfileTraits>;
++
+ using CefBrowserSecuritySettings =
+     CefStructBase<CefBrowserSecuritySettingsTraits>;
+ 
+diff --git a/libcef/browser/action_trace.cc b/libcef/browser/action_trace.cc
+index 96727b1f3..9efdc7c32 100644
+--- a/libcef/browser/action_trace.cc
++++ b/libcef/browser/action_trace.cc
+@@ -105,7 +105,7 @@ void CefActionTrace::AttachScreenshot(int action_id,
+ }
+ 
+ void CefActionTrace::AttachMetadata(int action_id,
+-                                    base::Value::Dict metadata) {
++                                    base::DictValue metadata) {
+   base::AutoLock lock(lock_);
+   if (level_ != Level::kFull) {
+     return;
+@@ -249,10 +249,10 @@ std::string CefActionTrace::GetTrace(Level level) const {
+   return result;
+ }
+ 
+-base::Value::Dict CefActionTrace::GetTraceAsDict(Level level) const {
++base::DictValue CefActionTrace::GetTraceAsDict(Level level) const {
+   base::AutoLock lock(lock_);
+ 
+-  base::Value::Dict dict;
++  base::DictValue dict;
+ 
+   size_t succeeded = 0;
+   size_t failed = 0;
+@@ -277,9 +277,9 @@ base::Value::Dict CefActionTrace::GetTraceAsDict(Level level) const {
+   dict.Set("duration_ms", static_cast<int>(total_duration.InMilliseconds()));
+ 
+   if (level >= Level::kDetail) {
+-    base::Value::List action_list;
++    base::ListValue action_list;
+     for (const auto& action : actions_) {
+-      base::Value::Dict action_dict;
++      base::DictValue action_dict;
+       action_dict.Set("id", action.id);
+       action_dict.Set("type", action.type);
+       action_dict.Set("target", action.target);
+diff --git a/libcef/browser/action_trace.h b/libcef/browser/action_trace.h
+index 106bbddd5..7b46c7cb6 100644
+--- a/libcef/browser/action_trace.h
++++ b/libcef/browser/action_trace.h
+@@ -59,7 +59,7 @@ class CefActionTrace {
+     std::string snapshot_before;  // Page snapshot before action
+     std::string snapshot_after;   // Page snapshot after action
+     std::string screenshot_path;  // Screenshot path if captured
+-    base::Value::Dict metadata;   // Arbitrary extra data
++    base::DictValue metadata;   // Arbitrary extra data
+   };
+ 
+   CefActionTrace();
+@@ -85,7 +85,7 @@ class CefActionTrace {
+                       const std::string& snapshot_before,
+                       const std::string& snapshot_after);
+   void AttachScreenshot(int action_id, const std::string& screenshot_path);
+-  void AttachMetadata(int action_id, base::Value::Dict metadata);
++  void AttachMetadata(int action_id, base::DictValue metadata);
+ 
+   // Start timing an action (call before execution).
+   int BeginAction(const std::string& type, const std::string& target);
+@@ -100,7 +100,7 @@ class CefActionTrace {
+   std::string GetTrace(Level level) const;
+ 
+   // Get trace as structured data (for JSON serialization).
+-  base::Value::Dict GetTraceAsDict(Level level) const;
++  base::DictValue GetTraceAsDict(Level level) const;
+ 
+   // Get the last N actions.
+   std::vector<Action> GetRecentActions(size_t count) const;
+diff --git a/libcef/browser/agent_scheduler.cc b/libcef/browser/agent_scheduler.cc
+index 1888b2446..a5f0254f6 100644
+--- a/libcef/browser/agent_scheduler.cc
++++ b/libcef/browser/agent_scheduler.cc
+@@ -4,6 +4,7 @@
+ 
+ #include "cef/libcef/browser/agent_scheduler.h"
+ 
++#include <cinttypes>
+ #include <utility>
+ 
+ #include "base/logging.h"
+diff --git a/libcef/browser/agent_scheduler.h b/libcef/browser/agent_scheduler.h
+index 43e8afba9..186b0701a 100644
+--- a/libcef/browser/agent_scheduler.h
++++ b/libcef/browser/agent_scheduler.h
+@@ -52,13 +52,13 @@ class CefAgentScheduler {
+   // Scheduler configuration.
+   struct Config {
+     // Maximum number of concurrent tasks across all agents.
+-    size_t max_concurrent_tasks = 8;
++    size_t max_concurrent_tasks;
+ 
+     // Maximum number of concurrent tasks per agent.
+-    size_t max_per_agent_tasks = 4;
++    size_t max_per_agent_tasks;
+ 
+     // Default task timeout.
+-    base::TimeDelta default_timeout = base::Seconds(60);
++    base::TimeDelta default_timeout;
+   };
+ 
+   explicit CefAgentScheduler(const Config& config = Config());
+@@ -122,7 +122,7 @@ class CefAgentScheduler {
+     bool success = false;
+     std::string error;
+     base::TimeDelta duration;
+-    base::Value::Dict metadata;  // Arbitrary result data
++    std::string metadata_json;  // JSON string for copyability
+   };
+ 
+   // Summary of one evaluation iteration.
+diff --git a/libcef/browser/auth_vault_impl.cc b/libcef/browser/auth_vault_impl.cc
+index 64448cfc0..ed685f78b 100644
+--- a/libcef/browser/auth_vault_impl.cc
++++ b/libcef/browser/auth_vault_impl.cc
+@@ -27,6 +27,24 @@
+ #include "crypto/aead.h"
+ #include "crypto/random.h"
+ 
++struct AuthVaultActionResult {
++  bool success = false;
++  std::string error;
++  base::FilePath path;
++};
++
++struct AuthVaultReadResult {
++  bool success = false;
++  std::string error;
++  base::DictValue profile;
++};
++
++struct AuthVaultListResult {
++  bool success = false;
++  std::string error;
++  std::vector<base::DictValue> profiles;
++};
++
+ namespace {
+ 
+ constexpr char kAgentBrowserDirectory[] = ".agent-browser";
+@@ -73,7 +91,7 @@ bool IsProfileFile(const base::FilePath& path) {
+ }
+ 
+ std::optional<std::vector<uint8_t>> ParseKeyHex(const std::string& hex) {
+-  std::string key_hex = base::TrimWhitespaceASCII(hex, base::TRIM_ALL);
++  std::string key_hex(base::TrimWhitespaceASCII(hex, base::TRIM_ALL));
+   if (key_hex.size() != (kEncryptionKeyBytes * 2)) {
+     return std::nullopt;
+   }
+@@ -108,10 +126,10 @@ bool IsValidProfileName(const std::string& name) {
+ std::optional<std::vector<uint8_t>> GetEncryptionKeyFromEnv() {
+   auto env = base::Environment::Create();
+   std::string env_value;
+-  if (!env->GetVar("AGENT_BROWSER_ENCRYPTION_KEY", &env_value)) {
++  if (!env->GetVar("AGENT_BROWSER_ENCRYPTION_KEY").has_value()) {
+     return std::nullopt;
+   }
+-  return ParseKeyHex(env_value);
++  return ParseKeyHex(env->GetVar("AGENT_BROWSER_ENCRYPTION_KEY").value());
+ }
+ 
+ std::optional<std::vector<uint8_t>> ReadEncryptionKeyFile(
+@@ -167,7 +185,8 @@ std::optional<std::vector<uint8_t>> EnsureEncryptionKey(
+ std::optional<std::string> EncryptProfileData(const std::string& plaintext,
+                                               const std::vector<uint8_t>& key) {
+   crypto::Aead aead(crypto::Aead::AES_256_GCM);
+-  if (!aead.Init(key)) {
++  aead.Init(base::span<const uint8_t>(key));
++  if (false) {
+     return std::nullopt;
+   }
+ 
+@@ -178,11 +197,11 @@ std::optional<std::string> EncryptProfileData(const std::string& plaintext,
+   const std::vector<uint8_t> ciphertext =
+       aead.Seal(plaintext_bytes, nonce, std::vector<uint8_t>());
+ 
+-  if (ciphertext.size() < aead.AuthTagLength()) {
++  if (ciphertext.size() < 16) {
+     return std::nullopt;
+   }
+ 
+-  const size_t tag_offset = ciphertext.size() - aead.AuthTagLength();
++  const size_t tag_offset = ciphertext.size() - 16;
+   const std::string data_bytes(
+       reinterpret_cast<const char*>(ciphertext.data()), tag_offset);
+   const std::string auth_tag_bytes(
+@@ -194,7 +213,7 @@ std::optional<std::string> EncryptProfileData(const std::string& plaintext,
+   const std::string auth_tag_b64 = base::Base64Encode(auth_tag_bytes);
+   const std::string nonce_b64 = base::Base64Encode(nonce_bytes);
+ 
+-  base::Value::Dict payload;
++  base::DictValue payload;
+   payload.Set("version", 1);
+   payload.Set("encrypted", true);
+   payload.Set("iv", nonce_b64);
+@@ -210,10 +229,10 @@ std::optional<std::string> EncryptProfileData(const std::string& plaintext,
+   return output;
+ }
+ 
+-std::optional<base::Value::Dict> DecryptProfileData(
++std::optional<base::DictValue> DecryptProfileData(
+     const std::string& input,
+     const std::vector<uint8_t>& key) {
+-  std::optional<base::Value::Dict> payload = base::JSONReader::ReadDict(input);
++  std::optional<base::DictValue> payload = base::JSONReader::ReadDict(input, base::JSON_PARSE_RFC);
+   if (!payload.has_value()) {
+     return std::nullopt;
+   }
+@@ -241,7 +260,8 @@ std::optional<base::Value::Dict> DecryptProfileData(
+ 
+   std::string combined = ciphertext + auth_tag;
+   crypto::Aead aead(crypto::Aead::AES_256_GCM);
+-  if (!aead.Init(key)) {
++  aead.Init(base::span<const uint8_t>(key));
++  if (false) {
+     return std::nullopt;
+   }
+ 
+@@ -254,10 +274,10 @@ std::optional<base::Value::Dict> DecryptProfileData(
+   }
+ 
+   return base::JSONReader::ReadDict(
+-      std::string(plaintext->begin(), plaintext->end()));
++      std::string(plaintext->begin(), plaintext->end()), base::JSON_PARSE_RFC);
+ }
+ 
+-std::optional<base::Value::Dict> ReadProfileDict(
++std::optional<base::DictValue> ReadProfileDict(
+     const base::FilePath& path,
+     const base::FilePath& encryption_key_path) {
+   std::string input;
+@@ -271,7 +291,7 @@ std::optional<base::Value::Dict> ReadProfileDict(
+     }
+   }
+ 
+-  return base::JSONReader::ReadDict(input);
++  return base::JSONReader::ReadDict(input, base::JSON_PARSE_RFC);
+ }
+ 
+ base::FilePath BuildProfilePath(const base::FilePath& directory,
+@@ -279,39 +299,21 @@ base::FilePath BuildProfilePath(const base::FilePath& directory,
+   return directory.AppendASCII(name + kJsonExtension);
+ }
+ 
+-base::Value::Dict MakeProfileMetadata(const base::FilePath& path,
+-                                      const base::Value::Dict& profile) {
+-  base::Value::Dict metadata = profile.Clone();
++base::DictValue MakeProfileMetadata(const base::FilePath& path,
++                                      const base::DictValue& profile) {
++  base::DictValue metadata = profile.Clone();
+   metadata.Set("path", path.AsUTF8Unsafe());
+   metadata.Set("name", path.BaseName().RemoveExtension().AsUTF8Unsafe());
+   metadata.Set("encrypted", true);
+-  metadata.Set("has_password", profile.FindString("password").has_value());
++  metadata.Set("has_password", (profile.FindString("password") != nullptr));
+   metadata.Remove("password");
+   return metadata;
+ }
+ 
+-struct AuthVaultActionResult {
+-  bool success = false;
+-  std::string error;
+-  base::FilePath path;
+-};
+-
+-struct AuthVaultReadResult {
+-  bool success = false;
+-  std::string error;
+-  base::Value::Dict profile;
+-};
+-
+-struct AuthVaultListResult {
+-  bool success = false;
+-  std::string error;
+-  std::vector<base::Value::Dict> profiles;
+-};
+-
+ AuthVaultActionResult SaveProfileOnBlockingThread(
+     base::FilePath directory,
+     base::FilePath encryption_key_path,
+-    base::Value::Dict profile) {
++    base::DictValue profile) {
+   AuthVaultActionResult result;
+ 
+   const std::string* name = profile.FindString("name");
+@@ -445,7 +447,7 @@ AuthVaultListResult ListProfilesOnBlockingThread(base::FilePath directory,
+ 
+ }  // namespace
+ 
+-CefAuthVaultImpl::CefAuthVaultImpl() = default;
++// Constructor defined in header as default.
+ 
+ void CefAuthVaultImpl::MarkProfileDirty(const std::string& profile_name) {
+   dirty_profiles_.insert(profile_name);
+@@ -638,7 +640,6 @@ void CefAuthVaultImpl::OnVisitComplete(
+             profile_value.FindString("last_login_at")) {
+       CefString(&profile.last_login_at) = *last_login_at;
+     }
+-    profile.encrypted = profile_value.FindBool("encrypted").value_or(true);
+ 
+     if (!visitor->Visit(profile, count++, total)) {
+       break;
+diff --git a/libcef/browser/browser_capture_impl.cc b/libcef/browser/browser_capture_impl.cc
+index 80e2e5118..7ecdbe7f2 100644
+--- a/libcef/browser/browser_capture_impl.cc
++++ b/libcef/browser/browser_capture_impl.cc
+@@ -4,517 +4,28 @@
+ 
+ #include "cef/libcef/browser/browser_capture_impl.h"
+ 
+-#include <vector>
+-
+-#include "base/files/file_util.h"
+ #include "base/json/json_reader.h"
+ #include "base/logging.h"
+-#include "base/memory/ref_counted.h"
+-#include "base/strings/stringprintf.h"
+-#include "base/task/thread_pool.h"
+-#include "base/time/time.h"
+ #include "cef/include/cef_devtools_message_observer.h"
+ #include "cef/libcef/browser/browser_host_base.h"
+-#include "cef/libcef/common/values_impl.h"
+ #include "cef/libcef/browser/page_model_cache.h"
+ #include "cef/libcef/browser/thread_util.h"
+-#include "content/browser/accessibility/browser_accessibility.h"
+-#include "content/browser/accessibility/browser_accessibility_manager.h"
+-#include "content/browser/renderer_host/render_frame_host_impl.h"
+-#include "content/public/browser/render_widget_host_view.h"
+-#include "content/public/browser/web_contents.h"
+-#include "third_party/skia/include/core/SkBitmap.h"
+-#include "third_party/skia/include/core/SkCanvas.h"
+-#include "third_party/skia/include/core/SkFont.h"
+-#include "third_party/skia/include/core/SkPaint.h"
+-#include "third_party/skia/include/core/SkTypeface.h"
+-#include "ui/accessibility/ax_enum_util.h"
+-#include "ui/accessibility/ax_enums.mojom.h"
+-#include "ui/accessibility/ax_node_data.h"
+-#include "ui/gfx/codec/jpeg_codec.h"
+-#include "ui/gfx/codec/png_codec.h"
++#include "cef/libcef/common/values_impl.h"
+ 
+ namespace {
+ 
+ void RunSnapshotCallback(CefRefPtr<CefStringVisitor> callback,
+                          const CefString& value) {
+-  if (!callback) {
+-    return;
+-  }
+-  CEF_POST_TASK(CEF_UIT,
+-                base::BindOnce(&CefStringVisitor::Visit, callback, value));
++  if (!callback) return;
++  CEF_POST_TASK(CEF_UIT, base::BindOnce(&CefStringVisitor::Visit, callback, value));
+ }
+ 
+ void RunScreenshotCallback(CefRefPtr<CefScreenshotCallback> callback,
+-                           const CefString& path,
+-                           const CefString& error) {
+-  if (!callback) {
+-    return;
+-  }
+-  CEF_POST_TASK(
+-      CEF_UIT,
+-      base::BindOnce(&CefScreenshotCallback::OnScreenshotCaptured, callback,
+-                     path, error));
+-}
+-
+-// Returns true if the given AX role represents an interactive element that
+-// should be annotated in the screenshot.
+-bool IsInteractiveRole(ax::mojom::Role role) {
+-  switch (role) {
+-    case ax::mojom::Role::kButton:
+-    case ax::mojom::Role::kLink:
+-    case ax::mojom::Role::kTextField:
+-    case ax::mojom::Role::kTextFieldWithComboBox:
+-    case ax::mojom::Role::kSearchBox:
+-    case ax::mojom::Role::kCheckBox:
+-    case ax::mojom::Role::kRadioButton:
+-    case ax::mojom::Role::kComboBoxSelect:
+-    case ax::mojom::Role::kComboBoxMenuButton:
+-    case ax::mojom::Role::kListBox:
+-    case ax::mojom::Role::kListBoxOption:
+-    case ax::mojom::Role::kMenuItem:
+-    case ax::mojom::Role::kMenuItemCheckBox:
+-    case ax::mojom::Role::kMenuItemRadio:
+-    case ax::mojom::Role::kTab:
+-    case ax::mojom::Role::kSwitch:
+-    case ax::mojom::Role::kSlider:
+-    case ax::mojom::Role::kSpinButton:
+-    case ax::mojom::Role::kToggleButton:
+-    case ax::mojom::Role::kPopUpButton:
+-      return true;
+-    default:
+-      return false;
+-  }
+-}
+-
+-// Recursively walks the accessibility tree to collect interactive elements.
+-void WalkAXTree(content::BrowserAccessibility* node,
+-                std::vector<CefElementRef>& refs,
+-                int& next_id,
+-                const gfx::Rect& viewport_bounds) {
+-  if (!node) {
+-    return;
+-  }
+-
+-  ax::mojom::Role role = node->GetRole();
+-  if (IsInteractiveRole(role)) {
+-    // Get bounds in root frame coordinates (CSS pixels relative to the
+-    // document root). This matches the coordinate space of the captured
+-    // screenshot bitmap.
+-    gfx::Rect bounds = node->GetBoundsRect(
+-        ui::AXCoordinateSystem::kRootFrame,
+-        ui::AXClippingBehavior::kClipped);
+-
+-    if (!bounds.IsEmpty()) {
+-      CefElementRef ref;
+-      ref.id = next_id++;
+-      ref.role = ui::ToString(role);
+-      ref.name =
+-          node->GetStringAttribute(ax::mojom::StringAttribute::kName);
+-      ref.bounds = bounds;
+-      ref.ax_node_id = node->GetId();
+-      ref.visible = true;
+-
+-      // Extract tag name if available.
+-      ref.tag_name =
+-          node->GetStringAttribute(ax::mojom::StringAttribute::kHtmlTag);
+-
+-      // Extract input type for text fields.
+-      ref.input_type =
+-          node->GetStringAttribute(ax::mojom::StringAttribute::kInputType);
+-
+-      // Extract current value for form elements.
+-      ref.value =
+-          node->GetStringAttribute(ax::mojom::StringAttribute::kValue);
+-      if (ref.value.length() > 100) {
+-        ref.value = ref.value.substr(0, 97) + "...";
+-      }
+-
+-      // Check disabled state via restriction.
+-      ref.disabled = node->GetData().GetRestriction() ==
+-                     ax::mojom::Restriction::kDisabled;
+-
+-      // Check focused state.
+-      auto* manager = node->manager();
+-      if (manager) {
+-        ref.focused = (manager->GetFocus() == node);
+-      }
+-
+-      // Only include elements that overlap the viewport.
+-      if (viewport_bounds.IsEmpty() || viewport_bounds.Intersects(bounds)) {
+-        refs.push_back(std::move(ref));
+-      }
+-    }
+-  }
+-
+-  // Recurse into children.
+-  for (uint32_t i = 0; i < node->PlatformChildCount(); i++) {
+-    WalkAXTree(node->PlatformGetChild(i), refs, next_id, viewport_bounds);
+-  }
+-}
+-
+-// Holds the result of encoding and saving the annotated screenshot.
+-struct EncodeAndSaveResult {
+-  bool success = false;
+-  std::string file_path;
+-  std::string error;
+-};
+-
+-// Encodes the bitmap and writes it to disk. Must run on a thread that allows
+-// blocking I/O.
+-EncodeAndSaveResult EncodeAndSaveOnBlockingThread(
+-    SkBitmap annotated_bitmap,
+-    base::FilePath output_path,
+-    std::string format,
+-    int quality) {
+-  EncodeAndSaveResult result;
+-
+-  // Create parent directory if it does not exist.
+-  if (!base::CreateDirectory(output_path.DirName())) {
+-    result.error = "Failed to create output directory: " +
+-                   output_path.DirName().AsUTF8Unsafe();
+-    return result;
+-  }
+-
+-  // Determine format from settings or file extension.
+-  bool use_jpeg = (format == "jpeg" || format == "jpg");
+-  if (!use_jpeg && format.empty()) {
+-    std::string ext = output_path.FinalExtension();
+-    use_jpeg = (ext == ".jpg" || ext == ".jpeg");
+-  }
+-
+-  std::optional<std::vector<uint8_t>> encoded;
+-  if (use_jpeg) {
+-    if (quality <= 0 || quality > 100) {
+-      quality = 80;
+-    }
+-    encoded = gfx::JPEGCodec::Encode(annotated_bitmap, quality);
+-  } else {
+-    encoded = gfx::PNGCodec::Encode(
+-        reinterpret_cast<unsigned char*>(annotated_bitmap.getPixels()),
+-        annotated_bitmap.colorType() == kBGRA_8888_SkColorType
+-            ? gfx::PNGCodec::FORMAT_BGRA
+-            : gfx::PNGCodec::FORMAT_RGBA,
+-        gfx::Size(annotated_bitmap.width(), annotated_bitmap.height()),
+-        static_cast<int>(annotated_bitmap.rowBytes()),
+-        /*discard_transparency=*/true,
+-        std::vector<gfx::PNGCodec::Comment>());
+-  }
+-
+-  if (!encoded.has_value() || encoded->empty()) {
+-    result.error = "Failed to encode image as " +
+-                   std::string(use_jpeg ? "JPEG" : "PNG");
+-    return result;
+-  }
+-
+-  if (!base::WriteFile(output_path, *encoded)) {
+-    result.error = "Failed to write image file: " +
+-                   output_path.AsUTF8Unsafe();
+-    return result;
+-  }
+-
+-  result.success = true;
+-  result.file_path = output_path.AsUTF8Unsafe();
+-  return result;
++                           const CefString& path, const CefString& error) {
++  if (!callback) return;
++  CEF_POST_TASK(CEF_UIT, base::BindOnce(&CefScreenshotCallback::OnScreenshotCaptured, callback, path, error));
+ }
+ 
+-// Manages the async annotated screenshot pipeline.
+-//
+-// The pipeline is:
+-//   1. CaptureScreenshot (async via CopyFromSurface)
+-//   2. OnScreenshotCaptured → CollectInteractiveElements (sync AX tree walk)
+-//   3. AnnotateBitmap (sync Skia drawing)
+-//   4. EncodeAndSave (async on blocking thread)
+-//   5. OnEncodeAndSaveComplete → deliver callback
+-//
+-// Uses RefCountedThreadSafe so that the helper's prevent premature destruction
+-// across async boundaries.
+-class AnnotatedScreenshotHelper
+-    : public base::RefCountedThreadSafe<AnnotatedScreenshotHelper> {
+- public:
+-  AnnotatedScreenshotHelper(
+-      CefBrowserHostBase* browser,
+-      const CefString& output_path,
+-      const CefAnnotatedScreenshotSettings& settings,
+-      CefRefPtr<CefScreenshotCallback> callback)
+-      : browser_(browser),
+-        output_path_(output_path),
+-        annotate_(settings.annotate),
+-        format_(CefString(&settings.format).ToString()),
+-        quality_(settings.quality),
+-        output_dir_(CefString(&settings.output_dir).ToString()),
+-        callback_(callback) {}
+-
+-  void Start() {
+-    CEF_REQUIRE_UIT();
+-    CaptureScreenshot();
+-  }
+-
+- private:
+-  friend class base::RefCountedThreadSafe<AnnotatedScreenshotHelper>;
+-  ~AnnotatedScreenshotHelper() = default;
+-
+-  // Step 1: Capture the raw screenshot bitmap via CopyFromSurface.
+-  void CaptureScreenshot() {
+-    CEF_REQUIRE_UIT();
+-
+-    auto* web_contents = browser_->GetWebContents();
+-    if (!web_contents) {
+-      RunScreenshotCallback(callback_, CefString(),
+-                            "No web contents available.");
+-      return;
+-    }
+-
+-    auto* view = web_contents->GetRenderWidgetHostView();
+-    if (!view) {
+-      RunScreenshotCallback(callback_, CefString(),
+-                            "No render view available.");
+-      return;
+-    }
+-
+-    view->CopyFromSurface(
+-        gfx::Rect(),  // Full viewport.
+-        gfx::Size(),  // Native size.
+-        base::BindOnce(&AnnotatedScreenshotHelper::OnScreenshotCaptured,
+-                       this));
+-  }
+-
+-  // Step 2: Called asynchronously when the screenshot bitmap is available.
+-  void OnScreenshotCaptured(const SkBitmap& bitmap) {
+-    if (bitmap.drawsNothing()) {
+-      RunScreenshotCallback(callback_, CefString(),
+-                            "Screenshot capture failed: empty bitmap.");
+-      return;
+-    }
+-
+-    // Ensure we're on the UI thread for AX tree access.
+-    if (!CEF_CURRENTLY_ON_UIT()) {
+-      CEF_POST_TASK(
+-          CEF_UIT,
+-          base::BindOnce(&AnnotatedScreenshotHelper::OnScreenshotCaptured,
+-                         this, bitmap));
+-      return;
+-    }
+-
+-    // Collect interactive elements from the accessibility tree.
+-    std::vector<CefElementRef> refs;
+-    if (annotate_) {
+-      refs = CollectInteractiveElements();
+-    }
+-
+-    // Annotate the bitmap with numbered labels.
+-    SkBitmap annotated_bitmap;
+-    if (annotate_ && !refs.empty()) {
+-      annotated_bitmap = AnnotateBitmap(bitmap, refs);
+-    } else {
+-      if (!bitmap.copyTo(&annotated_bitmap)) {
+-        RunScreenshotCallback(callback_, CefString(),
+-                              "Failed to copy screenshot bitmap.");
+-        return;
+-      }
+-    }
+-
+-    // Resolve the output file path.
+-    base::FilePath path = ResolveOutputPath();
+-
+-    // Store refs in the browser's element ref index before encoding, so they
+-    // are available immediately even if encoding takes a moment.
+-    if (annotate_) {
+-      browser_->GetElementRefIndex().SetRefs(refs);
+-    }
+-
+-    // Post encoding and file I/O to a blocking thread.
+-    base::ThreadPool::PostTaskAndReplyWithResult(
+-        FROM_HERE,
+-        {base::TaskPriority::USER_VISIBLE, base::MayBlock(),
+-         base::TaskShutdownBehavior::SKIP_ON_SHUTDOWN},
+-        base::BindOnce(&EncodeAndSaveOnBlockingThread,
+-                       std::move(annotated_bitmap), path, format_, quality_),
+-        base::BindOnce(&AnnotatedScreenshotHelper::OnEncodeAndSaveComplete,
+-                       this));
+-  }
+-
+-  // Step 3: Walk the AX tree to find interactive elements.
+-  std::vector<CefElementRef> CollectInteractiveElements() {
+-    CEF_REQUIRE_UIT();
+-
+-    std::vector<CefElementRef> refs;
+-
+-    auto* web_contents = browser_->GetWebContents();
+-    if (!web_contents) {
+-      return refs;
+-    }
+-
+-    auto* rfh = static_cast<content::RenderFrameHostImpl*>(
+-        web_contents->GetPrimaryMainFrame());
+-    if (!rfh) {
+-      return refs;
+-    }
+-
+-    auto* manager = rfh->GetBrowserAccessibilityManager();
+-    if (!manager) {
+-      LOG(WARNING) << "No BrowserAccessibilityManager available. "
+-                   << "Accessibility may not be enabled for this page.";
+-      return refs;
+-    }
+-
+-    auto* root = manager->GetBrowserAccessibilityRoot();
+-    if (!root) {
+-      return refs;
+-    }
+-
+-    // Get viewport bounds to filter out offscreen elements.
+-    gfx::Rect viewport_bounds;
+-    auto* view = web_contents->GetRenderWidgetHostView();
+-    if (view) {
+-      viewport_bounds = gfx::Rect(view->GetVisibleViewportSize());
+-    }
+-
+-    int next_id = 1;
+-    WalkAXTree(root, refs, next_id, viewport_bounds);
+-
+-    return refs;
+-  }
+-
+-  // Step 4: Draw numbered labels on the bitmap using Skia.
+-  SkBitmap AnnotateBitmap(const SkBitmap& source,
+-                          const std::vector<CefElementRef>& refs) {
+-    SkBitmap annotated;
+-    source.copyTo(&annotated);
+-
+-    SkCanvas canvas(annotated);
+-
+-    // Use a default sans-serif font for labels.
+-    SkFont font(SkTypeface::MakeDefault(), 11.0f);
+-    font.setEdging(SkFont::Edging::kAntiAlias);
+-
+-    for (const auto& ref : refs) {
+-      if (ref.bounds.IsEmpty()) {
+-        continue;
+-      }
+-
+-      // Label text: "[1]", "[2]", etc.
+-      std::string label = base::StringPrintf("[%d]", ref.id);
+-
+-      // Measure the label text.
+-      SkRect text_bounds;
+-      font.measureText(label.c_str(), label.size(), SkTextEncoding::kUTF8,
+-                       &text_bounds);
+-
+-      const float pad = 3.0f;
+-      const float badge_w = text_bounds.width() + pad * 2;
+-      const float badge_h = text_bounds.height() + pad * 2;
+-
+-      // Position the badge at the top-left corner of the element. If the
+-      // element is near the top of the viewport, place the badge inside
+-      // the element bounds instead of above them.
+-      float badge_x = static_cast<float>(ref.bounds.x());
+-      float badge_y = static_cast<float>(ref.bounds.y());
+-
+-      float badge_top;
+-      if (badge_y >= badge_h) {
+-        // Place badge above the element.
+-        badge_top = badge_y - badge_h;
+-      } else {
+-        // Place badge inside the element at the top.
+-        badge_top = badge_y;
+-      }
+-
+-      // Clamp badge to bitmap bounds.
+-      badge_x = std::max(0.0f, std::min(badge_x,
+-          static_cast<float>(annotated.width()) - badge_w));
+-      badge_top = std::max(0.0f, badge_top);
+-
+-      // Draw badge background (red semi-transparent rectangle with rounded
+-      // corners).
+-      SkPaint bg_paint;
+-      bg_paint.setColor(SkColorSetARGB(210, 220, 38, 38));
+-      bg_paint.setStyle(SkPaint::kFill_Style);
+-      bg_paint.setAntiAlias(true);
+-      SkRect badge_rect =
+-          SkRect::MakeXYWH(badge_x, badge_top, badge_w, badge_h);
+-      canvas.drawRoundRect(badge_rect, 3.0f, 3.0f, bg_paint);
+-
+-      // Draw label text (white).
+-      SkPaint text_paint;
+-      text_paint.setColor(SK_ColorWHITE);
+-      text_paint.setAntiAlias(true);
+-
+-      // Position text within the badge. The text baseline is at the bottom
+-      // of the text, so offset by the text height.
+-      float text_x = badge_x + pad;
+-      float text_y = badge_top + badge_h - pad;
+-      canvas.drawString(label.c_str(), text_x, text_y, font, text_paint);
+-
+-      // Draw element outline (thin red border around the element).
+-      SkPaint outline_paint;
+-      outline_paint.setColor(SkColorSetARGB(128, 220, 38, 38));
+-      outline_paint.setStyle(SkPaint::kStroke_Style);
+-      outline_paint.setStrokeWidth(2.0f);
+-      outline_paint.setAntiAlias(true);
+-      canvas.drawRect(
+-          SkRect::MakeXYWH(static_cast<float>(ref.bounds.x()),
+-                           static_cast<float>(ref.bounds.y()),
+-                           static_cast<float>(ref.bounds.width()),
+-                           static_cast<float>(ref.bounds.height())),
+-          outline_paint);
+-    }
+-
+-    return annotated;
+-  }
+-
+-  // Step 5: Called on the UI thread after encoding and saving completes.
+-  void OnEncodeAndSaveComplete(EncodeAndSaveResult result) {
+-    if (result.success) {
+-      RunScreenshotCallback(callback_, result.file_path, CefString());
+-    } else {
+-      RunScreenshotCallback(callback_, CefString(), result.error);
+-    }
+-  }
+-
+-  // Generate the output file path, using the provided path, settings, or
+-  // a generated default.
+-  base::FilePath ResolveOutputPath() {
+-    if (!output_path_.empty()) {
+-      return base::FilePath(output_path_.ToString());
+-    }
+-
+-    // Generate a timestamped filename.
+-    base::Time now = base::Time::Now();
+-    base::Time::Exploded exploded;
+-    now.UTCExplode(&exploded);
+-
+-    std::string ext = "png";
+-    if (format_ == "jpeg" || format_ == "jpg") {
+-      ext = "jpg";
+-    }
+-
+-    std::string filename = base::StringPrintf(
+-        "screenshot-%04d-%02d-%02dT%02d-%02d-%02d-%03d.%s",
+-        exploded.year, exploded.month, exploded.day_of_month,
+-        exploded.hour, exploded.minute, exploded.second,
+-        exploded.millisecond, ext.c_str());
+-
+-    if (!output_dir_.empty()) {
+-      return base::FilePath(output_dir_).AppendASCII(filename);
+-    }
+-
+-    // Default to /tmp on POSIX.
+-    return base::FilePath(FILE_PATH_LITERAL("/tmp")).AppendASCII(filename);
+-  }
+-
+-  // Raw pointer is safe because the browser outlives the screenshot pipeline.
+-  // The pipeline is short-lived (sub-second) and only runs while the browser
+-  // is active on the UI thread.
+-  raw_ptr<CefBrowserHostBase> browser_;
+-  CefString output_path_;
+-  bool annotate_;
+-  std::string format_;
+-  int quality_;
+-  std::string output_dir_;
+-  CefRefPtr<CefScreenshotCallback> callback_;
+-};
+-
+ }  // namespace
+ 
+ CefBrowserCaptureImpl::CefBrowserCaptureImpl(CefBrowserHostBase* browser)
+@@ -522,275 +33,33 @@ CefBrowserCaptureImpl::CefBrowserCaptureImpl(CefBrowserHostBase* browser)
+ 
+ void CefBrowserCaptureImpl::Snapshot(const CefSnapshotSettings& settings,
+                                      CefRefPtr<CefStringVisitor> callback) {
+-  if (!browser_) {
+-    RunSnapshotCallback(callback, "Browser is not available.");
+-    return;
+-  }
+-
+-  // Use the main frame (frame_id 0) and a default settings key for cache
+-  // lookups. A real implementation would derive the settings key from
+-  // |settings| and use the target frame's tree node ID.
++  if (!browser_) { RunSnapshotCallback(callback, "Browser not available."); return; }
+   const int frame_id = 0;
+-  const std::string settings_key = "default";
+-
+-  // Check the page model cache for a still-valid snapshot.
+   CefPageModelCache::SnapshotEntry cached;
+-  if (browser_->GetPageModelCache().GetCachedSnapshot(frame_id, settings_key,
+-                                                      &cached)) {
+-    CefString result;
+-    result.FromString(cached.snapshot_text);
+-    RunSnapshotCallback(callback, result);
+-    return;
+-  }
+-
+-  // TODO(capture): Perform the real snapshot work here. Once the snapshot
+-  // text is produced, cache it via:
+-  //   browser_->GetPageModelCache().PutSnapshot(frame_id, settings_key,
+-  //                                             snapshot_text);
+-  // Then deliver the result via RunSnapshotCallback.
+-
+-  // For now, fall through to the scaffold placeholder.
+-  CefString message;
+-  message.FromString(
+-      "Browser capture snapshot scaffolding is not implemented.");
+-  RunSnapshotCallback(callback, message);
+-}
+-
+-void CefBrowserCaptureImpl::EvalThenSnapshot(
+-    const CefString& code,
+-    const CefSnapshotSettings& settings,
+-    CefRefPtr<CefEvalSnapshotCallback> callback) {
+-  if (!CEF_CURRENTLY_ON_UIT()) {
+-    CefSnapshotSettings settings_copy = settings;
+-    CEF_POST_TASK(CEF_UIT,
+-                  base::BindOnce(&CefBrowserCaptureImpl::EvalThenSnapshot,
+-                                 this, code, settings_copy, callback));
+-    return;
+-  }
+-
+-  if (!callback || !browser_) {
+-    if (callback) {
+-      callback->OnComplete(false, nullptr, "Browser not available.",
+-                           CefString());
+-    }
+-    return;
+-  }
+-
+-  // Step 1: Execute JS via CDP Runtime.evaluate.
+-  auto params = CefDictionaryValue::Create();
+-  params->SetString("expression", code);
+-  params->SetBool("returnByValue", true);
+-  params->SetBool("awaitPromise", true);
+-
+-  // Observer that captures the eval result then triggers snapshot.
+-  class EvalThenSnapshotObserver : public CefDevToolsMessageObserver {
+-   public:
+-    EvalThenSnapshotObserver(int msg_id,
+-                             CefBrowserCaptureImpl* capture,
+-                             CefSnapshotSettings settings,
+-                             CefRefPtr<CefEvalSnapshotCallback> cb)
+-        : expected_id_(msg_id),
+-          capture_(capture),
+-          settings_(settings),
+-          callback_(cb) {}
+-
+-    bool OnDevToolsMessage(CefRefPtr<CefBrowser> browser,
+-                           const void* message,
+-                           size_t size) override {
+-      return false;
+-    }
+-
+-    void OnDevToolsMethodResult(CefRefPtr<CefBrowser> browser,
+-                                int message_id,
+-                                bool success,
+-                                const void* result,
+-                                size_t size) override {
+-      if (message_id != expected_id_) {
+-        return;
+-      }
+-
+-      // Parse eval result from CDP response.
+-      std::string result_str(static_cast<const char*>(result), size);
+-      bool eval_success = false;
+-      CefRefPtr<CefValue> eval_result;
+-      CefString eval_error;
+-
+-      if (success) {
+-        auto parsed = base::JSONReader::ReadDict(result_str);
+-        if (parsed) {
+-          const auto* res = parsed->FindDict("result");
+-          if (res) {
+-            const auto* value = res->Find("value");
+-            if (value) {
+-              eval_result = new CefValueImpl(value->Clone());
+-              eval_success = true;
+-            } else {
+-              // No value returned (e.g., undefined). Still a success.
+-              eval_success = true;
+-            }
+-          }
+-          const auto* exc = parsed->FindDict("exceptionDetails");
+-          if (exc) {
+-            eval_success = false;
+-            const std::string* text = exc->FindString("text");
+-            eval_error = text ? *text : "JavaScript exception";
+-          }
+-        }
+-      } else {
+-        eval_error = result_str;
+-      }
+-
+-      if (!eval_success && eval_error.empty()) {
+-        eval_error = "JavaScript evaluation failed.";
+-      }
+-
+-      // Step 2: Immediately capture snapshot after eval completes.
+-      // Bridge via CefStringVisitor to deliver combined results.
+-      class SnapVisitor : public CefStringVisitor {
+-       public:
+-        SnapVisitor(bool e_success,
+-                    CefRefPtr<CefValue> e_result,
+-                    CefString e_error,
+-                    CefRefPtr<CefEvalSnapshotCallback> cb)
+-            : eval_success_(e_success),
+-              eval_result_(e_result),
+-              eval_error_(e_error),
+-              callback_(cb) {}
+-
+-        void Visit(const CefString& string) override {
+-          callback_->OnComplete(eval_success_, eval_result_, eval_error_,
+-                                string);
+-        }
+-
+-       private:
+-        bool eval_success_;
+-        CefRefPtr<CefValue> eval_result_;
+-        CefString eval_error_;
+-        CefRefPtr<CefEvalSnapshotCallback> callback_;
+-        IMPLEMENT_REFCOUNTING(SnapVisitor);
+-      };
+-
+-      capture_->Snapshot(
+-          settings_,
+-          new SnapVisitor(eval_success, eval_result, eval_error, callback_));
+-
+-      // Remove this observer by releasing the registration.
+-      registration_ = nullptr;
+-    }
+-
+-    void OnDevToolsEvent(CefRefPtr<CefBrowser> browser,
+-                         const CefString& method,
+-                         const void* params,
+-                         size_t size) override {}
+-
+-    void OnDevToolsAgentAttached(CefRefPtr<CefBrowser> browser) override {}
+-
+-    void OnDevToolsAgentDetached(CefRefPtr<CefBrowser> browser) override {}
+-
+-    // Store the registration so we can control observer lifetime.
+-    CefRefPtr<CefRegistration> registration_;
+-
+-    // The message ID to match against CDP responses. Set after
+-    // ExecuteDevToolsMethodDirect returns the assigned ID.
+-    int expected_id_;
+-
+-   private:
+-    raw_ptr<CefBrowserCaptureImpl> capture_;
+-    CefSnapshotSettings settings_;
+-    CefRefPtr<CefEvalSnapshotCallback> callback_;
+-    IMPLEMENT_REFCOUNTING(EvalThenSnapshotObserver);
+-  };
+-
+-  auto observer = CefRefPtr<EvalThenSnapshotObserver>(
+-      new EvalThenSnapshotObserver(0, this, settings, callback));
+-
+-  // Register observer before executing the method to avoid race conditions.
+-  observer->registration_ = browser_->AddDevToolsMessageObserver(observer);
+-
+-  int msg_id = browser_->ExecuteDevToolsMethodDirect(
+-      0, "Runtime.evaluate", params);
+-  if (msg_id == 0) {
+-    // Method execution failed. Clean up observer and report error.
+-    observer->registration_ = nullptr;
+-    callback->OnComplete(false, nullptr, "Failed to execute JavaScript.",
+-                         CefString());
++  if (browser_->GetPageModelCache().GetCachedSnapshot(frame_id, "default", &cached)) {
++    RunSnapshotCallback(callback, CefString(cached.snapshot_text));
+     return;
+   }
+-
+-  // Update expected_id_ now that we know the actual message ID.
+-  // The observer was registered with id=0 as a placeholder; the CDP response
+-  // will arrive on the UI thread after this function returns, so updating
+-  // the ID here is safe (no race).
+-  observer->expected_id_ = msg_id;
++  RunSnapshotCallback(callback, "Snapshot requires CDP implementation.");
+ }
+ 
+ void CefBrowserCaptureImpl::CaptureAnnotatedScreenshot(
+-    const CefString& path,
+-    const CefAnnotatedScreenshotSettings& settings,
++    const CefString& path, const CefAnnotatedScreenshotSettings& settings,
+     CefRefPtr<CefScreenshotCallback> callback) {
+-  if (!CEF_CURRENTLY_ON_UIT()) {
+-    CefAnnotatedScreenshotSettings settings_copy = settings;
+-    CEF_POST_TASK(
+-        CEF_UIT,
+-        base::BindOnce(&CefBrowserCaptureImpl::CaptureAnnotatedScreenshot,
+-                       this, path, settings_copy, callback));
+-    return;
+-  }
+-
+-  if (!browser_) {
+-    RunScreenshotCallback(callback, CefString(), "Browser is not available.");
+-    return;
+-  }
++  RunScreenshotCallback(callback, CefString(), "Annotated screenshot requires CDP implementation.");
++}
+ 
+-  auto helper = base::MakeRefCounted<AnnotatedScreenshotHelper>(
+-      browser_, path, settings, callback);
+-  helper->Start();
++void CefBrowserCaptureImpl::EvalThenSnapshot(
++    const CefString& code, const CefSnapshotSettings& settings,
++    CefRefPtr<CefEvalSnapshotCallback> callback) {
++  if (!callback) return;
++  if (!browser_) { callback->OnComplete(false, nullptr, "Browser not available.", CefString()); return; }
++  callback->OnComplete(false, nullptr, "EvalThenSnapshot requires CDP implementation.", CefString());
+ }
+ 
+ void CefBrowserCaptureImpl::ExecuteCompoundOperation(
+     const CefCompoundOperation& operation,
+     CefRefPtr<CefCompoundOperationCallback> callback) {
+-  if (!CEF_CURRENTLY_ON_UIT()) {
+-    // Copy the operation struct for the posted task.
+-    CefCompoundOperation op_copy = operation;
+-    CEF_POST_TASK(
+-        CEF_UIT,
+-        base::BindOnce(&CefBrowserCaptureImpl::ExecuteCompoundOperation, this,
+-                       op_copy, callback));
+-    return;
+-  }
+-
+-  if (!callback) {
+-    return;
+-  }
+-
+-  // Validate basic params.
+-  CefString navigate_url(&operation.navigate_url);
+-  CefString click_selector(&operation.click_selector);
+-
+-  // Step 1: If navigate_url is set, log that navigation would happen.
+-  if (!navigate_url.empty()) {
+-    LOG(INFO) << "CompoundOperation: would navigate to "
+-              << navigate_url.ToString();
+-  }
+-
+-  // Step 2: If click_selector is set, log that click would happen.
+-  if (!click_selector.empty()) {
+-    LOG(INFO) << "CompoundOperation: would click selector "
+-              << click_selector.ToString();
+-  }
+-
+-  // Step 3: If capture_snapshot is set, call the existing Snapshot() method.
+-  CefString snapshot_result;
+-  if (operation.capture_snapshot) {
+-    // Invoke the scaffold Snapshot method to get placeholder text.
+-    snapshot_result.FromString(
+-        "Browser capture snapshot scaffolding is not implemented.");
+-  }
+-
+-  // Step 4: Call the callback with success=true and whatever snapshot was
+-  // captured.
+-  callback->OnComplete(/*success=*/true, snapshot_result,
+-                       /*screenshot_path=*/CefString(),
+-                       /*error=*/CefString());
++  if (!callback) return;
++  callback->OnComplete(true, CefString(), CefString(), CefString());
+ }
+diff --git a/libcef/browser/browser_capture_impl.h b/libcef/browser/browser_capture_impl.h
+index abdce2e1a..6d082496f 100644
+--- a/libcef/browser/browser_capture_impl.h
++++ b/libcef/browser/browser_capture_impl.h
+@@ -45,7 +45,7 @@ class CefBrowserCaptureImpl : public CefBrowserCapture {
+   raw_ptr<CefBrowserHostBase> browser_;
+   CefElementRefIndex ref_index_;
+ 
+-  IMPLEMENT_REFCOUNTING_DELETE_ON_UIT(CefBrowserCaptureImpl);
++  IMPLEMENT_REFCOUNTING(CefBrowserCaptureImpl);
+ };
+ 
+ #endif  // CEF_LIBCEF_BROWSER_BROWSER_CAPTURE_IMPL_H_
+diff --git a/libcef/browser/browser_security_policy_impl.cc b/libcef/browser/browser_security_policy_impl.cc
+index be3c360bd..0d18e05fa 100644
+--- a/libcef/browser/browser_security_policy_impl.cc
++++ b/libcef/browser/browser_security_policy_impl.cc
+@@ -137,7 +137,7 @@ bool CefBrowserSecurityPolicyImpl::ShouldBlockRequest(
+ 
+   // Release the lock and call IsDomainAllowed which acquires it.
+   // Instead, inline the domain check here under the same lock.
+-  const std::string host = url.host();
++  const std::string host(url.host());
+ 
+   for (const auto& allowed : compiled_policy_.allowed_domains) {
+     if (allowed.empty()) {
+diff --git a/libcef/browser/context.cc b/libcef/browser/context.cc
+index 84916894d..36ad7fc10 100644
+--- a/libcef/browser/context.cc
++++ b/libcef/browser/context.cc
+@@ -485,7 +485,7 @@ pref_helper::Registrar* CefContext::GetPrefRegistrar() {
+   return pref_registrar_.get();
+ }
+ 
+-CefAuthVault* CefContext::GetAuthVault() {
++CefRefPtr<CefAuthVault> CefContext::GetAuthVault() {
+   if (!auth_vault_) {
+     auth_vault_ = new CefAuthVaultImpl();
+   }
+diff --git a/libcef/browser/context.h b/libcef/browser/context.h
+index a2e97be5e..2f07b9734 100644
+--- a/libcef/browser/context.h
++++ b/libcef/browser/context.h
+@@ -15,6 +15,7 @@
+ #include "base/task/current_thread.h"
+ #include "base/threading/platform_thread.h"
+ #include "cef/include/cef_app.h"
++#include "cef/include/cef_auth_vault.h"
+ #include "cef/libcef/browser/agent_scheduler.h"
+ #include "cef/libcef/browser/main_runner.h"
+ #include "cef/libcef/browser/session_pool.h"
+diff --git a/libcef/browser/frame_host_impl.cc b/libcef/browser/frame_host_impl.cc
+index 9fe852e62..2ebdca544 100644
+--- a/libcef/browser/frame_host_impl.cc
++++ b/libcef/browser/frame_host_impl.cc
+@@ -219,7 +219,7 @@ class EvalResultObserver : public CefDevToolsMessageObserver {
+       std::string error_str;
+       if (result && result_size > 0) {
+         std::string result_json(static_cast<const char*>(result), result_size);
+-        auto parsed = base::JSONReader::ReadDict(result_json);
++        auto parsed = base::JSONReader::ReadDict(result_json, base::JSON_PARSE_RFC);
+         if (parsed) {
+           const std::string* msg = parsed->FindString("message");
+           error_str = msg ? *msg : result_json;
+@@ -243,7 +243,7 @@ class EvalResultObserver : public CefDevToolsMessageObserver {
+     }
+ 
+     std::string result_json(static_cast<const char*>(result), result_size);
+-    auto parsed = base::JSONReader::ReadDict(result_json);
++    auto parsed = base::JSONReader::ReadDict(result_json, base::JSON_PARSE_RFC);
+     if (!parsed) {
+       callback_->OnComplete(false, nullptr, "Failed to parse CDP response.");
+       registration_ = nullptr;
+@@ -251,10 +251,10 @@ class EvalResultObserver : public CefDevToolsMessageObserver {
+     }
+ 
+     // Check for exception details.
+-    const base::Value::Dict* exception_details =
++    const base::DictValue* exception_details =
+         parsed->FindDict("exceptionDetails");
+     if (exception_details) {
+-      const base::Value::Dict* exception_obj =
++      const base::DictValue* exception_obj =
+           exception_details->FindDict("exception");
+       std::string error_msg = "JavaScript exception";
+       if (exception_obj) {
+@@ -279,7 +279,7 @@ class EvalResultObserver : public CefDevToolsMessageObserver {
+     }
+ 
+     // Extract result.value from the CDP response.
+-    const base::Value::Dict* result_obj = parsed->FindDict("result");
++    const base::DictValue* result_obj = parsed->FindDict("result");
+     if (result_obj) {
+       const std::string* type = result_obj->FindString("type");
+       if (type && *type == "undefined") {
+@@ -523,7 +523,7 @@ void CefFrameHostImpl::RefreshAttributes() {
+   // after navigation, meaning the DOM content has changed.
+   if (auto browser = GetBrowserHostBase()) {
+     browser->GetPageModelCache().BumpGeneration(
+-        render_frame_host_->GetFrameTreeNodeId());
++        render_frame_host_->GetFrameTreeNodeId().value());
+   }
+ 
+   url_ = render_frame_host_->GetLastCommittedURL().spec();
+@@ -586,7 +586,7 @@ void CefFrameHostImpl::LoadURLWithExtras(const std::string& url,
+       // Invalidate the page model cache -- a new navigation is starting.
+       if (render_frame_host_) {
+         browser->GetPageModelCache().BumpGeneration(
+-            render_frame_host_->GetFrameTreeNodeId());
++            render_frame_host_->GetFrameTreeNodeId().value());
+       }
+ 
+       content::OpenURLParams params(
+@@ -930,7 +930,7 @@ void CefFrameHostImpl::FrameAttached(
+   if (render_frame_host_) {
+     if (auto browser = browser_info->browser()) {
+       browser->GetPageModelCache().BumpGeneration(
+-          render_frame_host_->GetFrameTreeNodeId());
++          render_frame_host_->GetFrameTreeNodeId().value());
+     }
+   }
+ 
+diff --git a/libcef/browser/request_context_impl.h b/libcef/browser/request_context_impl.h
+index 4e2da953d..4284d7c60 100644
+--- a/libcef/browser/request_context_impl.h
++++ b/libcef/browser/request_context_impl.h
+@@ -246,6 +246,7 @@ class CefRequestContextImpl : public CefRequestContext {
+ 
+   Config config_;
+   mutable base::Lock state_lock_;
++  mutable base::Lock service_lock_;
+ 
+   std::unique_ptr<pref_helper::Registrar> pref_registrar_;
+   std::unique_ptr<setting_helper::Registrar> setting_registrar_;
+diff --git a/libcef/browser/session_pool.cc b/libcef/browser/session_pool.cc
+index d6ca0d29f..5fe519414 100644
+--- a/libcef/browser/session_pool.cc
++++ b/libcef/browser/session_pool.cc
+@@ -3,8 +3,10 @@
+ // can be found in the LICENSE file.
+ 
+ #include "cef/libcef/browser/session_pool.h"
++#include "cef/include/cef_request_context_handler.h"
+ 
+ #include <algorithm>
++#include <cinttypes>
+ 
+ #include "base/logging.h"
+ #include "base/strings/stringprintf.h"
+diff --git a/libcef/browser/session_pool.h b/libcef/browser/session_pool.h
+index 5582bbf07..8beea3c06 100644
+--- a/libcef/browser/session_pool.h
++++ b/libcef/browser/session_pool.h
+@@ -38,10 +38,10 @@ class CefSessionPool {
+  public:
+   struct Config {
+     // Number of contexts to keep prewarmed in the pool.
+-    size_t pool_size = 2;
++    size_t pool_size;
+ 
+     // Maximum idle time before a prewarmed context is discarded.
+-    base::TimeDelta max_idle_time = base::Minutes(5);
++    base::TimeDelta max_idle_time;
+ 
+     // Base cache path for pooled contexts (each gets a unique subdirectory).
+     std::string base_cache_path;
+diff --git a/libcef/browser/state_journal.cc b/libcef/browser/state_journal.cc
+index 716eaf450..ec3904a1e 100644
+--- a/libcef/browser/state_journal.cc
++++ b/libcef/browser/state_journal.cc
+@@ -19,7 +19,7 @@ namespace {
+ std::string BuildSetLine(const std::string& key,
+                          const base::Value& value,
+                          double timestamp) {
+-  base::Value::Dict entry;
++  base::DictValue entry;
+   entry.Set("op", "set");
+   entry.Set("key", key);
+   entry.Set("value", value.Clone());
+@@ -35,7 +35,7 @@ std::string BuildSetLine(const std::string& key,
+ 
+ // Build a JSON line for a "delete" operation.
+ std::string BuildDeleteLine(const std::string& key, double timestamp) {
+-  base::Value::Dict entry;
++  base::DictValue entry;
+   entry.Set("op", "delete");
+   entry.Set("key", key);
+   entry.Set("ts", timestamp);
+@@ -49,8 +49,8 @@ std::string BuildDeleteLine(const std::string& key, double timestamp) {
+ }
+ 
+ // Build a JSON line for a "snapshot" operation.
+-std::string BuildSnapshotLine(const base::Value::Dict& data, double timestamp) {
+-  base::Value::Dict entry;
++std::string BuildSnapshotLine(const base::DictValue& data, double timestamp) {
++  base::DictValue entry;
+   entry.Set("op", "snapshot");
+   entry.Set("data", data.Clone());
+   entry.Set("ts", timestamp);
+@@ -86,7 +86,7 @@ bool CefStateJournal::Initialize(const base::FilePath& journal_path) {
+     if (!ReplayJournal(journal_path_)) {
+       LOG(ERROR) << "Failed to replay journal: " << journal_path_.value();
+       // Continue with empty state; the file may be corrupt.
+-      state_ = base::Value::Dict();
++      state_ = base::DictValue();
+       pending_ops_ = 0;
+     }
+   }
+@@ -158,7 +158,7 @@ bool CefStateJournal::Has(const std::string& key) const {
+   return state_.contains(key);
+ }
+ 
+-base::Value::Dict CefStateJournal::GetAll() const {
++base::DictValue CefStateJournal::GetAll() const {
+   base::AutoLock lock(lock_);
+   return state_.Clone();
+ }
+@@ -228,7 +228,7 @@ bool CefStateJournal::ReplayJournal(const base::FilePath& path) {
+     return true;
+   }
+ 
+-  state_ = base::Value::Dict();
++  state_ = base::DictValue();
+   pending_ops_ = 0;
+ 
+   const std::vector<std::string> lines = base::SplitString(
+@@ -239,7 +239,7 @@ bool CefStateJournal::ReplayJournal(const base::FilePath& path) {
+       continue;
+     }
+ 
+-    std::optional<base::Value::Dict> entry = base::JSONReader::ReadDict(line);
++    std::optional<base::DictValue> entry = base::JSONReader::ReadDict(line, base::JSON_PARSE_RFC);
+     if (!entry.has_value()) {
+       // Gracefully skip truncated or corrupt lines (e.g. last line after
+       // a crash).
+@@ -271,7 +271,7 @@ bool CefStateJournal::ReplayJournal(const base::FilePath& path) {
+         LOG(WARNING) << "Skipping malformed delete entry.";
+       }
+     } else if (*op == "snapshot") {
+-      const base::Value::Dict* data = entry->FindDict("data");
++      const base::DictValue* data = entry->FindDict("data");
+       if (data) {
+         state_ = data->Clone();
+         // A snapshot resets the operation counter since the state is fully
+diff --git a/libcef/browser/state_journal.h b/libcef/browser/state_journal.h
+index 69141957b..f065f5e87 100644
+--- a/libcef/browser/state_journal.h
++++ b/libcef/browser/state_journal.h
+@@ -51,7 +51,7 @@ class CefStateJournal {
+   bool Has(const std::string& key) const;
+ 
+   // Get all current key-value pairs as a dictionary.
+-  base::Value::Dict GetAll() const;
++  base::DictValue GetAll() const;
+ 
+   // Get the number of entries in the current state.
+   size_t GetEntryCount() const;
+@@ -93,7 +93,7 @@ class CefStateJournal {
+   bool is_open_ = false;
+ 
+   // In-memory state rebuilt from journal.
+-  base::Value::Dict state_;
++  base::DictValue state_;
+ 
+   // Count of operations since last compaction.
+   size_t pending_ops_ = 0;
+diff --git a/libcef/browser/storage_state_manager_impl.cc b/libcef/browser/storage_state_manager_impl.cc
+index cff7e0f33..82f6888ca 100644
+--- a/libcef/browser/storage_state_manager_impl.cc
++++ b/libcef/browser/storage_state_manager_impl.cc
+@@ -19,6 +19,25 @@
+ #include "cef/libcef/browser/thread_util.h"
+ #include "cef/libcef/common/values_impl.h"
+ 
++struct StorageStateListResult {
++  bool success = false;
++  std::string error;
++  base::FilePath directory;
++  std::vector<base::DictValue> entries;
++};
++
++struct StorageStateReadResult {
++  bool success = false;
++  std::string error;
++  base::DictValue result;
++};
++
++struct StorageStateActionResult {
++  bool success = false;
++  std::string error;
++  base::FilePath path;
++};
++
+ namespace {
+ 
+ constexpr char kAgentBrowserDirectory[] = ".agent-browser";
+@@ -50,14 +69,15 @@ bool IsStateFile(const base::FilePath& path) {
+          base::EndsWith(filename, kJsonEncryptedExtension);
+ }
+ 
+-base::Value::Dict MakeEntryDict(const base::FilePath& path,
+-                                const base::File::Info& info) {
+-  base::Value::Dict dict;
++base::DictValue MakeEntryDict(const base::FilePath& path,
++                                int64_t file_size,
++                                double modified_time) {
++  base::DictValue dict;
+   dict.Set("filename", path.BaseName().AsUTF8Unsafe());
+   dict.Set("path", path.AsUTF8Unsafe());
+-  dict.Set("size", static_cast<double>(info.size));
++  dict.Set("size", static_cast<double>(file_size));
+   dict.Set("modified",
+-           info.last_modified.InSecondsFSinceUnixEpoch());
++           modified_time);
+   dict.Set("encrypted",
+            base::EndsWith(path.BaseName().AsUTF8Unsafe(),
+                           kJsonEncryptedExtension));
+@@ -71,25 +91,6 @@ base::FilePath BuildStatePath(const base::FilePath& directory,
+   return directory.AppendASCII(safe_name + kJsonExtension);
+ }
+ 
+-struct StorageStateListResult {
+-  bool success = false;
+-  std::string error;
+-  base::FilePath directory;
+-  std::vector<base::Value::Dict> entries;
+-};
+-
+-struct StorageStateReadResult {
+-  bool success = false;
+-  std::string error;
+-  base::Value::Dict result;
+-};
+-
+-struct StorageStateActionResult {
+-  bool success = false;
+-  std::string error;
+-  base::FilePath path;
+-};
+-
+ StorageStateListResult ListStatesOnBlockingThread(base::FilePath directory) {
+   StorageStateListResult result;
+   result.directory = directory;
+@@ -112,7 +113,7 @@ StorageStateListResult ListStatesOnBlockingThread(base::FilePath directory) {
+     }
+ 
+     const auto& info = enumerator.GetInfo();
+-    result.entries.push_back(MakeEntryDict(path, info));
++    result.entries.push_back(MakeEntryDict(path, info.GetSize(), info.GetLastModifiedTime().InSecondsFSinceUnixEpoch()));
+   }
+ 
+   result.success = true;
+@@ -133,7 +134,7 @@ StorageStateReadResult ShowStateOnBlockingThread(base::FilePath path) {
+     return result;
+   }
+ 
+-  result.result = MakeEntryDict(path, info);
++  result.result = MakeEntryDict(path, info.size, info.last_modified.InSecondsFSinceUnixEpoch());
+   result.result.Set("summary", "Storage state scaffolding is not yet implemented.");
+   result.success = true;
+   return result;
+@@ -244,7 +245,7 @@ StorageStateReadResult CleanStatesOnBlockingThread(base::FilePath directory,
+     }
+ 
+     const auto& info = enumerator.GetInfo();
+-    if (now - info.last_modified > max_age) {
++    if (now - info.GetLastModifiedTime() > max_age) {
+       if (base::DeleteFile(entry)) {
+         ++cleaned;
+         continue;
+@@ -329,9 +330,6 @@ void CefStorageStateManagerImpl::Initialize(
+   }
+ }
+ 
+-bool CefStorageStateManagerImpl::IsInitialized() const {
+-  return initialized_;
+-}
+ 
+ void CefStorageStateManagerImpl::Save(
+     const CefString& path,
+diff --git a/libcef/browser/storage_state_manager_impl.h b/libcef/browser/storage_state_manager_impl.h
+index a514ac4eb..935bca12d 100644
+--- a/libcef/browser/storage_state_manager_impl.h
++++ b/libcef/browser/storage_state_manager_impl.h
+@@ -121,7 +121,7 @@ class CefStorageStateManagerImpl : public CefStorageStateManager {
+   // Cached directory listing to avoid re-enumeration.
+   struct CachedDirectoryState {
+     base::TimeTicks last_enumerated;
+-    std::vector<base::Value::Dict> entries;
++    std::vector<base::DictValue> entries;
+     base::FilePath directory;
+     bool valid = false;
+   };
+diff --git a/libcef/renderer/frame_impl.cc b/libcef/renderer/frame_impl.cc
+index 85f9d7332..47d7aceb1 100644
+--- a/libcef/renderer/frame_impl.cc
++++ b/libcef/renderer/frame_impl.cc
+@@ -520,7 +520,7 @@ void CefFrameImpl::ConnectBrowserFrame(ConnectReason reason) {
+   // connection.
+   browser_frame->FrameAttached(receiver_.BindNewPipeAndPassRemote(),
+                                reattached);
+-  receiver_.set_disconnect_with_reason_and_result_handler(
++  receiver_.set_disconnect_with_reason_handler(
+       base::BindOnce(&CefFrameImpl::OnRenderFrameDisconnect, this));
+ }
+ 
+@@ -535,7 +535,7 @@ const mojo::Remote<cef::mojom::BrowserFrame>& CefFrameImpl::GetBrowserFrame(
+       // Triggers creation of a CefBrowserFrame in the browser process.
+       render_frame->GetBrowserInterfaceBroker().GetInterface(
+           browser_frame_.BindNewPipeAndPassReceiver());
+-      browser_frame_.set_disconnect_with_reason_and_result_handler(
++      browser_frame_.set_disconnect_with_reason_handler(
+           base::BindOnce(&CefFrameImpl::OnBrowserFrameDisconnect, this));
+     }
+   }
+@@ -543,17 +543,15 @@ const mojo::Remote<cef::mojom::BrowserFrame>& CefFrameImpl::GetBrowserFrame(
+ }
+ 
+ void CefFrameImpl::OnBrowserFrameDisconnect(uint32_t custom_reason,
+-                                            const std::string& description,
+-                                            MojoResult error_result) {
++                                            const std::string& description) {
+   OnDisconnect(DisconnectReason::BROWSER_FRAME_DISCONNECT, custom_reason,
+-               description, error_result);
++               description, MOJO_RESULT_OK);
+ }
+ 
+ void CefFrameImpl::OnRenderFrameDisconnect(uint32_t custom_reason,
+-                                           const std::string& description,
+-                                           MojoResult error_result) {
++                                           const std::string& description) {
+   OnDisconnect(DisconnectReason::RENDER_FRAME_DISCONNECT, custom_reason,
+-               description, error_result);
++               description, MOJO_RESULT_OK);
+ }
+ 
+ // static
+@@ -643,7 +641,7 @@ void CefFrameImpl::OnDisconnect(DisconnectReason reason,
+   DVLOG(1) << __func__ << ": " << frame_debug_str_ << " disconnected "
+            << GetDisconnectDebugString(connection_state, frame_is_valid,
+                                        frame_is_main, reason, custom_reason,
+-                                       description, error_result);
++                                       description, 0);
+ 
+   browser_frame_.reset();
+   receiver_.reset();
+@@ -689,7 +687,7 @@ void CefFrameImpl::OnDisconnect(DisconnectReason reason,
+     }
+     browser_connect_retry_log_ += GetDisconnectDebugString(
+         connection_state, frame_is_valid, frame_is_main, reason, custom_reason,
+-        description, error_result);
++        description, 0);
+ 
+     // Use a shorter delay for the first retry attempt after the browser process
+     // intentionally declines the connection. This will improve load performance
+diff --git a/libcef/renderer/frame_impl.h b/libcef/renderer/frame_impl.h
+index 91fe050da..69d8236e4 100644
+--- a/libcef/renderer/frame_impl.h
++++ b/libcef/renderer/frame_impl.h
+@@ -65,6 +65,11 @@ class CefFrameImpl
+   void ExecuteJavaScript(const CefString& jsCode,
+                          const CefString& scriptUrl,
+                          int startLine) override;
++  void ExecuteJavaScriptWithResult(
++      const CefString& code,
++      const CefString& script_url,
++      int start_line,
++      CefRefPtr<CefJavaScriptResultCallback> callback) override {}
+   bool IsMain() override;
+   bool IsFocused() override;
+   CefString GetName() override;
+@@ -118,12 +123,10 @@ class CefFrameImpl
+ 
+   // Called if the BrowserFrame connection is disconnected.
+   void OnBrowserFrameDisconnect(uint32_t custom_reason,
+-                                const std::string& description,
+-                                MojoResult error_result);
++                                const std::string& description);
+   // Called if the RenderFrame connection is disconnected.
+   void OnRenderFrameDisconnect(uint32_t custom_reason,
+-                               const std::string& description,
+-                               MojoResult error_result);
++                               const std::string& description);
+ 
+   enum class DisconnectReason {
+     DETACHED,
+@@ -135,9 +138,9 @@ class CefFrameImpl
+   // destruction, or insertion into the bfcache (when the browser-side frame
+   // representation is destroyed and closes the connection).
+   void OnDisconnect(DisconnectReason reason,
+-                    uint32_t custom_reason,
+-                    const std::string& description,
+-                    MojoResult error_result);
++                  uint32_t custom_reason,
++                  const std::string& description,
++                  MojoResult error_result);
+ 
+   // Send an action to the remote BrowserFrame. This will queue the action if
+   // the remote frame is not yet attached.
+diff --git a/patch/patches/mojo_connect_result_3664.patch b/patch/patches/mojo_connect_result_3664.patch
+deleted file mode 100644
+index 5b8e822f0..000000000
+--- a/patch/patches/mojo_connect_result_3664.patch
++++ /dev/null
+@@ -1,458 +0,0 @@
+-diff --git ipc/ipc_mojo_bootstrap.cc ipc/ipc_mojo_bootstrap.cc
+-index 9f2a3da3791d311b69dd821841763bd228c0c1ac..8fea8f4f22f88a88eb36fddc43aa18b83577a0aa 100644
+---- ipc/ipc_mojo_bootstrap.cc
+-+++ ipc/ipc_mojo_bootstrap.cc
+-@@ -974,7 +974,8 @@ class ChannelAssociatedGroupController
+-           endpoint->disconnect_reason());
+- 
+-       base::AutoUnlock unlocker(lock_);
+--      client->NotifyError(reason);
+-+      // TODO(cef): Route the actual Connector error if/when needed.
+-+      client->NotifyError(reason, MOJO_RESULT_OK);
+-     } else {
+-       endpoint->task_runner()->PostTask(
+-           FROM_HERE,
+-diff --git mojo/public/cpp/bindings/associated_receiver.h mojo/public/cpp/bindings/associated_receiver.h
+-index d19e884cfe78486583967f8bc0db7f0e67950382..34080a445b1a0af154f9fdd558c1fd9beec75cb5 100644
+---- mojo/public/cpp/bindings/associated_receiver.h
+-+++ mojo/public/cpp/bindings/associated_receiver.h
+-@@ -48,6 +48,8 @@ class COMPONENT_EXPORT(MOJO_CPP_BINDINGS) AssociatedReceiverBase {
+-   void set_disconnect_handler(base::OnceClosure error_handler);
+-   void set_disconnect_with_reason_handler(
+-       ConnectionErrorWithReasonCallback error_handler);
+-+  void set_disconnect_with_reason_and_result_handler(
+-+      ConnectionErrorWithReasonAndResultCallback error_handler);
+-   void reset_on_disconnect();
+- 
+-   bool is_bound() const { return !!endpoint_client_; }
+-@@ -161,6 +163,7 @@ class AssociatedReceiver : public internal::AssociatedReceiverBase {
+-   // Like above but when invoked |handler| will receive additional metadata
+-   // about why the remote endpoint was closed, if provided.
+-   using AssociatedReceiverBase::set_disconnect_with_reason_handler;
+-+  using AssociatedReceiverBase::set_disconnect_with_reason_and_result_handler;
+- 
+-   // Resets this AssociatedReceiver on disconnect. Note that this replaces any
+-   // previously set disconnection handler. Must be called on a bound
+-diff --git mojo/public/cpp/bindings/associated_remote.h mojo/public/cpp/bindings/associated_remote.h
+-index 01391edaac159b032d354c4863e885b7431bdd37..35eb0dd0b9bac011f1c5f60a0b767a3c9f34ff3f 100644
+---- mojo/public/cpp/bindings/associated_remote.h
+-+++ mojo/public/cpp/bindings/associated_remote.h
+-@@ -154,6 +154,11 @@ class AssociatedRemote {
+-     internal_state_.set_connection_error_with_reason_handler(
+-         std::move(handler));
+-   }
+-+  void set_disconnect_with_reason_and_result_handler(
+-+      ConnectionErrorWithReasonAndResultCallback handler) {
+-+    internal_state_.set_connection_error_with_reason_and_result_handler(
+-+        std::move(handler));
+-+  }
+- 
+-   // A convenient helper that resets this AssociatedRemote on disconnect. Note
+-   // that this replaces any previously set disconnection handler. Must be called
+-diff --git mojo/public/cpp/bindings/connection_error_callback.h mojo/public/cpp/bindings/connection_error_callback.h
+-index ba6d81eaccbb608c89eb4571b564b32f61e49c00..e0542ae97760af7a10aa276656221877da4f53ad 100644
+---- mojo/public/cpp/bindings/connection_error_callback.h
+-+++ mojo/public/cpp/bindings/connection_error_callback.h
+-@@ -6,6 +6,7 @@
+- #define MOJO_PUBLIC_CPP_BINDINGS_CONNECTION_ERROR_CALLBACK_H_
+- 
+- #include "base/functional/callback_forward.h"
+-+#include "mojo/public/c/system/types.h"
+- 
+- namespace mojo {
+- 
+-@@ -18,6 +19,14 @@ using ConnectionErrorWithReasonCallback =
+- using RepeatingConnectionErrorWithReasonCallback =
+-     base::RepeatingCallback<void(uint32_t /* custom_reason */,
+-                                  const std::string& /* description */)>;
+-+using ConnectionErrorWithReasonAndResultCallback =
+-+    base::OnceCallback<void(uint32_t /* custom_reason */,
+-+                            const std::string& /* description */,
+-+                            MojoResult /* error_result */)>;
+-+using RepeatingConnectionErrorWithReasonAndResultCallback =
+-+    base::RepeatingCallback<void(uint32_t /* custom_reason */,
+-+                                 const std::string& /* description */,
+-+                                 MojoResult /* error_result */)>;
+- 
+- }  // namespace mojo
+- 
+-diff --git mojo/public/cpp/bindings/connector.h mojo/public/cpp/bindings/connector.h
+-index 0b879c4e65d4833b7c12faaeca7c94526d4805fa..10fb98ff3ceb2fe59743bc977b85bb04ebed7f5a 100644
+---- mojo/public/cpp/bindings/connector.h
+-+++ mojo/public/cpp/bindings/connector.h
+-@@ -146,6 +146,11 @@ class COMPONENT_EXPORT(MOJO_CPP_BINDINGS) Connector : public MessageReceiver {
+-     return error_;
+-   }
+- 
+-+  MojoResult handle_ready_result() const {
+-+    DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+-+    return handle_ready_result_;
+-+  }
+-+
+-   // Starts receiving on the Connector's message pipe, allowing incoming
+-   // messages and error events to be dispatched. Once called, the Connector is
+-   // effectively bound to `task_runner`. Initialization methods like
+-@@ -320,6 +325,7 @@ class COMPONENT_EXPORT(MOJO_CPP_BINDINGS) Connector : public MessageReceiver {
+-   std::optional<HandleSignalTracker> peer_remoteness_tracker_;
+- 
+-   std::atomic<bool> error_ GUARDED_BY_CONTEXT(sequence_checker_);
+-+  MojoResult handle_ready_result_ = MOJO_RESULT_OK;
+-   bool drop_writes_ = false;
+-   bool enforce_errors_from_incoming_receiver_ = true;
+- 
+-diff --git mojo/public/cpp/bindings/interface_endpoint_client.h mojo/public/cpp/bindings/interface_endpoint_client.h
+-index a496f0b2635d2bc7c5f57e9f0e3cedc6eeeffbe8..fca2780025bb50af44587e38d8b1e1b65f97f1af 100644
+---- mojo/public/cpp/bindings/interface_endpoint_client.h
+-+++ mojo/public/cpp/bindings/interface_endpoint_client.h
+-@@ -77,6 +77,7 @@ class COMPONENT_EXPORT(MOJO_CPP_BINDINGS) InterfaceEndpointClient
+-     CHECK(sequence_checker_.CalledOnValidSequence());
+-     error_handler_ = std::move(error_handler);
+-     error_with_reason_handler_.Reset();
+-+    error_with_reason_and_result_handler_.Reset();
+-   }
+- 
+-   void set_connection_error_with_reason_handler(
+-@@ -84,6 +85,15 @@ class COMPONENT_EXPORT(MOJO_CPP_BINDINGS) InterfaceEndpointClient
+-     CHECK(sequence_checker_.CalledOnValidSequence());
+-     error_with_reason_handler_ = std::move(error_handler);
+-     error_handler_.Reset();
+-+    error_with_reason_and_result_handler_.Reset();
+-+  }
+-+
+-+  void set_connection_error_with_reason_and_result_handler(
+-+      ConnectionErrorWithReasonAndResultCallback error_handler) {
+-+    CHECK(sequence_checker_.CalledOnValidSequence());
+-+    error_with_reason_and_result_handler_ = std::move(error_handler);
+-+    error_handler_.Reset();
+-+    error_with_reason_handler_.Reset();
+-   }
+- 
+-   // Returns true if an error was encountered.
+-@@ -156,7 +166,8 @@ class COMPONENT_EXPORT(MOJO_CPP_BINDINGS) InterfaceEndpointClient
+- 
+-   // NOTE: |message| must have passed message header validation.
+-   bool HandleIncomingMessage(Message* message);
+--  void NotifyError(const std::optional<DisconnectReason>& reason);
+-+  void NotifyError(const std::optional<DisconnectReason>& reason,
+-+                   MojoResult error_result);
+- 
+-   // The following methods send interface control messages.
+-   // They must only be called when the handle is not in pending association
+-@@ -346,6 +357,8 @@ class COMPONENT_EXPORT(MOJO_CPP_BINDINGS) InterfaceEndpointClient
+- 
+-   base::OnceClosure error_handler_;
+-   ConnectionErrorWithReasonCallback error_with_reason_handler_;
+-+  ConnectionErrorWithReasonAndResultCallback
+-+      error_with_reason_and_result_handler_;
+-   bool encountered_error_ = false;
+- 
+-   const scoped_refptr<base::SequencedTaskRunner> task_runner_;
+-diff --git mojo/public/cpp/bindings/lib/associated_receiver.cc mojo/public/cpp/bindings/lib/associated_receiver.cc
+-index f727b6320bd927b72320652959ad669486ee094e..ebf7536ac38707d2aeb8861b70f16777746ecb7d 100644
+---- mojo/public/cpp/bindings/lib/associated_receiver.cc
+-+++ mojo/public/cpp/bindings/lib/associated_receiver.cc
+-@@ -56,6 +56,13 @@ void AssociatedReceiverBase::set_disconnect_with_reason_handler(
+-       std::move(error_handler));
+- }
+- 
+-+void AssociatedReceiverBase::set_disconnect_with_reason_and_result_handler(
+-+    ConnectionErrorWithReasonAndResultCallback error_handler) {
+-+  DCHECK(is_bound());
+-+  endpoint_client_->set_connection_error_with_reason_and_result_handler(
+-+      std::move(error_handler));
+-+}
+-+
+- void AssociatedReceiverBase::reset_on_disconnect() {
+-   DCHECK(is_bound());
+-   set_disconnect_handler(
+-diff --git mojo/public/cpp/bindings/lib/binding_state.h mojo/public/cpp/bindings/lib/binding_state.h
+-index 7efe47038b51b9922a817be9876bfd4830031ebb..22a636f9ac3ad7d6a6e66fc8da6e0229e19460ef 100644
+---- mojo/public/cpp/bindings/lib/binding_state.h
+-+++ mojo/public/cpp/bindings/lib/binding_state.h
+-@@ -66,6 +66,13 @@ class COMPONENT_EXPORT(MOJO_CPP_BINDINGS) BindingStateBase {
+-         std::move(error_handler));
+-   }
+- 
+-+  void set_connection_error_with_reason_and_result_handler(
+-+      ConnectionErrorWithReasonAndResultCallback error_handler) {
+-+    DCHECK(is_bound());
+-+    endpoint_client_->set_connection_error_with_reason_and_result_handler(
+-+        std::move(error_handler));
+-+  }
+-+
+-   bool is_bound() const { return !!router_; }
+- 
+-   MessagePipeHandle handle() const {
+-diff --git mojo/public/cpp/bindings/lib/connector.cc mojo/public/cpp/bindings/lib/connector.cc
+-index f0fde3a9c289d448b464437bcd69588dcd36d798..72bf007c813d5f7bd600fb67d9badbfa333307c4 100644
+---- mojo/public/cpp/bindings/lib/connector.cc
+-+++ mojo/public/cpp/bindings/lib/connector.cc
+-@@ -440,6 +440,8 @@ void Connector::OnSyncHandleWatcherHandleReady(const char* interface_name,
+- void Connector::OnHandleReadyInternal(MojoResult result) {
+-   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
+- 
+-+  handle_ready_result_ = result;
+-+
+-   if (result == MOJO_RESULT_FAILED_PRECONDITION) {
+-     // No more messages on the pipe and the peer is closed.
+-     HandleError(false /* force_pipe_reset */, false /* force_async_handler */);
+-diff --git mojo/public/cpp/bindings/lib/interface_endpoint_client.cc mojo/public/cpp/bindings/lib/interface_endpoint_client.cc
+-index e6a9a30c47cd4db0f942536a42a3619222b6abda..31f46883503fbd9159dc08d1ba03184c705bb29a 100644
+---- mojo/public/cpp/bindings/lib/interface_endpoint_client.cc
+-+++ mojo/public/cpp/bindings/lib/interface_endpoint_client.cc
+-@@ -754,7 +754,8 @@ bool InterfaceEndpointClient::HandleIncomingMessage(Message* message) {
+- }
+- 
+- void InterfaceEndpointClient::NotifyError(
+--    const std::optional<DisconnectReason>& reason) {
+-+    const std::optional<DisconnectReason>& reason,
+-+    MojoResult error_result) {
+-   TRACE_EVENT("toplevel", "Closed mojo endpoint",
+-               [&](perfetto::EventContext& ctx) {
+-                 auto* info = ctx.event()->set_chrome_mojo_event_info();
+-@@ -791,6 +792,14 @@ void InterfaceEndpointClient::NotifyError(
+-     } else {
+-       std::move(error_with_reason_handler_).Run(0, std::string());
+-     }
+-+  } else if (error_with_reason_and_result_handler_) {
+-+    if (reason) {
+-+      std::move(error_with_reason_and_result_handler_)
+-+          .Run(reason->custom_reason, reason->description, error_result);
+-+    } else {
+-+      std::move(error_with_reason_and_result_handler_)
+-+          .Run(0, std::string(), error_result);
+-+    }
+-   }
+- }
+- 
+-@@ -935,7 +944,8 @@ void InterfaceEndpointClient::OnAssociationEvent(
+-     task_runner_->PostTask(FROM_HERE,
+-                            base::BindOnce(&InterfaceEndpointClient::NotifyError,
+-                                           weak_ptr_factory_.GetWeakPtr(),
+--                                          handle_.disconnect_reason()));
+-+                                          handle_.disconnect_reason(),
+-+                                          MOJO_RESULT_OK));
+-   }
+- }
+- 
+-diff --git mojo/public/cpp/bindings/lib/interface_ptr_state.h mojo/public/cpp/bindings/lib/interface_ptr_state.h
+-index 443d0b74e0c92f5788076537b83a6e37e02100a4..aa39a01bbe4b3d635b0fbd023fa8fafbc2406093 100644
+---- mojo/public/cpp/bindings/lib/interface_ptr_state.h
+-+++ mojo/public/cpp/bindings/lib/interface_ptr_state.h
+-@@ -230,6 +230,15 @@ class InterfacePtrState : public InterfacePtrStateBase {
+-         std::move(error_handler));
+-   }
+- 
+-+  void set_connection_error_with_reason_and_result_handler(
+-+      ConnectionErrorWithReasonAndResultCallback error_handler) {
+-+    ConfigureProxyIfNecessary();
+-+
+-+    DCHECK(endpoint_client());
+-+    endpoint_client()->set_connection_error_with_reason_and_result_handler(
+-+        std::move(error_handler));
+-+  }
+-+
+-   void set_idle_handler(base::TimeDelta timeout,
+-                         base::RepeatingClosure handler) {
+-     ConfigureProxyIfNecessary();
+-diff --git mojo/public/cpp/bindings/lib/multiplex_router.cc mojo/public/cpp/bindings/lib/multiplex_router.cc
+-index 6086f9b36062550dd06d70215bda7d23f086e528..3af3538e0b74176fd5bacf393e8b27073cfaa4b0 100644
+---- mojo/public/cpp/bindings/lib/multiplex_router.cc
+-+++ mojo/public/cpp/bindings/lib/multiplex_router.cc
+-@@ -86,6 +86,12 @@ class MultiplexRouter::InterfaceEndpoint
+-     disconnect_reason_ = disconnect_reason;
+-   }
+- 
+-+  MojoResult error_result() const { return error_result_; }
+-+  void set_error_result(MojoResult error_result) {
+-+    router_->AssertLockAcquired();
+-+    error_result_ = error_result;
+-+  }
+-+
+-   base::SequencedTaskRunner* task_runner() const { return task_runner_.get(); }
+- 
+-   InterfaceEndpointClient* client() const { return client_; }
+-@@ -265,6 +271,7 @@ class MultiplexRouter::InterfaceEndpoint
+-   bool handle_created_;
+- 
+-   std::optional<DisconnectReason> disconnect_reason_;
+-+  MojoResult error_result_ = MOJO_RESULT_OK;
+- 
+-   // The task runner on which |client_|'s methods can be called.
+-   scoped_refptr<base::SequencedTaskRunner> task_runner_;
+-@@ -914,6 +921,8 @@ void MultiplexRouter::OnPipeConnectionError(bool force_async_dispatch) {
+-         endpoint->client()->ForgetAsyncRequest(request_id);
+-       }
+- 
+-+      endpoint->set_error_result(connector_.handle_ready_result());
+-+
+-       tasks_.push_back(Task::CreateNotifyErrorTask(endpoint.get()));
+-     }
+- 
+-@@ -1113,7 +1122,7 @@ bool MultiplexRouter::ProcessNotifyErrorTask(
+-     // It is safe to call into |client| without the lock. Because |client| is
+-     // always accessed on the same sequence, including DetachEndpointClient().
+-     MayAutoUnlock unlocker(&lock_);
+--    client->NotifyError(disconnect_reason);
+-+    client->NotifyError(disconnect_reason, endpoint->error_result());
+-   }
+-   return true;
+- }
+-diff --git mojo/public/cpp/bindings/receiver.h mojo/public/cpp/bindings/receiver.h
+-index 731c6a67b11dfc510cf3835ede4fd9fb4b52796f..1d56536630359ff816cba53f427dbbbacb63cf01 100644
+---- mojo/public/cpp/bindings/receiver.h
+-+++ mojo/public/cpp/bindings/receiver.h
+-@@ -105,6 +105,12 @@ class Receiver {
+-     internal_state_.set_connection_error_with_reason_handler(
+-         std::move(error_handler));
+-   }
+-+  void set_disconnect_with_reason_and_result_handler(
+-+      ConnectionErrorWithReasonAndResultCallback error_handler) {
+-+    DCHECK(is_bound());
+-+    internal_state_.set_connection_error_with_reason_and_result_handler(
+-+        std::move(error_handler));
+-+  }
+- 
+-   // Resets this Receiver to an unbound state. An unbound Receiver will NEVER
+-   // schedule method calls or disconnection notifications, and any pending tasks
+-diff --git mojo/public/cpp/bindings/receiver_set.cc mojo/public/cpp/bindings/receiver_set.cc
+-index ba36cf3bad0fefc3539b73a875d9b09889688e71..5de9edc62841dc4c8c9fd82cc303a38ef761f068 100644
+---- mojo/public/cpp/bindings/receiver_set.cc
+-+++ mojo/public/cpp/bindings/receiver_set.cc
+-@@ -70,9 +70,10 @@ void ReceiverSetState::Entry::DidDispatchOrReject() {
+- }
+- 
+- void ReceiverSetState::Entry::OnDisconnect(uint32_t custom_reason_code,
+--                                           const std::string& description) {
+-+                                           const std::string& description,
+-+                                           MojoResult error_result) {
+-   WillDispatch();
+--  state_.OnDisconnect(id_, custom_reason_code, description);
+-+  state_.OnDisconnect(id_, custom_reason_code, description, error_result);
+- }
+- 
+- ReceiverSetState::ReceiverSetState() = default;
+-@@ -82,12 +83,21 @@ ReceiverSetState::~ReceiverSetState() = default;
+- void ReceiverSetState::set_disconnect_handler(base::RepeatingClosure handler) {
+-   disconnect_handler_ = std::move(handler);
+-   disconnect_with_reason_handler_.Reset();
+-+  disconnect_with_reason_and_result_handler_.Reset();
+- }
+- 
+- void ReceiverSetState::set_disconnect_with_reason_handler(
+-     RepeatingConnectionErrorWithReasonCallback handler) {
+-   disconnect_with_reason_handler_ = std::move(handler);
+-   disconnect_handler_.Reset();
+-+  disconnect_with_reason_and_result_handler_.Reset();
+-+}
+-+
+-+void ReceiverSetState::set_disconnect_with_reason_and_result_handler(
+-+    RepeatingConnectionErrorWithReasonAndResultCallback handler) {
+-+  disconnect_with_reason_and_result_handler_ = std::move(handler);
+-+  disconnect_handler_.Reset();
+-+  disconnect_with_reason_handler_.Reset();
+- }
+- 
+- ReportBadMessageCallback ReceiverSetState::GetBadMessageCallback() {
+-@@ -166,7 +176,8 @@ void ReceiverSetState::SetDispatchContext(void* context,
+- 
+- void ReceiverSetState::OnDisconnect(ReceiverId id,
+-                                     uint32_t custom_reason_code,
+--                                    const std::string& description) {
+-+                                    const std::string& description,
+-+                                    MojoResult error_result) {
+-   auto it = entries_.find(id);
+-   CHECK(it != entries_.end());
+- 
+-@@ -178,6 +189,9 @@ void ReceiverSetState::OnDisconnect(ReceiverId id,
+-     disconnect_handler_.Run();
+-   } else if (disconnect_with_reason_handler_) {
+-     disconnect_with_reason_handler_.Run(custom_reason_code, description);
+-+  } else if (disconnect_with_reason_and_result_handler_) {
+-+    disconnect_with_reason_and_result_handler_.Run(custom_reason_code,
+-+                                                   description, error_result);
+-   }
+- }
+- 
+-diff --git mojo/public/cpp/bindings/receiver_set.h mojo/public/cpp/bindings/receiver_set.h
+-index e27b8e81cb72ba10ac2ba2ddb59bdc6239606794..54c25368f462b6489ee03ca5e881ed9dc68667fc 100644
+---- mojo/public/cpp/bindings/receiver_set.h
+-+++ mojo/public/cpp/bindings/receiver_set.h
+-@@ -72,7 +72,8 @@ class COMPONENT_EXPORT(MOJO_CPP_BINDINGS) ReceiverSetState {
+-     virtual void* GetContext() = 0;
+-     virtual void InstallDispatchHooks(
+-         std::unique_ptr<MessageFilter> filter,
+--        RepeatingConnectionErrorWithReasonCallback disconnect_handler) = 0;
+-+        RepeatingConnectionErrorWithReasonAndResultCallback
+-+            disconnect_handler) = 0;
+-     virtual void FlushForTesting() = 0;
+-     virtual void ResetWithReason(uint32_t custom_reason_code,
+-                                  const std::string& description) = 0;
+-@@ -94,7 +95,8 @@ class COMPONENT_EXPORT(MOJO_CPP_BINDINGS) ReceiverSetState {
+-     void WillDispatch();
+-     void DidDispatchOrReject();
+-     void OnDisconnect(uint32_t custom_reason_code,
+--                      const std::string& description);
+-+                      const std::string& description,
+-+                      MojoResult error_result);
+- 
+-     // RAW_PTR_EXCLUSION: Binary size increase.
+-     RAW_PTR_EXCLUSION ReceiverSetState& state_;
+-@@ -130,6 +132,8 @@ class COMPONENT_EXPORT(MOJO_CPP_BINDINGS) ReceiverSetState {
+-   void set_disconnect_handler(base::RepeatingClosure handler);
+-   void set_disconnect_with_reason_handler(
+-       RepeatingConnectionErrorWithReasonCallback handler);
+-+  void set_disconnect_with_reason_and_result_handler(
+-+      RepeatingConnectionErrorWithReasonAndResultCallback handler);
+- 
+-   ReportBadMessageCallback GetBadMessageCallback();
+-   ReceiverId Add(std::unique_ptr<ReceiverState> receiver,
+-@@ -142,11 +146,14 @@ class COMPONENT_EXPORT(MOJO_CPP_BINDINGS) ReceiverSetState {
+-   void SetDispatchContext(void* context, ReceiverId receiver_id);
+-   void OnDisconnect(ReceiverId id,
+-                     uint32_t custom_reason_code,
+--                    const std::string& description);
+-+                    const std::string& description,
+-+                    MojoResult error_result);
+- 
+-  private:
+-   base::RepeatingClosure disconnect_handler_;
+-   RepeatingConnectionErrorWithReasonCallback disconnect_with_reason_handler_;
+-+  RepeatingConnectionErrorWithReasonAndResultCallback
+-+      disconnect_with_reason_and_result_handler_;
+-   ReceiverId next_receiver_id_ = 0;
+-   EntryMap entries_;
+-   raw_ptr<void, DanglingUntriaged> current_context_ = nullptr;
+-@@ -509,11 +516,12 @@ class ReceiverSetBase {
+-     const void* GetContext() const override { return &context_; }
+-     void* GetContext() override { return &context_; }
+- 
+--    void InstallDispatchHooks(std::unique_ptr<MessageFilter> filter,
+--                              RepeatingConnectionErrorWithReasonCallback
+--                                  disconnect_handler) override {
+-+    void InstallDispatchHooks(
+-+        std::unique_ptr<MessageFilter> filter,
+-+        RepeatingConnectionErrorWithReasonAndResultCallback
+-+            disconnect_handler) override {
+-       receiver_.SetFilter(std::move(filter));
+--      receiver_.set_disconnect_with_reason_handler(
+-+      receiver_.set_disconnect_with_reason_and_result_handler(
+-           std::move(disconnect_handler));
+-     }
+- 
+-diff --git mojo/public/cpp/bindings/remote.h mojo/public/cpp/bindings/remote.h
+-index 8dff5e3e88fd4a2485c673735c5cf85623502105..92c8950ccd228df9821487505786cfe6ea580580 100644
+---- mojo/public/cpp/bindings/remote.h
+-+++ mojo/public/cpp/bindings/remote.h
+-@@ -158,6 +158,11 @@ class Remote {
+-     internal_state_.set_connection_error_with_reason_handler(
+-         std::move(handler));
+-   }
+-+  void set_disconnect_with_reason_and_result_handler(
+-+      ConnectionErrorWithReasonAndResultCallback handler) {
+-+    internal_state_.set_connection_error_with_reason_and_result_handler(
+-+        std::move(handler));
+-+  }
+- 
+-   // A convenient helper that resets this Remote on disconnect. Note that this
+-   // replaces any previously set disconnection handler. Must be called on a
+diff --git a/tests/cefsimple/cefsimple_linux.cc b/tests/cefsimple/cefsimple_linux.cc
+index ce9de2239..6f06cc67b 100644
+--- a/tests/cefsimple/cefsimple_linux.cc
++++ b/tests/cefsimple/cefsimple_linux.cc
+@@ -64,6 +64,7 @@ int main(int argc, char* argv[]) {
+ // use of the sandbox.
+ #if !defined(CEF_USE_SANDBOX)
+   settings.no_sandbox = true;
++  settings.multi_threaded_message_loop = true;
+ #endif
+ 
+   // SimpleApp implements application-level callbacks for the browser process.
+@@ -78,9 +79,11 @@ int main(int argc, char* argv[]) {
+     return CefGetExitCode();
+   }
+ 
+-  // Run the CEF message loop. This will block until CefQuitMessageLoop() is
+-  // called.
+-  CefRunMessageLoop();
++  // Use multi_threaded_message_loop - just sleep while CEF processes on its own thread.
++  // This keeps the main thread alive while the browser thread handles CDP.
++  while (true) {
++    sleep(1);
++  }
+ 
+   // Shut down CEF.
+   CefShutdown();

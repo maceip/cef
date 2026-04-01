@@ -103,18 +103,11 @@ function buildTaskIndex(
   return new Map(tasks.map((task) => [task.taskId, task]));
 }
 
-function emptyDifficultyBreakdown(): Record<TaskDifficulty, TrajectorySummary> {
-  return {
-    easy: { ...EMPTY_TRAJECTORY_SUMMARY },
-    medium: { ...EMPTY_TRAJECTORY_SUMMARY },
-    hard: { ...EMPTY_TRAJECTORY_SUMMARY },
-  };
-}
-
 function distillDriverTrajectories(
   driver: DriverAccuracyReport,
   taskIndex: Map<string, AccuracyTask>
 ): DriverTrajectoryDistillation {
+  const knownTaskResults: AccuracyResult[] = [];
   const resultsByDifficulty: Record<TaskDifficulty, AccuracyResult[]> = {
     easy: [],
     medium: [],
@@ -129,6 +122,7 @@ function distillDriverTrajectories(
       continue;
     }
 
+    knownTaskResults.push(result);
     resultsByDifficulty[task.difficulty].push(result);
 
     const domainResults = resultsByDomain.get(task.domain) ?? [];
@@ -153,7 +147,7 @@ function distillDriverTrajectories(
     driverName: driver.driverName,
     displayName: driver.displayName,
     provenance: driver.provenance,
-    overall: buildTrajectorySummary(driver.results),
+    overall: buildTrajectorySummary(knownTaskResults),
     byDifficulty: {
       easy: buildTrajectorySummary(resultsByDifficulty.easy),
       medium: buildTrajectorySummary(resultsByDifficulty.medium),

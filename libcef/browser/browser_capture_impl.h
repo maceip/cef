@@ -8,8 +8,6 @@
 
 #include "base/memory/raw_ptr.h"
 #include "cef/include/cef_browser_capture.h"
-#include "cef/include/cef_compound_operation.h"
-#include "cef/libcef/browser/element_ref.h"
 
 class CefBrowserHostBase;
 
@@ -24,28 +22,17 @@ class CefBrowserCaptureImpl : public CefBrowserCapture {
 
   void Snapshot(const CefSnapshotSettings& settings,
                 CefRefPtr<CefStringVisitor> callback) override;
-  void EvalThenSnapshot(const CefString& code,
-                         const CefSnapshotSettings& settings,
-                         CefRefPtr<CefEvalSnapshotCallback> callback) override;
   void CaptureAnnotatedScreenshot(
       const CefString& path,
       const CefAnnotatedScreenshotSettings& settings,
       CefRefPtr<CefScreenshotCallback> callback) override;
 
-  void ExecuteCompoundOperation(
-      const CefCompoundOperation& operation,
-      CefRefPtr<CefCompoundOperationCallback> callback);
-
-  // Get the element ref index for this browser's capture state.
-  CefElementRefIndex& GetRefIndex() { return ref_index_; }
-
  private:
   ~CefBrowserCaptureImpl() override = default;
 
   raw_ptr<CefBrowserHostBase> browser_;
-  CefElementRefIndex ref_index_;
 
-  IMPLEMENT_REFCOUNTING_DELETE_ON_UIT(CefBrowserCaptureImpl);
+  IMPLEMENT_REFCOUNTING(CefBrowserCaptureImpl);
 };
 
 #endif  // CEF_LIBCEF_BROWSER_BROWSER_CAPTURE_IMPL_H_
