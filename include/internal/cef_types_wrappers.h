@@ -545,6 +545,32 @@ struct CefBrowserSecuritySettingsTraits {
 ///
 /// Class representing browser security settings.
 ///
+struct CefAuthProfileTraits {
+  typedef cef_auth_profile_t struct_type;
+  static inline void init(struct_type* s) { s->size = sizeof(struct_type); }
+  static inline void clear(struct_type* s) {
+    cef_string_clear(&s->name);
+    cef_string_clear(&s->url);
+    cef_string_clear(&s->username);
+    cef_string_clear(&s->username_selector);
+    cef_string_clear(&s->password_selector);
+    cef_string_clear(&s->submit_selector);
+    cef_string_clear(&s->created_at);
+    cef_string_clear(&s->last_login_at);
+  }
+  static inline void set(const struct_type* src, struct_type* target, bool copy) {
+    cef_string_set(src->name.str, src->name.length, &target->name, copy);
+    cef_string_set(src->url.str, src->url.length, &target->url, copy);
+    cef_string_set(src->username.str, src->username.length, &target->username, copy);
+    cef_string_set(src->username_selector.str, src->username_selector.length, &target->username_selector, copy);
+    cef_string_set(src->password_selector.str, src->password_selector.length, &target->password_selector, copy);
+    cef_string_set(src->submit_selector.str, src->submit_selector.length, &target->submit_selector, copy);
+    cef_string_set(src->created_at.str, src->created_at.length, &target->created_at, copy);
+    cef_string_set(src->last_login_at.str, src->last_login_at.length, &target->last_login_at, copy);
+  }
+};
+using CefAuthProfile = CefStructBase<CefAuthProfileTraits>;
+
 using CefBrowserSecuritySettings =
     CefStructBase<CefBrowserSecuritySettingsTraits>;
 

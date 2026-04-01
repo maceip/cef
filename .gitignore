@@ -1,1 +1,4 @@
+*.rej
 __pycache__/
+*.pyc
+*Zone.Identifier

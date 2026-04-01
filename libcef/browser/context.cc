@@ -485,8 +485,7 @@ pref_helper::Registrar* CefContext::GetPrefRegistrar() {
   return pref_registrar_.get();
 }
 
-CefAuthVault* CefContext::GetAuthVault() {
-  base::AutoLock lock_scope(service_lock_);
+CefRefPtr<CefAuthVault> CefContext::GetAuthVault() {
   if (!auth_vault_) {
     auth_vault_ = new CefAuthVaultImpl();
   }
@@ -547,6 +546,9 @@ bool CefContext::HasObserver(Observer* observer) const {
 void CefContext::OnContextInitialized() {
   CEF_REQUIRE_UIT();
 
+  agent_scheduler_ = std::make_unique<CefAgentScheduler>();
+  session_pool_ = std::make_unique<CefSessionPool>();
+
   if (application_) {
     // Notify the handler after the global browser context has initialized.
     CefRefPtr<CefRequestContext> request_context =
@@ -576,6 +578,14 @@ void CefContext::ShutdownOnUIThread() {
 
   for (auto& observer : observers_) {
     observer.OnContextDestroyed();
+  }
+
+  if (session_pool_) {
+    session_pool_->Shutdown();
+    session_pool_.reset();
+  }
+  if (agent_scheduler_) {
+    agent_scheduler_.reset();
   }
 
   if (trace_subscriber_) {

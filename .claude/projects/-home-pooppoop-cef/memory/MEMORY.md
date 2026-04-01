@@ -1,0 +1,2 @@
+- [Sandwich Architecture](architecture_sandwich.md) — Three-layer design: Rust cefagent on cef-rs on our patched libcef.so
+- [Benchmark Site](project_bench_site.md) — surfcomp website requirements, COSS style, Pachinko + Cladogram visualizations

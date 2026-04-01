@@ -65,6 +65,11 @@ class CefFrameImpl
   void ExecuteJavaScript(const CefString& jsCode,
                          const CefString& scriptUrl,
                          int startLine) override;
+  void ExecuteJavaScriptWithResult(
+      const CefString& code,
+      const CefString& script_url,
+      int start_line,
+      CefRefPtr<CefJavaScriptResultCallback> callback) override {}
   bool IsMain() override;
   bool IsFocused() override;
   CefString GetName() override;
@@ -118,12 +123,10 @@ class CefFrameImpl
 
   // Called if the BrowserFrame connection is disconnected.
   void OnBrowserFrameDisconnect(uint32_t custom_reason,
-                                const std::string& description,
-                                MojoResult error_result);
+                                const std::string& description);
   // Called if the RenderFrame connection is disconnected.
   void OnRenderFrameDisconnect(uint32_t custom_reason,
-                               const std::string& description,
-                               MojoResult error_result);
+                               const std::string& description);
 
   enum class DisconnectReason {
     DETACHED,
@@ -135,9 +138,9 @@ class CefFrameImpl
   // destruction, or insertion into the bfcache (when the browser-side frame
   // representation is destroyed and closes the connection).
   void OnDisconnect(DisconnectReason reason,
-                    uint32_t custom_reason,
-                    const std::string& description,
-                    MojoResult error_result);
+                  uint32_t custom_reason,
+                  const std::string& description,
+                  MojoResult error_result);
 
   // Send an action to the remote BrowserFrame. This will queue the action if
   // the remote frame is not yet attached.

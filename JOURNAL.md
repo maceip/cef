@@ -1,6 +1,6 @@
 # CEF Agent-Browser Project Journal
 **Last updated:** 2026-03-31
-**Branch:** `zero-user-native` on `github.com/maceip/cef` (canonical source for this journal; see addendum for `bench/site` on other branches)
+**Branch:** `zero-user-native` on `github.com/maceip/cef` (canonical source for this journal; see addendum for `bench/site` on `cursor/journal-action-items-9cc6`)
 **Build machine:** `ec2-3-120-153-36.eu-central-1.compute.amazonaws.com` (32-core AMD EPYC 7571, 123GB RAM, 1.2TB NVMe)
 
 ---
@@ -157,11 +157,11 @@ Crashed on init. Needs `CHROME_PATH` set + local npm install (both done on remot
 
 ---
 
-## Addendum — `master` branch: `bench/site` (TypeScript)
+## Addendum — `bench/site` (TypeScript) on `cursor/journal-action-items-9cc6`
 
-Synced from [zero-user-native](https://github.com/maceip/cef/tree/zero-user-native) `JOURNAL.md` as the canonical project journal. The following applies to **`maceip/cef` `master`** (large Python `bench/` harness was removed in PR #7; the TypeScript package under `bench/site/` remains).
+This branch merges `zero-user-native` with **`master`**-derived work: trajectory distillation types/helpers under `bench/site/`, CAPI header work from PR #7, etc.
 
-### Completed on `cursor/journal-action-items-9cc6`
+### Completed
 - Trajectory distillation uses only **trusted** provenance for aggregates; external scores stay in `excludedExternalScores`.
 - `overall` driver summary matches filtered task rows (known `taskId` only).
 - Unit tests: `bench/site/src/data/stats.test.ts` (`npm test` in `bench/site`).
