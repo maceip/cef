@@ -58,3 +58,7 @@ CefString CefBrowserSecurityPolicyImpl::GetConfirmActionCategories() {
   base::AutoLock lock_scope(lock_);
   return CefString(&settings_.confirm_actions);
 }
+
+bool CefBrowserSecurityPolicyImpl::ShouldBlockRequest(const CefString& url) {
+  return false;
+}

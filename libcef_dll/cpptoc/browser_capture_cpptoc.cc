@@ -59,6 +59,42 @@ void CEF_CALLBACK browser_capture_snapshot(struct _cef_browser_capture_0_t* self
       CefStringVisitorCToCpp_Wrap(callback));
 }
 
+void CEF_CALLBACK browser_capture_eval_then_snapshot(
+    struct _cef_browser_capture_0_t* self,
+    const cef_string_t* javascript,
+    const struct _cef_snapshot_settings_t* snapshot_settings,
+    struct _cef_string_visitor_0_t* callback) {
+  shutdown_checker::AssertNotShutdown();
+
+  DCHECK(self);
+  if (!self) {
+    return;
+  }
+  DCHECK(javascript);
+  if (!javascript) {
+    return;
+  }
+  DCHECK(snapshot_settings);
+  if (!snapshot_settings) {
+    return;
+  }
+  if (!template_util::has_valid_size(snapshot_settings)) {
+    DCHECK(false) << "invalid snapshot_settings->[base.]size";
+    return;
+  }
+  DCHECK(callback);
+  if (!callback) {
+    return;
+  }
+
+  CefSnapshotSettings snapshotObj;
+  snapshotObj.Set(*snapshot_settings, false);
+
+  CefBrowserCapture_0_CppToC::Get(self)->EvalThenSnapshot(
+      CefString(javascript), snapshotObj,
+      CefStringVisitorCToCpp_Wrap(callback));
+}
+
 void CEF_CALLBACK browser_capture_capture_annotated_screenshot(struct _cef_browser_capture_0_t* self, const cef_string_t* path, const struct _cef_annotated_screenshot_settings_t* settings, struct _cef_screenshot_callback_0_t* callback) {
   shutdown_checker::AssertNotShutdown();
 
@@ -106,6 +142,7 @@ CefBrowserCapture_0_CppToC::CefBrowserCapture_0_CppToC() {
   LOG_IF(FATAL, version < 0) << __func__ << " called with invalid version " << version;
 
   GetStruct()->snapshot = browser_capture_snapshot;
+  GetStruct()->eval_then_snapshot = browser_capture_eval_then_snapshot;
   GetStruct()->capture_annotated_screenshot = browser_capture_capture_annotated_screenshot;
 }
 

@@ -162,6 +162,13 @@ typedef struct _cef_frame_t {
   void (CEF_CALLBACK *execute_java_script)(struct _cef_frame_t* self, const cef_string_t* code, const cef_string_t* script_url, int start_line);
 
   ///
+  /// Execute JavaScript and deliver the serialized result asynchronously via
+  /// |callback|. The |script_url| and |start_line| parameters follow the same
+  /// conventions as execute_java_script.
+  ///
+  void (CEF_CALLBACK *execute_java_script_with_result)(struct _cef_frame_t* self, const cef_string_t* code, const cef_string_t* script_url, int start_line, struct _cef_string_visitor_t* callback);
+
+  ///
   /// Returns true (1) if this is the main (top-level) frame.
   ///
   int (CEF_CALLBACK *is_main)(struct _cef_frame_t* self);

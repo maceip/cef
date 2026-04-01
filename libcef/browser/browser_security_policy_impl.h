@@ -23,6 +23,7 @@ class CefBrowserSecurityPolicyImpl : public CefBrowserSecurityPolicy {
                    CefRefPtr<CefBrowserSecurityCallback> callback) override;
   CefString GetAllowedDomains() override;
   CefString GetConfirmActionCategories() override;
+  bool ShouldBlockRequest(const CefString& url) override;
 
  private:
   ~CefBrowserSecurityPolicyImpl() override = default;

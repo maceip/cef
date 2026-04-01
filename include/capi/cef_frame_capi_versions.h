@@ -52,6 +52,7 @@ typedef struct _cef_frame_0_t {
   void (CEF_CALLBACK *load_request)(struct _cef_frame_0_t* self, struct _cef_request_0_t* request);
   void (CEF_CALLBACK *load_url)(struct _cef_frame_0_t* self, const cef_string_t* url);
   void (CEF_CALLBACK *execute_java_script)(struct _cef_frame_0_t* self, const cef_string_t* code, const cef_string_t* script_url, int start_line);
+  void (CEF_CALLBACK *execute_java_script_with_result)(struct _cef_frame_0_t* self, const cef_string_t* code, const cef_string_t* script_url, int start_line, struct _cef_string_visitor_0_t* callback);
   int (CEF_CALLBACK *is_main)(struct _cef_frame_0_t* self);
   int (CEF_CALLBACK *is_focused)(struct _cef_frame_0_t* self);
   cef_string_userfree_t (CEF_CALLBACK *get_name)(struct _cef_frame_0_t* self);

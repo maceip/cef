@@ -944,6 +944,42 @@ typedef enum {
 } cef_return_value_t;
 
 ///
+/// Instruction kinds for browser automation programs. Kept at file scope so
+/// the CEF translator and language bindings can consume a stable C enum.
+///
+typedef enum {
+  ///
+  /// Unknown or default instruction type.
+  ///
+  CEF_AUTOMATION_INSTRUCTION_TYPE_UNKNOWN = 0,
+
+  ///
+  /// Navigate to a URL.
+  ///
+  CEF_AUTOMATION_INSTRUCTION_TYPE_NAVIGATE,
+
+  ///
+  /// Click a target element.
+  ///
+  CEF_AUTOMATION_INSTRUCTION_TYPE_CLICK,
+
+  ///
+  /// Fill an input element.
+  ///
+  CEF_AUTOMATION_INSTRUCTION_TYPE_FILL,
+
+  ///
+  /// Evaluate JavaScript.
+  ///
+  CEF_AUTOMATION_INSTRUCTION_TYPE_EVAL,
+
+  ///
+  /// Wait for a condition or timeout.
+  ///
+  CEF_AUTOMATION_INSTRUCTION_TYPE_WAIT,
+} cef_automation_instruction_type_t;
+
+///
 /// URL component parts.
 ///
 typedef struct _cef_urlparts_t {

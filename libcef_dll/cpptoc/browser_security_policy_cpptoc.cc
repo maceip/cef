@@ -123,6 +123,26 @@ cef_string_userfree_t CEF_CALLBACK browser_security_policy_get_confirm_action_ca
   return _retval.DetachToUserFree();
 }
 
+int CEF_CALLBACK browser_security_policy_should_block_request(
+    struct _cef_browser_security_policy_0_t* self,
+    const cef_string_t* url) {
+  shutdown_checker::AssertNotShutdown();
+
+  DCHECK(self);
+  if (!self) {
+    return 0;
+  }
+  DCHECK(url);
+  if (!url) {
+    return 0;
+  }
+
+  bool blocked =
+      CefBrowserSecurityPolicy_0_CppToC::Get(self)->ShouldBlockRequest(
+          CefString(url));
+  return blocked ? 1 : 0;
+}
+
 }  // namespace
 
 // CONSTRUCTOR FOR VERSION 0 - Do not edit by hand.
@@ -135,6 +155,7 @@ CefBrowserSecurityPolicy_0_CppToC::CefBrowserSecurityPolicy_0_CppToC() {
   GetStruct()->set_settings = browser_security_policy_set_settings;
   GetStruct()->get_allowed_domains = browser_security_policy_get_allowed_domains;
   GetStruct()->get_confirm_action_categories = browser_security_policy_get_confirm_action_categories;
+  GetStruct()->should_block_request = browser_security_policy_should_block_request;
 }
 
 // DESTRUCTOR FOR VERSION 0 - Do not edit by hand.

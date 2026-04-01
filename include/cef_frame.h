@@ -164,6 +164,18 @@ class CefFrame : public virtual CefBaseRefCounted {
                                  int start_line) = 0;
 
   ///
+  /// Execute JavaScript and deliver the serialized result asynchronously via
+  /// |callback|. The |script_url| and |start_line| parameters follow the same
+  /// conventions as ExecuteJavaScript.
+  ///
+  /*--cef(optional_param=script_url)--*/
+  virtual void ExecuteJavaScriptWithResult(
+      const CefString& code,
+      const CefString& script_url,
+      int start_line,
+      CefRefPtr<CefStringVisitor> callback) = 0;
+
+  ///
   /// Returns true if this is the main (top-level) frame.
   ///
   /*--cef()--*/

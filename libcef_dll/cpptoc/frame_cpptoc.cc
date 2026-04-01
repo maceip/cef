@@ -274,6 +274,32 @@ void CEF_CALLBACK frame_execute_java_script(struct _cef_frame_0_t* self, const c
       start_line);
 }
 
+void CEF_CALLBACK frame_execute_java_script_with_result(
+    struct _cef_frame_0_t* self,
+    const cef_string_t* code,
+    const cef_string_t* script_url,
+    int start_line,
+    struct _cef_string_visitor_0_t* callback) {
+  shutdown_checker::AssertNotShutdown();
+
+  DCHECK(self);
+  if (!self) {
+    return;
+  }
+  DCHECK(code);
+  if (!code) {
+    return;
+  }
+  DCHECK(callback);
+  if (!callback) {
+    return;
+  }
+
+  CefFrame_0_CppToC::Get(self)->ExecuteJavaScriptWithResult(
+      CefString(code), CefString(script_url), start_line,
+      CefStringVisitorCToCpp_Wrap(callback));
+}
+
 int CEF_CALLBACK frame_is_main(struct _cef_frame_0_t* self) {
   shutdown_checker::AssertNotShutdown();
 
@@ -503,6 +529,8 @@ CefFrame_0_CppToC::CefFrame_0_CppToC() {
   GetStruct()->load_request = frame_load_request;
   GetStruct()->load_url = frame_load_url;
   GetStruct()->execute_java_script = frame_execute_java_script;
+  GetStruct()->execute_java_script_with_result =
+      frame_execute_java_script_with_result;
   GetStruct()->is_main = frame_is_main;
   GetStruct()->is_focused = frame_is_focused;
   GetStruct()->get_name = frame_get_name;

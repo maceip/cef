@@ -277,6 +277,28 @@ NO_SANITIZE("cfi-icall") void CefFrameCToCpp::ExecuteJavaScript(const CefString&
       start_line);
 }
 
+NO_SANITIZE("cfi-icall") void CefFrameCToCpp::ExecuteJavaScriptWithResult(
+    const CefString& code,
+    const CefString& script_url,
+    int start_line,
+    CefRefPtr<CefStringVisitor> callback) {
+  shutdown_checker::AssertNotShutdown();
+
+  auto* _struct = GetStruct();
+  if (!_struct->execute_java_script_with_result) {
+    return;
+  }
+
+  DCHECK(callback.get());
+  if (!callback.get()) {
+    return;
+  }
+
+  _struct->execute_java_script_with_result(
+      _struct, code.GetStruct(), script_url.GetStruct(), start_line,
+      CefStringVisitorCppToC_Wrap(callback));
+}
+
 NO_SANITIZE("cfi-icall") bool CefFrameCToCpp::IsMain() {
   shutdown_checker::AssertNotShutdown();
 

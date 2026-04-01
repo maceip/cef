@@ -43,6 +43,16 @@ void CefBrowserCaptureImpl::Snapshot(const CefSnapshotSettings& settings,
   RunSnapshotCallback(callback, message);
 }
 
+void CefBrowserCaptureImpl::EvalThenSnapshot(
+    const CefString& javascript,
+    const CefSnapshotSettings& snapshot_settings,
+    CefRefPtr<CefStringVisitor> callback) {
+  CefString message;
+  message.FromString(
+      "Browser capture EvalThenSnapshot scaffolding is not implemented.");
+  RunSnapshotCallback(callback, message);
+}
+
 void CefBrowserCaptureImpl::CaptureAnnotatedScreenshot(
     const CefString& path,
     const CefAnnotatedScreenshotSettings& settings,

@@ -181,6 +181,30 @@ void CefFrameHostImpl::ExecuteJavaScript(const CefString& jsCode,
   SendJavaScript(jsCode, scriptUrl, startLine);
 }
 
+void CefFrameHostImpl::ExecuteJavaScriptWithResult(
+    const CefString& code,
+    const CefString& script_url,
+    int start_line,
+    CefRefPtr<CefStringVisitor> callback) {
+  if (!callback) {
+    return;
+  }
+  CefString message;
+  message.FromString(
+      "ExecuteJavaScriptWithResult is not yet implemented for browser-process "
+      "frames.");
+  if (!CEF_CURRENTLY_ON_UIT()) {
+    CEF_POST_TASK(CEF_UIT,
+                  base::BindOnce(
+                      [](CefRefPtr<CefStringVisitor> cb, const CefString& text) {
+                        cb->Visit(text);
+                      },
+                      callback, message));
+    return;
+  }
+  callback->Visit(message);
+}
+
 bool CefFrameHostImpl::IsMain() {
   return is_main_frame_;
 }

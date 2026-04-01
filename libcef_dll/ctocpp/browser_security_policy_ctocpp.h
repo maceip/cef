@@ -37,6 +37,7 @@ class CefBrowserSecurityPolicyCToCpp
   void SetSettings(const CefBrowserSecuritySettings& settings, CefRefPtr<CefBrowserSecurityCallback> callback) override;
   CefString GetAllowedDomains() override;
   CefString GetConfirmActionCategories() override;
+  bool ShouldBlockRequest(const CefString& url) override;
 };
 
 constexpr auto CefBrowserSecurityPolicyCToCpp_Wrap = CefBrowserSecurityPolicyCToCpp::Wrap;

@@ -77,6 +77,16 @@ class CefBrowserCapture : public virtual CefBaseRefCounted {
                         CefRefPtr<CefStringVisitor> callback) = 0;
 
   ///
+  /// Evaluate |javascript| in the active frame, then capture a textual
+  /// snapshot using |snapshot_settings|. The combined result is delivered via
+  /// |callback|.
+  ///
+  /*--cef()--*/
+  virtual void EvalThenSnapshot(const CefString& javascript,
+                                const CefSnapshotSettings& snapshot_settings,
+                                CefRefPtr<CefStringVisitor> callback) = 0;
+
+  ///
   /// Capture a screenshot of the current page. If |path| is empty a default
   /// output location may be chosen by the implementation. The result will be
   /// returned asynchronously via |callback|.

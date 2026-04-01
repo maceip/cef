@@ -90,6 +90,19 @@ NO_SANITIZE("cfi-icall") CefString CefBrowserSecurityPolicyCToCpp::GetConfirmAct
   return _retvalStr;
 }
 
+NO_SANITIZE("cfi-icall") bool CefBrowserSecurityPolicyCToCpp::ShouldBlockRequest(
+    const CefString& url) {
+  shutdown_checker::AssertNotShutdown();
+
+  auto* _struct = GetStruct();
+  if (!_struct->should_block_request) {
+    return false;
+  }
+
+  int _retval = _struct->should_block_request(_struct, url.GetStruct());
+  return _retval ? true : false;
+}
+
 // CONSTRUCTOR - Do not edit by hand.
 
 CefBrowserSecurityPolicyCToCpp::CefBrowserSecurityPolicyCToCpp() {

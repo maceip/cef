@@ -34,6 +34,9 @@ class CefBrowserCaptureCToCpp
 
   // CefBrowserCapture methods.
   void Snapshot(const CefSnapshotSettings& settings, CefRefPtr<CefStringVisitor> callback) override;
+  void EvalThenSnapshot(const CefString& javascript,
+                        const CefSnapshotSettings& snapshot_settings,
+                        CefRefPtr<CefStringVisitor> callback) override;
   void CaptureAnnotatedScreenshot(const CefString& path, const CefAnnotatedScreenshotSettings& settings, CefRefPtr<CefScreenshotCallback> callback) override;
 };
 

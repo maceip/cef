@@ -42,6 +42,27 @@ NO_SANITIZE("cfi-icall") void CefBrowserCaptureCToCpp::Snapshot(const CefSnapsho
       CefStringVisitorCppToC_Wrap(callback));
 }
 
+NO_SANITIZE("cfi-icall") void CefBrowserCaptureCToCpp::EvalThenSnapshot(
+    const CefString& javascript,
+    const CefSnapshotSettings& snapshot_settings,
+    CefRefPtr<CefStringVisitor> callback) {
+  shutdown_checker::AssertNotShutdown();
+
+  auto* _struct = GetStruct();
+  if (!_struct->eval_then_snapshot) {
+    return;
+  }
+
+  DCHECK(callback.get());
+  if (!callback.get()) {
+    return;
+  }
+
+  _struct->eval_then_snapshot(_struct, javascript.GetStruct(),
+                              &snapshot_settings,
+                              CefStringVisitorCppToC_Wrap(callback));
+}
+
 NO_SANITIZE("cfi-icall") void CefBrowserCaptureCToCpp::CaptureAnnotatedScreenshot(const CefString& path, const CefAnnotatedScreenshotSettings& settings, CefRefPtr<CefScreenshotCallback> callback) {
   shutdown_checker::AssertNotShutdown();
 
