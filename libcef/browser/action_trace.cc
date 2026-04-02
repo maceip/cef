@@ -105,7 +105,7 @@ void CefActionTrace::AttachScreenshot(int action_id,
 }
 
 void CefActionTrace::AttachMetadata(int action_id,
-                                    base::DictValue metadata) {
+                                    base::Value::Dict metadata) {
   base::AutoLock lock(lock_);
   if (level_ != Level::kFull) {
     return;
@@ -249,10 +249,10 @@ std::string CefActionTrace::GetTrace(Level level) const {
   return result;
 }
 
-base::DictValue CefActionTrace::GetTraceAsDict(Level level) const {
+base::Value::Dict CefActionTrace::GetTraceAsDict(Level level) const {
   base::AutoLock lock(lock_);
 
-  base::DictValue dict;
+  base::Value::Dict dict;
 
   size_t succeeded = 0;
   size_t failed = 0;
@@ -277,9 +277,9 @@ base::DictValue CefActionTrace::GetTraceAsDict(Level level) const {
   dict.Set("duration_ms", static_cast<int>(total_duration.InMilliseconds()));
 
   if (level >= Level::kDetail) {
-    base::ListValue action_list;
+    base::Value::List action_list;
     for (const auto& action : actions_) {
-      base::DictValue action_dict;
+      base::Value::Dict action_dict;
       action_dict.Set("id", action.id);
       action_dict.Set("type", action.type);
       action_dict.Set("target", action.target);
