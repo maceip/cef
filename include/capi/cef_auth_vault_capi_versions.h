@@ -21,6 +21,7 @@
 
 #include "include/capi/cef_base_capi.h"
 #include "include/capi/cef_values_capi_versions.h"
+#include "include/internal/cef_types_wrappers.h"
 #include "include/internal/cef_types.h"
 
 #ifdef __cplusplus
