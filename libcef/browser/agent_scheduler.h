@@ -61,8 +61,6 @@ class CefAgentScheduler {
     base::TimeDelta default_timeout = base::Seconds(60);
   };
 
-  Config();
-
   explicit CefAgentScheduler(const Config& config = Config());
   ~CefAgentScheduler();
 
@@ -124,7 +122,7 @@ class CefAgentScheduler {
     bool success = false;
     std::string error;
     base::TimeDelta duration;
-    base::Value::Dict metadata;  // Arbitrary result data
+    base::DictValue metadata;  // Arbitrary result data
   };
 
   // Summary of one evaluation iteration.

@@ -107,12 +107,11 @@ bool IsValidProfileName(const std::string& name) {
 
 std::optional<std::vector<uint8_t>> GetEncryptionKeyFromEnv() {
   auto env = base::Environment::Create();
-  std::optional<std::string> env_value =
-      env->GetVar("AGENT_BROWSER_ENCRYPTION_KEY");
-  if (!env_value.has_value()) {
+  std::string env_value;
+  if (!env->GetVar("AGENT_BROWSER_ENCRYPTION_KEY", &env_value)) {
     return std::nullopt;
   }
-  return ParseKeyHex(*env_value);
+  return ParseKeyHex(env_value);
 }
 
 std::optional<std::vector<uint8_t>> ReadEncryptionKeyFile(
@@ -157,7 +156,7 @@ std::optional<std::vector<uint8_t>> EnsureEncryptionKey(
 #endif
 
   std::vector<uint8_t> key(kEncryptionKeyBytes);
-  crypto::RandBytes(key);
+  crypto::RandBytes(key.data(), key.size());
   if (!WriteEncryptionKeyFile(key_path, key)) {
     return std::nullopt;
   }
@@ -173,7 +172,7 @@ std::optional<std::string> EncryptProfileData(const std::string& plaintext,
   }
 
   std::vector<uint8_t> nonce(kNonceBytes);
-  crypto::RandBytes(nonce);
+  crypto::RandBytes(nonce.data(), nonce.size());
 
   const std::vector<uint8_t> plaintext_bytes(plaintext.begin(), plaintext.end());
   const std::vector<uint8_t> ciphertext =

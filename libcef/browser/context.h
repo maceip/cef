@@ -27,7 +27,6 @@ class Registrar;
 
 class CefBrowserInfoManager;
 class CefTraceSubscriber;
-class CefAuthVault;
 class CefAuthVaultImpl;
 
 class CefContext {

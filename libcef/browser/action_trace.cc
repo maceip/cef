@@ -304,7 +304,7 @@ base::DictValue CefActionTrace::GetTraceAsDict(Level level) const {
         if (!action.screenshot_path.empty()) {
           action_dict.Set("screenshot_path", action.screenshot_path);
         }
-        if (!action.metadata.DictEmpty()) {
+        if (!action.metadata.empty()) {
           action_dict.Set("metadata", action.metadata.Clone());
         }
       }
