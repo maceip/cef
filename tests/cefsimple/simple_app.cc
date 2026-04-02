@@ -108,6 +108,40 @@ class SimpleBrowserViewDelegate : public CefBrowserViewDelegate {
 
 SimpleApp::SimpleApp() = default;
 
+void SimpleApp::OnBeforeCommandLineProcessing(const CefString& process_type,
+                                              CefRefPtr<CefCommandLine> command_line) {
+#if defined(OS_LINUX)
+  if (!command_line ||
+      !command_line->HasSwitch(client::switches::kUseOzoneHeadless)) {
+    return;
+  }
+
+  if (!command_line->HasSwitch("enable-features")) {
+    command_line->AppendSwitchWithValue("enable-features", "UseOzonePlatform");
+  }
+  if (!command_line->HasSwitch(client::switches::kOzonePlatform)) {
+    command_line->AppendSwitchWithValue(client::switches::kOzonePlatform,
+                                        "headless");
+  }
+  if (!command_line->HasSwitch("headless")) {
+    command_line->AppendSwitch("headless");
+  }
+  if (!command_line->HasSwitch("remote-debugging-address")) {
+    command_line->AppendSwitchWithValue("remote-debugging-address",
+                                        "127.0.0.1");
+  }
+  if (!command_line->HasSwitch(client::switches::kOffScreenRenderingEnabled)) {
+    command_line->AppendSwitch(client::switches::kOffScreenRenderingEnabled);
+  }
+  if (!command_line->HasSwitch("disable-gpu")) {
+    command_line->AppendSwitch("disable-gpu");
+  }
+  if (!command_line->HasSwitch("disable-gpu-compositing")) {
+    command_line->AppendSwitch("disable-gpu-compositing");
+  }
+#endif
+}
+
 void SimpleApp::OnContextInitialized() {
   CEF_REQUIRE_UI_THREAD();
 
@@ -139,22 +173,6 @@ void SimpleApp::OnContextInitialized() {
 #if defined(OS_LINUX)
   const bool use_headless_osr =
       command_line->HasSwitch(client::switches::kUseOzoneHeadless);
-
-  if (command_line->HasSwitch(client::switches::kUseOzoneHeadless)) {
-    if (!command_line->HasSwitch("enable-features")) {
-      command_line->AppendSwitchWithValue("enable-features", "UseOzonePlatform");
-    }
-    if (!command_line->HasSwitch(client::switches::kOzonePlatform)) {
-      command_line->AppendSwitchWithValue(client::switches::kOzonePlatform,
-                                      "headless");
-    }
-    if (!command_line->HasSwitch("headless")) {
-      command_line->AppendSwitch("headless");
-    }
-    if (!command_line->HasSwitch("remote-debugging-address")) {
-      command_line->AppendSwitchWithValue("remote-debugging-address", "127.0.0.1");
-    }
-  }
 #endif
 
   // Views is enabled by default (add `--use-native` to disable).
@@ -197,7 +215,7 @@ void SimpleApp::OnContextInitialized() {
 
 #if defined(OS_LINUX)
     if (use_headless_osr) {
-      window_info.SetAsWindowless(nullptr);
+      window_info.SetAsWindowless(static_cast<cef_window_handle_t>(0));
     } else
 #endif
 #if defined(OS_WIN)
