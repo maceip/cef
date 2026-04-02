@@ -122,7 +122,7 @@ class CefAgentScheduler {
     bool success = false;
     std::string error;
     base::TimeDelta duration;
-    base::Value::Dict metadata;  // Arbitrary result data
+    base::DictValue metadata;  // Arbitrary result data
   };
 
   // Summary of one evaluation iteration.
