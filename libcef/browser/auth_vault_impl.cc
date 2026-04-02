@@ -107,11 +107,12 @@ bool IsValidProfileName(const std::string& name) {
 
 std::optional<std::vector<uint8_t>> GetEncryptionKeyFromEnv() {
   auto env = base::Environment::Create();
-  std::string env_value;
-  if (!env->GetVar("AGENT_BROWSER_ENCRYPTION_KEY", &env_value)) {
+  std::optional<std::string> env_value =
+      env->GetVar("AGENT_BROWSER_ENCRYPTION_KEY");
+  if (!env_value.has_value()) {
     return std::nullopt;
   }
-  return ParseKeyHex(env_value);
+  return ParseKeyHex(*env_value);
 }
 
 std::optional<std::vector<uint8_t>> ReadEncryptionKeyFile(
@@ -178,11 +179,12 @@ std::optional<std::string> EncryptProfileData(const std::string& plaintext,
   const std::vector<uint8_t> ciphertext =
       aead.Seal(plaintext_bytes, nonce, std::vector<uint8_t>());
 
-  if (ciphertext.size() < aead.AuthTagLength()) {
+  constexpr size_t kAuthTagBytes = 16;
+  if (ciphertext.size() < kAuthTagBytes) {
     return std::nullopt;
   }
 
-  const size_t tag_offset = ciphertext.size() - aead.AuthTagLength();
+  const size_t tag_offset = ciphertext.size() - kAuthTagBytes;
   const std::string data_bytes(
       reinterpret_cast<const char*>(ciphertext.data()), tag_offset);
   const std::string auth_tag_bytes(
@@ -213,7 +215,8 @@ std::optional<std::string> EncryptProfileData(const std::string& plaintext,
 std::optional<base::Value::Dict> DecryptProfileData(
     const std::string& input,
     const std::vector<uint8_t>& key) {
-  std::optional<base::Value::Dict> payload = base::JSONReader::ReadDict(input);
+  std::optional<base::Value::Dict> payload =
+      base::JSONReader::ReadDict(input, base::JSON_PARSE_RFC);
   if (!payload.has_value()) {
     return std::nullopt;
   }
@@ -254,7 +257,7 @@ std::optional<base::Value::Dict> DecryptProfileData(
   }
 
   return base::JSONReader::ReadDict(
-      std::string(plaintext->begin(), plaintext->end()));
+      std::string(plaintext->begin(), plaintext->end()), base::JSON_PARSE_RFC);
 }
 
 bool LooksLikeEncryptedPayload(const base::Value::Dict& payload) {
@@ -271,7 +274,8 @@ std::optional<base::Value::Dict> ReadProfileDict(
     return std::nullopt;
   }
 
-  std::optional<base::Value::Dict> payload = base::JSONReader::ReadDict(input);
+  std::optional<base::Value::Dict> payload =
+      base::JSONReader::ReadDict(input, base::JSON_PARSE_RFC);
   if (!payload.has_value()) {
     return std::nullopt;
   }

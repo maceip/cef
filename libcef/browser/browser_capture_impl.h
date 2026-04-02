@@ -10,6 +10,7 @@
 #include "cef/include/cef_browser_capture.h"
 #include "cef/include/cef_compound_operation.h"
 #include "cef/libcef/browser/element_ref.h"
+#include "cef/libcef/browser/thread_util.h"
 
 class CefBrowserHostBase;
 

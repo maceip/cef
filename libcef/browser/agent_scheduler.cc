@@ -12,6 +12,8 @@
 #include "base/task/sequenced_task_runner.h"
 #include "base/task/thread_pool.h"
 
+#include <inttypes.h>
+
 namespace {
 
 // Shared task factory that can be cloned across iterations.

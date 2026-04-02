@@ -137,7 +137,7 @@ bool CefBrowserSecurityPolicyImpl::ShouldBlockRequest(
 
   // Release the lock and call IsDomainAllowed which acquires it.
   // Instead, inline the domain check here under the same lock.
-  const std::string host = url.host();
+  const std::string host = std::string(url.host());
 
   for (const auto& allowed : compiled_policy_.allowed_domains) {
     if (allowed.empty()) {

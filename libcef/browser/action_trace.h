@@ -59,7 +59,7 @@ class CefActionTrace {
     std::string snapshot_before;  // Page snapshot before action
     std::string snapshot_after;   // Page snapshot after action
     std::string screenshot_path;  // Screenshot path if captured
-    base::Value::Dict metadata;   // Arbitrary extra data
+    base::DictValue metadata;  // Arbitrary extra data
   };
 
   CefActionTrace();
@@ -85,7 +85,7 @@ class CefActionTrace {
                       const std::string& snapshot_before,
                       const std::string& snapshot_after);
   void AttachScreenshot(int action_id, const std::string& screenshot_path);
-  void AttachMetadata(int action_id, base::Value::Dict metadata);
+  void AttachMetadata(int action_id, base::DictValue metadata);
 
   // Start timing an action (call before execution).
   int BeginAction(const std::string& type, const std::string& target);
@@ -100,7 +100,7 @@ class CefActionTrace {
   std::string GetTrace(Level level) const;
 
   // Get trace as structured data (for JSON serialization).
-  base::Value::Dict GetTraceAsDict(Level level) const;
+  base::DictValue GetTraceAsDict(Level level) const;
 
   // Get the last N actions.
   std::vector<Action> GetRecentActions(size_t count) const;
