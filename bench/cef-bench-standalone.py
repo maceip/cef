@@ -19,8 +19,17 @@ async def main():
     # Start CEF
     env = {**os.environ, "DISPLAY": ":99", "LD_LIBRARY_PATH": CEF_LIB}
     cef = subprocess.Popen(
-        [CEF_BIN, "--no-sandbox", "--remote-debugging-port=9333", "--url=about:blank"],
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env)
+        [
+            CEF_BIN,
+            "--no-sandbox",
+            "--off-screen-rendering-enabled",
+            "--external-message-pump",
+            "--remote-debugging-port=9333",
+            "--url=about:blank",
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        env=env)
     await asyncio.sleep(4)
 
     # Get page target via subprocess curl (urllib hangs on CEF)
