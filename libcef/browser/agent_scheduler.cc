@@ -191,6 +191,11 @@ class EvalLoopRunner : public base::RefCountedThreadSafe<EvalLoopRunner> {
 
 }  // namespace
 
+CefAgentScheduler::Config::Config()
+    : max_concurrent_tasks(8),
+      max_per_agent_tasks(4),
+      default_timeout(base::Seconds(60)) {}
+
 CefAgentScheduler::CefAgentScheduler(const Config& config) : config_(config) {}
 
 CefAgentScheduler::~CefAgentScheduler() = default;

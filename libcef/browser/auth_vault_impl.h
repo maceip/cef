@@ -10,6 +10,7 @@
 #include <string>
 
 #include "base/files/file_path.h"
+#include "base/values.h"
 #include "cef/include/cef_auth_vault.h"
 
 // Implementation of the CefAuthVault interface. Methods may be called on any
@@ -38,9 +39,6 @@ class CefAuthVaultImpl : public CefAuthVault {
   bool IsProfileDirty(const std::string& profile_name) const;
   void ClearProfileDirty(const std::string& profile_name);
 
- private:
-  ~CefAuthVaultImpl() override = default;
-
   struct ActionResult {
     bool success = false;
     std::string error;
@@ -58,6 +56,9 @@ class CefAuthVaultImpl : public CefAuthVault {
     std::string error;
     std::vector<base::DictValue> profiles;
   };
+
+ private:
+  ~CefAuthVaultImpl() override = default;
 
   void OnActionComplete(CefRefPtr<CefAuthVaultActionCallback> callback,
                         const std::string& profile_name,

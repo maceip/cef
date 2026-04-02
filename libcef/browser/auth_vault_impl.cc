@@ -303,23 +303,11 @@ base::DictValue MakeProfileMetadata(const base::FilePath& path,
   return metadata;
 }
 
-using AuthVaultActionResult = CefAuthVaultImpl::ActionResult;
-
-using AuthVaultReadResult = CefAuthVaultImpl::ReadResult;
-
-using AuthVaultListResult = CefAuthVaultImpl::ListResult;
-
-struct UnusedAuthVaultActionResultBody {
-  bool success = false;
-  std::string error;
-  base::FilePath path;
-};
-
-AuthVaultActionResult SaveProfileOnBlockingThread(
+CefAuthVaultImpl::ActionResult SaveProfileOnBlockingThread(
     base::FilePath directory,
     base::FilePath encryption_key_path,
     base::DictValue profile) {
-  AuthVaultActionResult result;
+  CefAuthVaultImpl::ActionResult result;
 
   const std::string* name = profile.FindString("name");
   if (!name || !IsValidProfileName(*name)) {
@@ -375,10 +363,11 @@ AuthVaultActionResult SaveProfileOnBlockingThread(
   return result;
 }
 
-AuthVaultReadResult ReadProfileOnBlockingThread(base::FilePath directory,
-                                                base::FilePath key_path,
-                                                std::string name) {
-  AuthVaultReadResult result;
+CefAuthVaultImpl::ReadResult ReadProfileOnBlockingThread(
+    base::FilePath directory,
+    base::FilePath key_path,
+    std::string name) {
+  CefAuthVaultImpl::ReadResult result;
 
   if (!IsValidProfileName(name)) {
     result.error = "Profile name must match /^[A-Za-z0-9_-]+$/.";
@@ -397,9 +386,10 @@ AuthVaultReadResult ReadProfileOnBlockingThread(base::FilePath directory,
   return result;
 }
 
-AuthVaultActionResult DeleteProfileOnBlockingThread(base::FilePath directory,
-                                                    std::string name) {
-  AuthVaultActionResult result;
+CefAuthVaultImpl::ActionResult DeleteProfileOnBlockingThread(
+    base::FilePath directory,
+    std::string name) {
+  CefAuthVaultImpl::ActionResult result;
 
   if (!IsValidProfileName(name)) {
     result.error = "Profile name must match /^[A-Za-z0-9_-]+$/.";
@@ -417,9 +407,10 @@ AuthVaultActionResult DeleteProfileOnBlockingThread(base::FilePath directory,
   return result;
 }
 
-AuthVaultListResult ListProfilesOnBlockingThread(base::FilePath directory,
-                                                 base::FilePath key_path) {
-  AuthVaultListResult result;
+CefAuthVaultImpl::ListResult ListProfilesOnBlockingThread(
+    base::FilePath directory,
+    base::FilePath key_path) {
+  CefAuthVaultImpl::ListResult result;
 
   if (directory.empty()) {
     result.error = "Auth vault directory is unavailable.";
@@ -451,8 +442,6 @@ AuthVaultListResult ListProfilesOnBlockingThread(base::FilePath directory,
 }
 
 }  // namespace
-
-CefAuthVaultImpl::CefAuthVaultImpl() = default;
 
 void CefAuthVaultImpl::MarkProfileDirty(const std::string& profile_name) {
   dirty_profiles_.insert(profile_name);
@@ -592,7 +581,7 @@ CefString CefAuthVaultImpl::GetEncryptionKeyPath() {
 void CefAuthVaultImpl::OnActionComplete(
     CefRefPtr<CefAuthVaultActionCallback> callback,
     const std::string& profile_name,
-    AuthVaultActionResult result) {
+    ActionResult result) {
   CEF_REQUIRE_UIT();
   if (result.success && !profile_name.empty()) {
     ClearProfileDirty(profile_name);
@@ -602,7 +591,7 @@ void CefAuthVaultImpl::OnActionComplete(
 
 void CefAuthVaultImpl::OnReadComplete(
     CefRefPtr<CefAuthVaultReadCallback> callback,
-    AuthVaultReadResult result) {
+    ReadResult result) {
   CEF_REQUIRE_UIT();
   if (!callback) {
     return;
@@ -617,7 +606,7 @@ void CefAuthVaultImpl::OnReadComplete(
 
 void CefAuthVaultImpl::OnVisitComplete(
     CefRefPtr<CefAuthProfileVisitor> visitor,
-    AuthVaultListResult result) {
+    ListResult result) {
   CEF_REQUIRE_UIT();
   if (!visitor || !result.success) {
     return;

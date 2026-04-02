@@ -615,7 +615,8 @@ void CefBrowserCaptureImpl::EvalThenSnapshot(
       CefString eval_error;
 
       if (success) {
-        auto parsed = base::JSONReader::ReadDict(result_str);
+        auto parsed =
+            base::JSONReader::ReadDict(result_str, base::JSON_PARSE_RFC);
         if (parsed) {
           const auto* res = parsed->FindDict("result");
           if (res) {
