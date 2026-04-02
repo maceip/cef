@@ -107,11 +107,12 @@ bool IsValidProfileName(const std::string& name) {
 
 std::optional<std::vector<uint8_t>> GetEncryptionKeyFromEnv() {
   auto env = base::Environment::Create();
-  std::string env_value;
-  if (!env->GetVar("AGENT_BROWSER_ENCRYPTION_KEY", &env_value)) {
+  std::optional<std::string> env_value =
+      env->GetVar("AGENT_BROWSER_ENCRYPTION_KEY");
+  if (!env_value.has_value()) {
     return std::nullopt;
   }
-  return ParseKeyHex(env_value);
+  return ParseKeyHex(*env_value);
 }
 
 std::optional<std::vector<uint8_t>> ReadEncryptionKeyFile(
@@ -156,7 +157,7 @@ std::optional<std::vector<uint8_t>> EnsureEncryptionKey(
 #endif
 
   std::vector<uint8_t> key(kEncryptionKeyBytes);
-  crypto::RandBytes(key.data(), key.size());
+  crypto::RandBytes(base::span<uint8_t>(key));
   if (!WriteEncryptionKeyFile(key_path, key)) {
     return std::nullopt;
   }
@@ -167,12 +168,12 @@ std::optional<std::vector<uint8_t>> EnsureEncryptionKey(
 std::optional<std::string> EncryptProfileData(const std::string& plaintext,
                                               const std::vector<uint8_t>& key) {
   crypto::Aead aead(crypto::Aead::AES_256_GCM);
-  if (!aead.Init(key)) {
+  if (!aead.Init(base::span<const uint8_t>(key))) {
     return std::nullopt;
   }
 
   std::vector<uint8_t> nonce(kNonceBytes);
-  crypto::RandBytes(nonce.data(), nonce.size());
+  crypto::RandBytes(base::span<uint8_t>(nonce));
 
   const std::vector<uint8_t> plaintext_bytes(plaintext.begin(), plaintext.end());
   const std::vector<uint8_t> ciphertext =
@@ -243,7 +244,7 @@ std::optional<base::Value::Dict> DecryptProfileData(
 
   std::string combined = ciphertext + auth_tag;
   crypto::Aead aead(crypto::Aead::AES_256_GCM);
-  if (!aead.Init(key)) {
+  if (!aead.Init(base::span<const uint8_t>(key))) {
     return std::nullopt;
   }
 

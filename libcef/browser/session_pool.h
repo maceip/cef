@@ -49,7 +49,7 @@ class CefSessionPool {
 
   Config();
 
-  explicit CefSessionPool(const Config& config = Config{});
+  explicit CefSessionPool(const Config& config = Config());
   ~CefSessionPool();
 
   CefSessionPool(const CefSessionPool&) = delete;
