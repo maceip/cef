@@ -47,7 +47,9 @@ class CefSessionPool {
     std::string base_cache_path;
   };
 
-  explicit CefSessionPool(const Config& config = Config{});
+  Config();
+
+  explicit CefSessionPool(const Config& config = Config());
   ~CefSessionPool();
 
   CefSessionPool(const CefSessionPool&) = delete;

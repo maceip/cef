@@ -61,7 +61,9 @@ class CefAgentScheduler {
     base::TimeDelta default_timeout = base::Seconds(60);
   };
 
-  explicit CefAgentScheduler(const Config& config = Config{});
+  Config();
+
+  explicit CefAgentScheduler(const Config& config = Config());
   ~CefAgentScheduler();
 
   CefAgentScheduler(const CefAgentScheduler&) = delete;

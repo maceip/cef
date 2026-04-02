@@ -66,9 +66,9 @@ bool IsValidSessionName(const std::string& session_name) {
   return true;
 }
 
-base::Value::Dict MakeEntryDict(const base::FilePath& path,
-                                const base::File::Info& info) {
-  base::Value::Dict dict;
+base::DictValue MakeEntryDict(const base::FilePath& path,
+                              const base::File::Info& info) {
+  base::DictValue dict;
   dict.Set("filename", path.BaseName().AsUTF8Unsafe());
   dict.Set("path", path.AsUTF8Unsafe());
   dict.Set("size", static_cast<double>(info.size));
@@ -91,13 +91,13 @@ struct StorageStateListResult {
   bool success = false;
   std::string error;
   base::FilePath directory;
-  std::vector<base::Value::Dict> entries;
+  std::vector<base::DictValue> entries;
 };
 
 struct StorageStateReadResult {
   bool success = false;
   std::string error;
-  base::Value::Dict result;
+  base::DictValue result;
 };
 
 struct StorageStateActionResult {

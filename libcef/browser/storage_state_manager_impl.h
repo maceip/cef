@@ -122,7 +122,7 @@ class CefStorageStateManagerImpl : public CefStorageStateManager {
   // Cached directory listing to avoid re-enumeration.
   struct CachedDirectoryState {
     base::TimeTicks last_enumerated;
-    std::vector<base::Value::Dict> entries;
+    std::vector<base::DictValue> entries;
     base::FilePath directory;
     bool valid = false;
   };

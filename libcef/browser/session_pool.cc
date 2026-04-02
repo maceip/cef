@@ -10,6 +10,8 @@
 #include "base/strings/stringprintf.h"
 #include "cef/libcef/browser/thread_util.h"
 
+CefSessionPool::Config::Config() = default;
+
 CefSessionPool::CefSessionPool(const Config& config) : config_(config) {
   Prewarm();
 }
