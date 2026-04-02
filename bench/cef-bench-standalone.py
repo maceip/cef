@@ -33,8 +33,12 @@ async def main():
     await asyncio.sleep(4)
 
     # Get page target via subprocess curl (urllib hangs on CEF)
-    r = subprocess.run(["curl", "-s", "http://127.0.0.1:9333/json"],
-                       capture_output=True, text=True, timeout=5)
+    r = subprocess.run(
+        ["curl", "--max-time", "5", "-s", "http://127.0.0.1:9333/json/list"],
+        capture_output=True,
+        text=True,
+        timeout=8,
+    )
     if not r.stdout.strip():
         print("  FAIL: CEF not responding")
         cef.kill(); xvfb.kill()
