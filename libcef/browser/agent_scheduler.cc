@@ -191,8 +191,6 @@ class EvalLoopRunner : public base::RefCountedThreadSafe<EvalLoopRunner> {
 
 }  // namespace
 
-CefAgentScheduler::Config::Config() = default;
-
 CefAgentScheduler::CefAgentScheduler(const Config& config) : config_(config) {}
 
 CefAgentScheduler::~CefAgentScheduler() = default;

@@ -52,16 +52,16 @@ class CefAgentScheduler {
   // Scheduler configuration.
   struct Config {
     // Maximum number of concurrent tasks across all agents.
-    size_t max_concurrent_tasks = 8;
+    size_t max_concurrent_tasks;
 
     // Maximum number of concurrent tasks per agent.
-    size_t max_per_agent_tasks = 4;
+    size_t max_per_agent_tasks;
 
     // Default task timeout.
-    base::TimeDelta default_timeout = base::Seconds(60);
-  };
+    base::TimeDelta default_timeout;
 
-  Config();
+    Config();
+  };
 
   explicit CefAgentScheduler(const Config& config = Config());
   ~CefAgentScheduler();

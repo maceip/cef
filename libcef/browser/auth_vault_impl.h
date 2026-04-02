@@ -12,10 +12,6 @@
 #include "base/files/file_path.h"
 #include "cef/include/cef_auth_vault.h"
 
-struct AuthVaultActionResult;
-struct AuthVaultReadResult;
-struct AuthVaultListResult;
-
 // Implementation of the CefAuthVault interface. Methods may be called on any
 // browser process thread unless otherwise indicated.
 class CefAuthVaultImpl : public CefAuthVault {
@@ -45,13 +41,31 @@ class CefAuthVaultImpl : public CefAuthVault {
  private:
   ~CefAuthVaultImpl() override = default;
 
+  struct ActionResult {
+    bool success = false;
+    std::string error;
+    base::FilePath path;
+  };
+
+  struct ReadResult {
+    bool success = false;
+    std::string error;
+    base::DictValue profile;
+  };
+
+  struct ListResult {
+    bool success = false;
+    std::string error;
+    std::vector<base::DictValue> profiles;
+  };
+
   void OnActionComplete(CefRefPtr<CefAuthVaultActionCallback> callback,
                         const std::string& profile_name,
-                        AuthVaultActionResult result);
+                        ActionResult result);
   void OnReadComplete(CefRefPtr<CefAuthVaultReadCallback> callback,
-                      AuthVaultReadResult result);
+                      ReadResult result);
   void OnVisitComplete(CefRefPtr<CefAuthProfileVisitor> visitor,
-                       AuthVaultListResult result);
+                       ListResult result);
 
   void RunActionCallback(CefRefPtr<CefAuthVaultActionCallback> callback,
                          bool success,

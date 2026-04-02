@@ -10,7 +10,8 @@
 #include "base/strings/stringprintf.h"
 #include "cef/libcef/browser/thread_util.h"
 
-CefSessionPool::Config::Config() = default;
+CefSessionPool::Config::Config()
+    : pool_size(2), max_idle_time(base::Minutes(5)) {}
 
 CefSessionPool::CefSessionPool(const Config& config) : config_(config) {
   Prewarm();

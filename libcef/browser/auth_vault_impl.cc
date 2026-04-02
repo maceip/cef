@@ -298,27 +298,21 @@ base::DictValue MakeProfileMetadata(const base::FilePath& path,
   metadata.Set("path", path.AsUTF8Unsafe());
   metadata.Set("name", path.BaseName().RemoveExtension().AsUTF8Unsafe());
   metadata.Set("encrypted", true);
-  metadata.Set("has_password", profile.FindString("password").has_value());
+  metadata.Set("has_password", profile.FindString("password") != nullptr);
   metadata.Remove("password");
   return metadata;
 }
 
-struct AuthVaultActionResult {
+using AuthVaultActionResult = CefAuthVaultImpl::ActionResult;
+
+using AuthVaultReadResult = CefAuthVaultImpl::ReadResult;
+
+using AuthVaultListResult = CefAuthVaultImpl::ListResult;
+
+struct UnusedAuthVaultActionResultBody {
   bool success = false;
   std::string error;
   base::FilePath path;
-};
-
-struct AuthVaultReadResult {
-  bool success = false;
-  std::string error;
-  base::DictValue profile;
-};
-
-struct AuthVaultListResult {
-  bool success = false;
-  std::string error;
-  std::vector<base::DictValue> profiles;
 };
 
 AuthVaultActionResult SaveProfileOnBlockingThread(
@@ -524,7 +518,8 @@ void CefAuthVaultImpl::SaveProfile(
                      GetEncryptionKeyPathInternal(),
                      std::move(profile_value->GetDict())),
       base::BindOnce(&CefAuthVaultImpl::OnActionComplete,
-                     CefRefPtr<CefAuthVaultImpl>(this), callback));
+                     CefRefPtr<CefAuthVaultImpl>(this), callback,
+                     profile_name));
 }
 
 void CefAuthVaultImpl::ReadProfile(
@@ -562,7 +557,8 @@ void CefAuthVaultImpl::DeleteProfile(
       base::BindOnce(&DeleteProfileOnBlockingThread, GetVaultPathInternal(),
                      name.ToString()),
       base::BindOnce(&CefAuthVaultImpl::OnActionComplete,
-                     CefRefPtr<CefAuthVaultImpl>(this), callback));
+                     CefRefPtr<CefAuthVaultImpl>(this), callback,
+                     name.ToString()));
 }
 
 void CefAuthVaultImpl::VisitProfiles(CefRefPtr<CefAuthProfileVisitor> visitor) {
@@ -659,8 +655,6 @@ void CefAuthVaultImpl::OnVisitComplete(
             profile_value.FindString("last_login_at")) {
       CefString(&profile.last_login_at) = *last_login_at;
     }
-    profile.encrypted = profile_value.FindBool("encrypted").value_or(true);
-
     if (!visitor->Visit(profile, count++, total)) {
       break;
     }
