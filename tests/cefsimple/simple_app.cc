@@ -151,6 +151,12 @@ void SimpleApp::OnContextInitialized() {
   // Check if Alloy style will be used.
   cef_runtime_style_t runtime_style = CEF_RUNTIME_STYLE_DEFAULT;
   bool use_alloy_style = command_line->HasSwitch("use-alloy-style");
+#if defined(OS_LINUX)
+  // Ozone headless currently runs cleanly in the windowless Alloy path.
+  if (command_line->HasSwitch(client::switches::kUseOzoneHeadless)) {
+    use_alloy_style = true;
+  }
+#endif
   if (use_alloy_style) {
     runtime_style = CEF_RUNTIME_STYLE_ALLOY;
   }
