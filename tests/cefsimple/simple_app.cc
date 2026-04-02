@@ -139,17 +139,17 @@ void SimpleApp::OnContextInitialized() {
 #if defined(OS_LINUX)
   if (command_line->HasSwitch(client::switches::kUseOzoneHeadless)) {
     if (!command_line->HasSwitch("enable-features")) {
-      command_line->AppendSwitchASCII("enable-features", "UseOzonePlatform");
+      command_line->AppendSwitchWithValue("enable-features", "UseOzonePlatform");
     }
     if (!command_line->HasSwitch(client::switches::kOzonePlatform)) {
-      command_line->AppendSwitchASCII(client::switches::kOzonePlatform,
+      command_line->AppendSwitchWithValue(client::switches::kOzonePlatform,
                                       "headless");
     }
     if (!command_line->HasSwitch("headless")) {
       command_line->AppendSwitch("headless");
     }
     if (!command_line->HasSwitch("remote-debugging-address")) {
-      command_line->AppendSwitchASCII("remote-debugging-address", "127.0.0.1");
+      command_line->AppendSwitchWithValue("remote-debugging-address", "127.0.0.1");
     }
   }
 #endif
