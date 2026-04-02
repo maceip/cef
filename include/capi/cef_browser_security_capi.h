@@ -33,7 +33,7 @@
 // by hand. See the translator.README.txt file in the tools directory for
 // more information.
 //
-// $hash=e54f260435b344ea43f5b52438529459e9f44410$
+// $hash=2f3954819c35ba1820acb29fa88728d090b8dba2$
 //
 
 #ifndef CEF_INCLUDE_CAPI_CEF_BROWSER_SECURITY_CAPI_H_
@@ -111,7 +111,8 @@ typedef struct _cef_browser_security_policy_t {
 
   ///
   /// Returns true (1) if a navigation or subresource request to |url| should be
-  /// blocked under the current policy.
+  /// blocked under the current policy. The scaffold implementation always
+  /// returns false (0).
   ///
   int (CEF_CALLBACK *should_block_request)(struct _cef_browser_security_policy_t* self, const cef_string_t* url);
 } cef_browser_security_policy_t;

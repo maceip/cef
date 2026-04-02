@@ -9,7 +9,7 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
-// $hash=04dc29dffbaeef5c8836dd2b5e63fa997e8326d0$
+// $hash=25258ce12075940c9f4bc2401f473c147babbf79$
 //
 
 
@@ -20,6 +20,7 @@
 #include "include/base/cef_compiler_specific.h"
 #include "include/capi/cef_app_capi.h"
 #include "include/capi/cef_auth_vault_capi.h"
+#include "include/capi/cef_automation_program_capi.h"
 #include "include/capi/cef_browser_capi.h"
 #include "include/capi/cef_command_line_capi.h"
 #include "include/capi/cef_component_updater_capi.h"
@@ -152,6 +153,7 @@ decltype(&cef_execute_java_script_with_user_gesture_for_tests) cef_execute_java_
 decltype(&cef_set_data_directory_for_tests) cef_set_data_directory_for_tests;
 decltype(&cef_is_feature_enabled_for_tests) cef_is_feature_enabled_for_tests;
 decltype(&cef_auth_vault_get_global_vault) cef_auth_vault_get_global_vault;
+decltype(&cef_automation_program_create) cef_automation_program_create;
 decltype(&cef_browser_host_create_browser) cef_browser_host_create_browser;
 decltype(&cef_browser_host_create_browser_sync) cef_browser_host_create_browser_sync;
 decltype(&cef_browser_host_get_browser_by_identifier) cef_browser_host_get_browser_by_identifier;
@@ -438,6 +440,7 @@ INIT_ENTRY(cef_execute_java_script_with_user_gesture_for_tests);
 INIT_ENTRY(cef_set_data_directory_for_tests);
 INIT_ENTRY(cef_is_feature_enabled_for_tests);
 INIT_ENTRY(cef_auth_vault_get_global_vault);
+INIT_ENTRY(cef_automation_program_create);
 INIT_ENTRY(cef_browser_host_create_browser);
 INIT_ENTRY(cef_browser_host_create_browser_sync);
 INIT_ENTRY(cef_browser_host_get_browser_by_identifier);
@@ -913,6 +916,10 @@ NO_SANITIZE("cfi-icall") int cef_is_feature_enabled_for_tests(const cef_string_t
 
 NO_SANITIZE("cfi-icall") struct _cef_auth_vault_t* cef_auth_vault_get_global_vault() {
   return g_libcef_pointers.cef_auth_vault_get_global_vault();
+}
+
+NO_SANITIZE("cfi-icall") struct _cef_automation_program_t* cef_automation_program_create() {
+  return g_libcef_pointers.cef_automation_program_create();
 }
 
 NO_SANITIZE("cfi-icall") int cef_browser_host_create_browser(const struct _cef_window_info_t* windowInfo, struct _cef_client_t* client, const cef_string_t* url, const struct _cef_browser_settings_t* settings, struct _cef_dictionary_value_t* extra_info, struct _cef_request_context_t* request_context) {

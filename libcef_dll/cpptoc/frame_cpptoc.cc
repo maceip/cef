@@ -9,7 +9,7 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
-// $hash=fb32f106800826cf29c21d9d782417c88d6aa1d2$
+// $hash=98b7ecc72e931520db0121e74aeba2d78cc0bdd3$
 //
 
 #include "include/cef_api_hash.h"
@@ -20,6 +20,7 @@
 #include "libcef_dll/cpptoc/urlrequest_cpptoc.h"
 #include "libcef_dll/cpptoc/v8_context_cpptoc.h"
 #include "libcef_dll/ctocpp/domvisitor_ctocpp.h"
+#include "libcef_dll/ctocpp/java_script_result_callback_ctocpp.h"
 #include "libcef_dll/ctocpp/string_visitor_ctocpp.h"
 #include "libcef_dll/ctocpp/urlrequest_client_ctocpp.h"
 #include "libcef_dll/shutdown_checker.h"
@@ -274,12 +275,7 @@ void CEF_CALLBACK frame_execute_java_script(struct _cef_frame_0_t* self, const c
       start_line);
 }
 
-void CEF_CALLBACK frame_execute_java_script_with_result(
-    struct _cef_frame_0_t* self,
-    const cef_string_t* code,
-    const cef_string_t* script_url,
-    int start_line,
-    struct _cef_string_visitor_0_t* callback) {
+void CEF_CALLBACK frame_execute_java_script_with_result(struct _cef_frame_0_t* self, const cef_string_t* code, const cef_string_t* script_url, int start_line, struct _cef_java_script_result_callback_0_t* callback){
   shutdown_checker::AssertNotShutdown();
 
   DCHECK(self);
@@ -297,7 +293,7 @@ void CEF_CALLBACK frame_execute_java_script_with_result(
 
   CefFrame_0_CppToC::Get(self)->ExecuteJavaScriptWithResult(
       CefString(code), CefString(script_url), start_line,
-      CefStringVisitorCToCpp_Wrap(callback));
+      CefJavaScriptResultCallbackCToCpp_Wrap(callback));
 }
 
 int CEF_CALLBACK frame_is_main(struct _cef_frame_0_t* self) {
@@ -529,8 +525,7 @@ CefFrame_0_CppToC::CefFrame_0_CppToC() {
   GetStruct()->load_request = frame_load_request;
   GetStruct()->load_url = frame_load_url;
   GetStruct()->execute_java_script = frame_execute_java_script;
-  GetStruct()->execute_java_script_with_result =
-      frame_execute_java_script_with_result;
+  GetStruct()->execute_java_script_with_result = frame_execute_java_script_with_result;
   GetStruct()->is_main = frame_is_main;
   GetStruct()->is_focused = frame_is_focused;
   GetStruct()->get_name = frame_get_name;

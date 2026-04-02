@@ -9,7 +9,7 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
-// $hash=7f94fc364c70f3acde7d7632f2ae2c0ba4b5085b$
+// $hash=844aa1420c67c35e13ce7cfe2973eba97645e54a$
 //
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_BROWSER_SECURITY_POLICY_CTOCPP_H_

@@ -9,7 +9,7 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
-// $hash=91be44665f5cf85e4b1972dc435903bc8934303e$
+// $hash=25e981fa771e211e2e61ff4f02593038969781bf$
 //
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_FRAME_CTOCPP_H_
@@ -56,10 +56,7 @@ class CefFrameCToCpp
   void LoadRequest(CefRefPtr<CefRequest> request) override;
   void LoadURL(const CefString& url) override;
   void ExecuteJavaScript(const CefString& code, const CefString& script_url, int start_line) override;
-  void ExecuteJavaScriptWithResult(const CefString& code,
-                                   const CefString& script_url,
-                                   int start_line,
-                                   CefRefPtr<CefStringVisitor> callback) override;
+  void ExecuteJavaScriptWithResult(const CefString& code, const CefString& script_url, int start_line, CefRefPtr<CefJavaScriptResultCallback> callback) override;
   bool IsMain() override;
   bool IsFocused() override;
   CefString GetName() override;

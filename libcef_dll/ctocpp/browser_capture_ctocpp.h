@@ -9,7 +9,7 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
-// $hash=da3ffa33283206e3f9d5b8651dce8327b1d84eed$
+// $hash=1f699ecb7526b57a998c43734c190062c7746221$
 //
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_BROWSER_CAPTURE_CTOCPP_H_
@@ -34,9 +34,7 @@ class CefBrowserCaptureCToCpp
 
   // CefBrowserCapture methods.
   void Snapshot(const CefSnapshotSettings& settings, CefRefPtr<CefStringVisitor> callback) override;
-  void EvalThenSnapshot(const CefString& javascript,
-                        const CefSnapshotSettings& snapshot_settings,
-                        CefRefPtr<CefStringVisitor> callback) override;
+  void EvalThenSnapshot(const CefString& code, const CefSnapshotSettings& settings, CefRefPtr<CefEvalSnapshotCallback> callback) override;
   void CaptureAnnotatedScreenshot(const CefString& path, const CefAnnotatedScreenshotSettings& settings, CefRefPtr<CefScreenshotCallback> callback) override;
 };
 

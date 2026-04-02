@@ -33,7 +33,7 @@
 // by hand. See the translator.README.txt file in the tools directory for
 // more information.
 //
-// $hash=c8055375599136ee01ab80bcaac5eeb2b271b4ed$
+// $hash=19bdd1fa2157639fa5373f08a998fc7140f61969$
 //
 
 #ifndef CEF_INCLUDE_CAPI_CEF_BROWSER_CAPTURE_CAPI_H_
@@ -46,6 +46,7 @@
 
 #include "include/capi/cef_base_capi.h"
 #include "include/capi/cef_string_visitor_capi.h"
+#include "include/capi/cef_values_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -73,6 +74,28 @@ typedef struct _cef_screenshot_callback_t {
 
 
 ///
+/// Callback structure for cef_browser_capture_t::EvalThenSnapshot.
+///
+/// NOTE: This struct is allocated client-side.
+///
+typedef struct _cef_eval_snapshot_callback_t {
+  ///
+  /// Base structure.
+  ///
+  cef_base_ref_counted_t base;
+
+  ///
+  /// Called when both the JavaScript evaluation and snapshot are complete.
+  /// |eval_success| indicates if the JS executed without error. |eval_result|
+  /// contains the JS return value (may be null). |eval_error| contains the JS
+  /// error message if eval_success is false (0). |snapshot| contains the page
+  /// snapshot text.
+  ///
+  void (CEF_CALLBACK *on_complete)(struct _cef_eval_snapshot_callback_t* self, int eval_success, struct _cef_value_t* eval_result, const cef_string_t* eval_error, const cef_string_t* snapshot);
+} cef_eval_snapshot_callback_t;
+
+
+///
 /// Browser-scoped capture and snapshot functionality. This structure provides
 /// the browser-host equivalent of agent-browser snapshot and annotated
 /// screenshot behaviors. The current implementation is scaffold-only and
@@ -95,11 +118,12 @@ typedef struct _cef_browser_capture_t {
   void (CEF_CALLBACK *snapshot)(struct _cef_browser_capture_t* self, const struct _cef_snapshot_settings_t* settings, struct _cef_string_visitor_t* callback);
 
   ///
-  /// Evaluate |javascript| in the active frame, then capture a textual
-  /// snapshot using |snapshot_settings|. The combined result is delivered via
-  /// |callback|.
+  /// Execute JavaScript and capture a snapshot in a single pipelined call. The
+  /// JavaScript is evaluated first, then the snapshot is captured immediately
+  /// after (without an additional IPC round-trip for scheduling). This is the
+  /// optimal pattern for coding agent workflows.
   ///
-  void (CEF_CALLBACK *eval_then_snapshot)(struct _cef_browser_capture_t* self, const cef_string_t* javascript, const struct _cef_snapshot_settings_t* snapshot_settings, struct _cef_string_visitor_t* callback);
+  void (CEF_CALLBACK *eval_then_snapshot)(struct _cef_browser_capture_t* self, const cef_string_t* code, const struct _cef_snapshot_settings_t* settings, struct _cef_eval_snapshot_callback_t* callback);
 
   ///
   /// Capture a screenshot of the current page. If |path| is NULL a default
