@@ -157,6 +157,11 @@ void SimpleApp::OnContextInitialized() {
     use_alloy_style = true;
   }
 #endif
+#if defined(OS_LINUX)
+  const bool use_headless_osr =
+      command_line->HasSwitch(client::switches::kUseOzoneHeadless);
+#endif
+
   if (use_alloy_style) {
     runtime_style = CEF_RUNTIME_STYLE_ALLOY;
   }
@@ -182,11 +187,6 @@ void SimpleApp::OnContextInitialized() {
   if (url.empty()) {
     url = "https://www.google.com";
   }
-
-#if defined(OS_LINUX)
-  const bool use_headless_osr =
-      command_line->HasSwitch(client::switches::kUseOzoneHeadless);
-#endif
 
   // Views is enabled by default (add `--use-native` to disable).
   const bool use_views =
