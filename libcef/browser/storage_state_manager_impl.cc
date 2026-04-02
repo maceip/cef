@@ -67,12 +67,13 @@ bool IsValidSessionName(const std::string& session_name) {
 }
 
 base::DictValue MakeEntryDict(const base::FilePath& path,
-                              const base::FileEnumerator::FileInfo& info) {
+                              int64_t size,
+                              base::Time modified_time) {
   base::DictValue dict;
   dict.Set("filename", path.BaseName().AsUTF8Unsafe());
   dict.Set("path", path.AsUTF8Unsafe());
-  dict.Set("size", static_cast<double>(info.GetSize()));
-  dict.Set("modified", info.GetLastModifiedTime().InSecondsFSinceUnixEpoch());
+  dict.Set("size", static_cast<double>(size));
+  dict.Set("modified", modified_time.InSecondsFSinceUnixEpoch());
   dict.Set("encrypted",
            base::EndsWith(path.BaseName().AsUTF8Unsafe(),
                           kJsonEncryptedExtension));
@@ -108,7 +109,8 @@ StorageStateListResult ListStatesOnBlockingThread(base::FilePath directory) {
     }
 
     const auto& info = enumerator.GetInfo();
-    result.entries.push_back(MakeEntryDict(path, info));
+    result.entries.push_back(
+        MakeEntryDict(path, info.GetSize(), info.GetLastModifiedTime()));
   }
 
   result.success = true;
@@ -129,7 +131,7 @@ StorageStateReadResult ShowStateOnBlockingThread(base::FilePath path) {
     return result;
   }
 
-  result.result = MakeEntryDict(path, info);
+  result.result = MakeEntryDict(path, info.size, info.last_modified);
   result.result.Set("summary", "Storage state scaffolding is not yet implemented.");
   result.success = true;
   return result;
