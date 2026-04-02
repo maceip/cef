@@ -63,6 +63,10 @@ CefString CefBrowserSecurityPolicyImpl::GetConfirmActionCategories() {
   return CefString(&settings_.confirm_actions);
 }
 
+bool CefBrowserSecurityPolicyImpl::ShouldBlockRequest(const CefString& url) {
+  return ShouldBlockRequest(GURL(url.ToString()));
+}
+
 void CefBrowserSecurityPolicyImpl::RecompilePolicy() {
   lock_.AssertAcquired();
 
