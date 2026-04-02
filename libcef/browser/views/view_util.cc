@@ -348,10 +348,13 @@ bool ConvertPointFromWindow(views::View* view, gfx::Point* point) {
 }
 
 SkColor GetColor(const views::View* view, ui::ColorId id) {
-  // Verify that our enum matches Chromium's values.
+  // Verify that our enum matches Chromium's values when the generated color-id
+  // header is available. Local/stub builds may not define the generated enum.
+#ifdef CEF_ChromeColorsEnd
   static_assert(static_cast<int>(CEF_ChromeColorsEnd) ==
                     static_cast<int>(kChromeColorsEnd),
                 "Enum values in cef_color_id_t must match ChromeColorIds");
+#endif
 
   // |color_provider| will be nullptr if |view| has not yet been added to a
   // Widget.
