@@ -24,14 +24,14 @@ class CefAutomationProgramImpl : public CefAutomationProgram {
   CefAutomationProgramImpl& operator=(const CefAutomationProgramImpl&) = delete;
 
   // CefAutomationProgram methods.
-  int AddInstruction(InstructionType type,
+  int AddInstruction(cef_automation_instruction_type_t type,
                      CefRefPtr<CefDictionaryValue> params) override;
   int GetInstructionCount() override;
   void Clear() override;
 
   // Internal: access the instruction list for execution.
   struct Instruction {
-    InstructionType type;
+    cef_automation_instruction_type_t type;
     CefRefPtr<CefDictionaryValue> params;
   };
 
