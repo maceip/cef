@@ -48,6 +48,10 @@ void SimpleHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
                                   const CefString& title) {
   CEF_REQUIRE_UI_THREAD();
 
+  if (browser->GetHost()->IsWindowRenderingDisabled()) {
+    return;
+  }
+
   if (auto browser_view = CefBrowserView::GetForBrowser(browser)) {
     // Set the title of the window using the Views framework.
     CefRefPtr<CefWindow> window = browser_view->GetWindow();
@@ -135,6 +139,20 @@ void SimpleHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
      << " (" << errorCode << ").</h2></body></html>";
 
   frame->LoadURL(GetDataURI(ss.str(), "text/html"));
+}
+
+void SimpleHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) {
+  CEF_REQUIRE_UI_THREAD();
+  rect = CefRect(0, 0, 1280, 720);
+}
+
+void SimpleHandler::OnPaint(CefRefPtr<CefBrowser> browser,
+                            PaintElementType type,
+                            const RectList& dirtyRects,
+                            const void* buffer,
+                            int width,
+                            int height) {
+  CEF_REQUIRE_UI_THREAD();
 }
 
 void SimpleHandler::ShowMainWindow() {

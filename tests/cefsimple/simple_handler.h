@@ -12,7 +12,8 @@
 class SimpleHandler : public CefClient,
                       public CefDisplayHandler,
                       public CefLifeSpanHandler,
-                      public CefLoadHandler {
+                      public CefLoadHandler,
+                      public CefRenderHandler {
  public:
   explicit SimpleHandler(bool is_alloy_style);
   ~SimpleHandler() override;
@@ -24,6 +25,7 @@ class SimpleHandler : public CefClient,
   CefRefPtr<CefDisplayHandler> GetDisplayHandler() override { return this; }
   CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override { return this; }
   CefRefPtr<CefLoadHandler> GetLoadHandler() override { return this; }
+  CefRefPtr<CefRenderHandler> GetRenderHandler() override { return this; }
 
   // CefDisplayHandler methods:
   void OnTitleChange(CefRefPtr<CefBrowser> browser,
@@ -40,6 +42,15 @@ class SimpleHandler : public CefClient,
                    ErrorCode errorCode,
                    const CefString& errorText,
                    const CefString& failedUrl) override;
+
+  // CefRenderHandler methods:
+  void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) override;
+  void OnPaint(CefRefPtr<CefBrowser> browser,
+               PaintElementType type,
+               const RectList& dirtyRects,
+               const void* buffer,
+               int width,
+               int height) override;
 
   void ShowMainWindow();
 

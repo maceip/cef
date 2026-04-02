@@ -137,6 +137,9 @@ void SimpleApp::OnContextInitialized() {
   }
 
 #if defined(OS_LINUX)
+  const bool use_headless_osr =
+      command_line->HasSwitch(client::switches::kUseOzoneHeadless);
+
   if (command_line->HasSwitch(client::switches::kUseOzoneHeadless)) {
     if (!command_line->HasSwitch("enable-features")) {
       command_line->AppendSwitchWithValue("enable-features", "UseOzonePlatform");
@@ -155,7 +158,11 @@ void SimpleApp::OnContextInitialized() {
 #endif
 
   // Views is enabled by default (add `--use-native` to disable).
-  const bool use_views = !command_line->HasSwitch("use-native");
+  const bool use_views =
+#if defined(OS_LINUX)
+      !use_headless_osr &&
+#endif
+      !command_line->HasSwitch("use-native");
 
   // If using Views create the browser using the Views framework, otherwise
   // create the browser using the native platform framework.
@@ -188,6 +195,11 @@ void SimpleApp::OnContextInitialized() {
     // Information used when creating the native window.
     CefWindowInfo window_info;
 
+#if defined(OS_LINUX)
+    if (use_headless_osr) {
+      window_info.SetAsWindowless(nullptr);
+    } else
+#endif
 #if defined(OS_WIN)
     // On Windows we need to specify certain flags that will be passed to
     // CreateWindowEx().
