@@ -95,6 +95,13 @@ typedef struct _cef_browser_capture_t {
   void (CEF_CALLBACK *snapshot)(struct _cef_browser_capture_t* self, const struct _cef_snapshot_settings_t* settings, struct _cef_string_visitor_t* callback);
 
   ///
+  /// Evaluate |javascript| in the active frame, then capture a textual
+  /// snapshot using |snapshot_settings|. The combined result is delivered via
+  /// |callback|.
+  ///
+  void (CEF_CALLBACK *eval_then_snapshot)(struct _cef_browser_capture_t* self, const cef_string_t* javascript, const struct _cef_snapshot_settings_t* snapshot_settings, struct _cef_string_visitor_t* callback);
+
+  ///
   /// Capture a screenshot of the current page. If |path| is NULL a default
   /// output location may be chosen by the implementation. The result will be
   /// returned asynchronously via |callback|.

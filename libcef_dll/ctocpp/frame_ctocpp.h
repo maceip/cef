@@ -56,6 +56,10 @@ class CefFrameCToCpp
   void LoadRequest(CefRefPtr<CefRequest> request) override;
   void LoadURL(const CefString& url) override;
   void ExecuteJavaScript(const CefString& code, const CefString& script_url, int start_line) override;
+  void ExecuteJavaScriptWithResult(const CefString& code,
+                                   const CefString& script_url,
+                                   int start_line,
+                                   CefRefPtr<CefStringVisitor> callback) override;
   bool IsMain() override;
   bool IsFocused() override;
   CefString GetName() override;

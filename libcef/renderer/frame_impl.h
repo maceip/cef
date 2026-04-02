@@ -65,6 +65,10 @@ class CefFrameImpl
   void ExecuteJavaScript(const CefString& jsCode,
                          const CefString& scriptUrl,
                          int startLine) override;
+  void ExecuteJavaScriptWithResult(const CefString& code,
+                                   const CefString& script_url,
+                                   int start_line,
+                                   CefRefPtr<CefStringVisitor> callback) override;
   bool IsMain() override;
   bool IsFocused() override;
   CefString GetName() override;

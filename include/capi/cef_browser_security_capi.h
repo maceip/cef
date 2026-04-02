@@ -108,6 +108,12 @@ typedef struct _cef_browser_security_policy_t {
   ///
   // The resulting string must be freed by calling cef_string_userfree_free().
   cef_string_userfree_t (CEF_CALLBACK *get_confirm_action_categories)(struct _cef_browser_security_policy_t* self);
+
+  ///
+  /// Returns true (1) if a navigation or subresource request to |url| should be
+  /// blocked under the current policy.
+  ///
+  int (CEF_CALLBACK *should_block_request)(struct _cef_browser_security_policy_t* self, const cef_string_t* url);
 } cef_browser_security_policy_t;
 
 

@@ -27,6 +27,7 @@ class CefBrowserSecurityPolicyImpl : public CefBrowserSecurityPolicy {
                    CefRefPtr<CefBrowserSecurityCallback> callback) override;
   CefString GetAllowedDomains() override;
   CefString GetConfirmActionCategories() override;
+  bool ShouldBlockRequest(const CefString& url) override;
 
   // Fast domain check against pre-compiled allowed domains list.
   // Returns true if the domain is allowed (or if no domain restriction is set).

@@ -37,6 +37,7 @@ typedef struct _cef_browser_security_policy_0_t {
   void (CEF_CALLBACK *set_settings)(struct _cef_browser_security_policy_0_t* self, const struct _cef_browser_security_settings_t* settings, struct _cef_browser_security_callback_0_t* callback);
   cef_string_userfree_t (CEF_CALLBACK *get_allowed_domains)(struct _cef_browser_security_policy_0_t* self);
   cef_string_userfree_t (CEF_CALLBACK *get_confirm_action_categories)(struct _cef_browser_security_policy_0_t* self);
+  int (CEF_CALLBACK *should_block_request)(struct _cef_browser_security_policy_0_t* self, const cef_string_t* url);
 } cef_browser_security_policy_0_t;
 
 #ifdef __cplusplus

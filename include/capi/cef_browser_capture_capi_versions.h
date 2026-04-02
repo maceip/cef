@@ -34,6 +34,7 @@ typedef struct _cef_screenshot_callback_0_t {
 typedef struct _cef_browser_capture_0_t {
   cef_base_ref_counted_t base;
   void (CEF_CALLBACK *snapshot)(struct _cef_browser_capture_0_t* self, const struct _cef_snapshot_settings_t* settings, struct _cef_string_visitor_0_t* callback);
+  void (CEF_CALLBACK *eval_then_snapshot)(struct _cef_browser_capture_0_t* self, const cef_string_t* javascript, const struct _cef_snapshot_settings_t* snapshot_settings, struct _cef_string_visitor_0_t* callback);
   void (CEF_CALLBACK *capture_annotated_screenshot)(struct _cef_browser_capture_0_t* self, const cef_string_t* path, const struct _cef_annotated_screenshot_settings_t* settings, struct _cef_screenshot_callback_0_t* callback);
 } cef_browser_capture_0_t;
 

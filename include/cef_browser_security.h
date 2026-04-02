@@ -90,6 +90,14 @@ class CefBrowserSecurityPolicy : public virtual CefBaseRefCounted {
   ///
   /*--cef()--*/
   virtual CefString GetConfirmActionCategories() = 0;
+
+  ///
+  /// Returns true if a navigation or subresource request to |url| should be
+  /// blocked under the current policy. The scaffold implementation always
+  /// returns false.
+  ///
+  /*--cef()--*/
+  virtual bool ShouldBlockRequest(const CefString& url) = 0;
 };
 
 #endif  // CEF_INCLUDE_CEF_BROWSER_SECURITY_H_
