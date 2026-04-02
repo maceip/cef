@@ -41,7 +41,6 @@
 #include <vector>
 
 #include "include/cef_base.h"
-#include "include/internal/cef_types_wrappers.h"
 #include "include/cef_values.h"
 
 class CefAuthProfileVisitor;
