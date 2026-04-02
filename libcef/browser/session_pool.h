@@ -14,6 +14,7 @@
 #include "base/synchronization/lock.h"
 #include "base/time/time.h"
 #include "cef/include/cef_request_context.h"
+#include "cef/include/cef_request_context_handler.h"
 
 // Session pool for prewarmed browser contexts.
 //

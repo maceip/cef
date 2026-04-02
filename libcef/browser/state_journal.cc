@@ -239,7 +239,8 @@ bool CefStateJournal::ReplayJournal(const base::FilePath& path) {
       continue;
     }
 
-    std::optional<base::DictValue> entry = base::JSONReader::ReadDict(line);
+    std::optional<base::DictValue> entry =
+        base::JSONReader::ReadDict(line, base::JSON_PARSE_RFC);
     if (!entry.has_value()) {
       // Gracefully skip truncated or corrupt lines (e.g. last line after
       // a crash).

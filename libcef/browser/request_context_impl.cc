@@ -383,7 +383,7 @@ CefRefPtr<CefStorageStateManager> CefRequestContextImpl::GetStorageStateManager(
     CefRefPtr<CefCompletionCallback> callback) {
   CefRefPtr<CefStorageStateManagerImpl> storage_state_manager;
   {
-    base::AutoLock lock_scope(service_lock_);
+    base::AutoLock lock_scope{service_lock_};
     if (!storage_state_manager_) {
       storage_state_manager_ = new CefStorageStateManagerImpl();
     }
@@ -541,7 +541,7 @@ CefRefPtr<CefMediaRouter> CefRequestContextImpl::GetMediaRouter(
 }
 
 CefRefPtr<CefBrowserSecurityPolicy> CefRequestContextImpl::GetSecurityPolicy() {
-  base::AutoLock lock_scope(service_lock_);
+  base::AutoLock lock_scope{service_lock_};
   if (!security_policy_.get()) {
     security_policy_ = new CefBrowserSecurityPolicyImpl();
   }

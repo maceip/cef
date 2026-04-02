@@ -67,13 +67,12 @@ bool IsValidSessionName(const std::string& session_name) {
 }
 
 base::DictValue MakeEntryDict(const base::FilePath& path,
-                              const base::File::Info& info) {
+                              const base::FileEnumerator::FileInfo& info) {
   base::DictValue dict;
   dict.Set("filename", path.BaseName().AsUTF8Unsafe());
   dict.Set("path", path.AsUTF8Unsafe());
-  dict.Set("size", static_cast<double>(info.size));
-  dict.Set("modified",
-           info.last_modified.InSecondsFSinceUnixEpoch());
+  dict.Set("size", static_cast<double>(info.GetSize()));
+  dict.Set("modified", info.GetLastModifiedTime().InSecondsFSinceUnixEpoch());
   dict.Set("encrypted",
            base::EndsWith(path.BaseName().AsUTF8Unsafe(),
                           kJsonEncryptedExtension));
@@ -86,25 +85,6 @@ base::FilePath BuildStatePath(const base::FilePath& directory,
       session_name.empty() ? std::string(kDefaultSessionName) : session_name;
   return directory.AppendASCII(safe_name + kJsonExtension);
 }
-
-struct StorageStateListResult {
-  bool success = false;
-  std::string error;
-  base::FilePath directory;
-  std::vector<base::DictValue> entries;
-};
-
-struct StorageStateReadResult {
-  bool success = false;
-  std::string error;
-  base::DictValue result;
-};
-
-struct StorageStateActionResult {
-  bool success = false;
-  std::string error;
-  base::FilePath path;
-};
 
 StorageStateListResult ListStatesOnBlockingThread(base::FilePath directory) {
   StorageStateListResult result;
@@ -265,7 +245,7 @@ StorageStateReadResult CleanStatesOnBlockingThread(base::FilePath directory,
     }
 
     const auto& info = enumerator.GetInfo();
-    if (now - info.last_modified > max_age) {
+    if (now - info.GetLastModifiedTime() > max_age) {
       if (base::DeleteFile(entry)) {
         ++cleaned;
         continue;
