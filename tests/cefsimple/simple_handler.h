@@ -15,7 +15,8 @@ class SimpleHandler : public CefClient,
                       public CefLoadHandler,
                       public CefRenderHandler {
  public:
-  explicit SimpleHandler(bool is_alloy_style);
+  explicit SimpleHandler(bool is_alloy_style,
+                         bool skip_runtime_style_check = false);
   ~SimpleHandler() override;
 
   // Provide access to the single global instance of this object.
@@ -67,6 +68,7 @@ class SimpleHandler : public CefClient,
 
   // True if this client is Alloy style, otherwise Chrome style.
   const bool is_alloy_style_;
+  const bool skip_runtime_style_check_;
 
   // List of existing browser windows. Only accessed on the CEF UI thread.
   typedef std::list<CefRefPtr<CefBrowser>> BrowserList;

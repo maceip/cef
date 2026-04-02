@@ -162,7 +162,14 @@ void SimpleApp::OnContextInitialized() {
   }
 
   // SimpleHandler implements browser-level callbacks.
-  CefRefPtr<SimpleHandler> handler(new SimpleHandler(use_alloy_style));
+  CefRefPtr<SimpleHandler> handler(
+      new SimpleHandler(use_alloy_style,
+#if defined(OS_LINUX)
+                        use_headless_osr
+#else
+                        false
+#endif
+                        ));
 
   // Specify CEF browser settings here.
   CefBrowserSettings browser_settings;

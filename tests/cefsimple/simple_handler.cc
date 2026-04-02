@@ -29,8 +29,8 @@ std::string GetDataURI(const std::string& data, const std::string& mime_type) {
 
 }  // namespace
 
-SimpleHandler::SimpleHandler(bool is_alloy_style)
-    : is_alloy_style_(is_alloy_style) {
+SimpleHandler::SimpleHandler(bool is_alloy_style, bool skip_style_check)
+    : is_alloy_style_(is_alloy_style), skip_style_check_(skip_style_check) {
   DCHECK(!g_instance);
   g_instance = this;
 }
@@ -68,8 +68,11 @@ void SimpleHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
 
   // Sanity-check the configured runtime style.
-  CHECK_EQ(is_alloy_style_ ? CEF_RUNTIME_STYLE_ALLOY : CEF_RUNTIME_STYLE_CHROME,
-           browser->GetHost()->GetRuntimeStyle());
+  if (!skip_style_check_) {
+    CHECK_EQ(
+        is_alloy_style_ ? CEF_RUNTIME_STYLE_ALLOY : CEF_RUNTIME_STYLE_CHROME,
+        browser->GetHost()->GetRuntimeStyle());
+  }
 
   // Add to the list of existing browsers.
   browser_list_.push_back(browser);
