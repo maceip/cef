@@ -1,0 +1,54 @@
+# Pre-baked build environment for CEF x86_64 Linux builds.
+# Eliminates ~3 min of apt-get installs per CI run across all targets.
+#
+# Build:  docker build -f Dockerfile.linux-x86 -t cef-builder-linux .
+# Push:   aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_URI
+#         docker tag cef-builder-linux $ECR_URI/cef-builder-linux:latest && docker push ...
+
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# All dependencies needed by CEF CI in a single layer
+RUN apt-get update && apt-get install -yq --no-install-recommends \
+    build-essential \
+    ca-certificates \
+    curl \
+    gcc-14-aarch64-linux-gnu \
+    gcc-14-arm-linux-gnueabi \
+    g++-14-aarch64-linux-gnu \
+    g++-14-arm-linux-gnueabi \
+    git \
+    jq \
+    libglib2.0-dev \
+    lsb-release \
+    ninja-build \
+    pkg-config \
+    python3 \
+    python3-pip \
+    sudo \
+    xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Rust toolchain
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+    | sh -s -- -y --default-toolchain stable --profile minimal
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Install sccache for distributed caching
+RUN curl -fsSL https://github.com/mozilla/sccache/releases/download/v0.9.1/sccache-v0.9.1-x86_64-unknown-linux-musl.tar.gz \
+    | tar -xz -C /usr/local/bin --strip-components=1 --wildcards '*/sccache'
+
+# Install depot_tools
+RUN git clone --depth=1 https://chromium.googlesource.com/chromium/tools/depot_tools.git /opt/depot_tools
+ENV PATH="/opt/depot_tools:${PATH}"
+
+# sccache environment (overridden at runtime with real bucket)
+ENV SCCACHE_BUCKET="cef-build-cache" \
+    SCCACHE_REGION="us-east-1" \
+    SCCACHE_S3_KEY_PREFIX="sccache/" \
+    RUSTC_WRAPPER="sccache" \
+    CC="sccache gcc" \
+    CXX="sccache g++"
+
+WORKDIR /build
