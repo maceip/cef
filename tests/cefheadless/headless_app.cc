@@ -4,9 +4,12 @@
 
 #include "tests/cefheadless/headless_app.h"
 
+#include <cstdlib>
 #include <string>
 
 #include "include/cef_command_line.h"
+#include "include/wrapper/cef_helpers.h"
+#include "tests/shared/browser/main_message_loop_external_pump.h"
 #include "tests/shared/common/client_switches.h"
 
 namespace {
@@ -65,10 +68,8 @@ void HeadlessApp::OnContextInitialized() {
   CefRefPtr<CefCommandLine> command_line =
       CefCommandLine::GetGlobalCommandLine();
 
-  const std::string url =
-      command_line->GetSwitchValue("url").empty()
-          ? std::string("about:blank")
-          : command_line->GetSwitchValue("url");
+  const std::string url_value = command_line->GetSwitchValue("url").ToString();
+  const std::string url = url_value.empty() ? "about:blank" : url_value;
 
   const int width = GetIntSwitch(command_line, "width", 1280);
   const int height = GetIntSwitch(command_line, "height", 720);

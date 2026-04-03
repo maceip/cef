@@ -2,9 +2,10 @@
 
 #include <utility>
 
+#include "cef/libcef/browser/stealth_config.h"
 #include "include/base/cef_logging.h"
 #include "include/cef_command_line.h"
-#include "include/cef_parser.h"
+#include "include/wrapper/cef_closure_task.h"
 #include "include/wrapper/cef_helpers.h"
 #include "tests/shared/browser/main_message_loop_external_pump.h"
 
@@ -14,8 +15,10 @@ HeadlessHandler* g_instance = nullptr;
 
 }  // namespace
 
-HeadlessHandler::HeadlessHandler(int width, int height, bool stealth_enabled)
-    : width_(width), height_(height), stealth_enabled_(stealth_enabled) {
+HeadlessHandler::HeadlessHandler(int width,
+                                 int height,
+                                 bool enable_stealth)
+    : width_(width), height_(height), enable_stealth_(enable_stealth) {
   DCHECK(!g_instance);
   g_instance = this;
 }
@@ -40,8 +43,8 @@ void HeadlessHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
   LOG(INFO) << "cefheadless browser created"
             << (port.empty() ? "" : " (CDP port " + port + ")");
 
-  if (stealth_enabled_) {
-    ApplyStealth(browser);
+  if (enable_stealth_) {
+    ApplyStealthConfig(browser);
   }
 }
 
@@ -87,8 +90,11 @@ void HeadlessHandler::OnPaint(CefRefPtr<CefBrowser> browser,
 
 void HeadlessHandler::CloseAllBrowsers(bool force_close) {
   if (!CefCurrentlyOn(TID_UI)) {
-    CefPostTask(TID_UI, base::BindOnce(&HeadlessHandler::CloseAllBrowsers, this,
-                                       force_close));
+    CefPostTask(
+        TID_UI,
+        CefCreateClosureTask(base::BindOnce(&HeadlessHandler::CloseAllBrowsers,
+                                            CefRefPtr<HeadlessHandler>(this),
+                                            force_close)));
     return;
   }
 
@@ -106,7 +112,7 @@ void HeadlessHandler::CloseAllBrowsers(bool force_close) {
   }
 }
 
-void HeadlessHandler::ApplyStealth(CefRefPtr<CefBrowser> browser) {
+void HeadlessHandler::ApplyStealthConfig(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
 
   auto params = CefDictionaryValue::Create();

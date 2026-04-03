@@ -3,6 +3,7 @@
 #pragma once
 
 #include "include/cef_app.h"
+#include "tests/cefheadless/headless_handler.h"
 
 class HeadlessApp : public CefApp, public CefBrowserProcessHandler {
  public:
@@ -16,8 +17,11 @@ class HeadlessApp : public CefApp, public CefBrowserProcessHandler {
       const CefString& process_type,
       CefRefPtr<CefCommandLine> command_line) override;
   void OnContextInitialized() override;
+  void OnScheduleMessagePumpWork(int64_t delay_ms) override;
 
  private:
+  CefRefPtr<HeadlessHandler> handler_;
+
   IMPLEMENT_REFCOUNTING(HeadlessApp);
 };
 

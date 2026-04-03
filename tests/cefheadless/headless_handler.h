@@ -45,7 +45,7 @@ class HeadlessHandler : public CefClient,
   void CloseAllBrowsers(bool force_close);
 
  private:
-  void ApplyStealthConfig(CefRefPtr<CefBrowser> browser);
+  void ApplyStealth(CefRefPtr<CefBrowser> browser);
 
   const int width_;
   const int height_;

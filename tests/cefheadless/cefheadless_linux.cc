@@ -5,9 +5,11 @@
 #include "tests/cefheadless/headless_app.h"
 
 #include <glib-unix.h>
+#include <signal.h>
 
 #include "include/base/cef_logging.h"
 #include "include/cef_command_line.h"
+#include "tests/cefheadless/headless_handler.h"
 #include "tests/shared/browser/main_message_loop_external_pump.h"
 
 namespace {
