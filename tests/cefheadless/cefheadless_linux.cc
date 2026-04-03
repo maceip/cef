@@ -39,11 +39,14 @@ int main(int argc, char* argv[]) {
   CefRefPtr<CefCommandLine> command_line = CefCommandLine::CreateCommandLine();
   command_line->InitFromArgv(argc, argv);
 
+  const bool use_external_message_pump =
+      command_line->HasSwitch(client::switches::kExternalMessagePump);
+
   CefSettings settings;
 #if !defined(CEF_USE_SANDBOX)
   settings.no_sandbox = true;
 #endif
-  settings.external_message_pump = true;
+  settings.external_message_pump = use_external_message_pump;
   settings.windowless_rendering_enabled = true;
 
   const std::string debug_port =
@@ -52,7 +55,12 @@ int main(int argc, char* argv[]) {
     settings.remote_debugging_port = std::stoi(debug_port);
   }
 
-  auto message_loop = client::MainMessageLoopExternalPump::Create();
+  std::unique_ptr<client::MainMessageLoop> message_loop;
+  if (use_external_message_pump) {
+    message_loop = client::MainMessageLoopExternalPump::Create();
+  } else {
+    message_loop = std::make_unique<client::MainMessageLoopStd>();
+  }
 
   g_unix_signal_add(SIGINT, &OnSignalReceived, nullptr);
   g_unix_signal_add(SIGTERM, &OnSignalReceived, nullptr);
