@@ -1,11 +1,13 @@
 #include "tests/cefheadless/headless_handler.h"
 
+#include <sstream>
+#include <string>
 #include <utility>
 
-#include "cef/libcef/browser/stealth_config.h"
 #include "include/cef_app.h"
 #include "include/base/cef_logging.h"
 #include "include/cef_command_line.h"
+#include "include/cef_parser.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "include/wrapper/cef_helpers.h"
 #include "tests/shared/browser/main_message_loop_external_pump.h"
@@ -13,6 +15,29 @@
 namespace {
 
 HeadlessHandler* g_instance = nullptr;
+
+std::string GetDataURI(const std::string& data, const std::string& mime_type) {
+  return "data:" + mime_type + ";base64," +
+         CefURIEncode(CefBase64Encode(data.data(), data.size()), false)
+             .ToString();
+}
+
+std::string BuildDefaultStealthScript() {
+  return R"JS(
+Object.defineProperty(navigator, 'webdriver', {
+  get: () => undefined,
+  configurable: true,
+});
+(function() {
+  const props = Object.getOwnPropertyNames(window);
+  for (const prop of props) {
+    if (prop.match(/^(cdc_|__webdriver_|\$cdc_)/)) {
+      try { delete window[prop]; } catch(e) {}
+    }
+  }
+})();
+)JS";
+}
 
 }  // namespace
 
@@ -74,6 +99,26 @@ void HeadlessHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
   }
 }
 
+void HeadlessHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
+                                  CefRefPtr<CefFrame> frame,
+                                  ErrorCode errorCode,
+                                  const CefString& errorText,
+                                  const CefString& failedUrl) {
+  CEF_REQUIRE_UI_THREAD();
+
+  if (errorCode == ERR_ABORTED) {
+    return;
+  }
+
+  std::stringstream ss;
+  ss << "<html><body bgcolor=\"white\">"
+        "<h2>Failed to load URL "
+     << std::string(failedUrl) << " with error " << std::string(errorText)
+     << " (" << errorCode << ").</h2></body></html>";
+
+  frame->LoadURL(GetDataURI(ss.str(), "text/html"));
+}
+
 void HeadlessHandler::GetViewRect(CefRefPtr<CefBrowser> browser,
                                   CefRect& rect) {
   CEF_REQUIRE_UI_THREAD();
@@ -117,7 +162,7 @@ void HeadlessHandler::ApplyStealth(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
 
   auto params = CefDictionaryValue::Create();
-  params->SetString("source", CefStealthConfig::Default().BuildStealthScript());
+  params->SetString("source", BuildDefaultStealthScript());
   const int id = browser->GetHost()->ExecuteDevToolsMethod(
       0, "Page.addScriptToEvaluateOnNewDocument", params);
   if (id == 0) {
