@@ -8,6 +8,7 @@
 
 #include <list>
 
+#include "include/cef_app.h"
 #include "include/cef_client.h"
 
 class HeadlessHandler : public CefClient,

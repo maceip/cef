@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "cef/libcef/browser/stealth_config.h"
+#include "include/cef_app.h"
 #include "include/base/cef_logging.h"
 #include "include/cef_command_line.h"
 #include "include/wrapper/cef_closure_task.h"
@@ -44,7 +45,7 @@ void HeadlessHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
             << (port.empty() ? "" : " (CDP port " + port + ")");
 
   if (enable_stealth_) {
-    ApplyStealthConfig(browser);
+    ApplyStealth(browser);
   }
 }
 
@@ -112,7 +113,7 @@ void HeadlessHandler::CloseAllBrowsers(bool force_close) {
   }
 }
 
-void HeadlessHandler::ApplyStealthConfig(CefRefPtr<CefBrowser> browser) {
+void HeadlessHandler::ApplyStealth(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
 
   auto params = CefDictionaryValue::Create();
