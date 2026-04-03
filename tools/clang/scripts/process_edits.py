@@ -4,79 +4,37 @@
 # can be found in the LICENSE file.
 
 """
-Post-processing script for cef_cpp_rewriter output.
-
-This script:
-1. Reads raw edit directives from stdin or files
-2. Deduplicates edits (same replacement at same location)
-3. Adds BEGIN/END EDITS markers
+Deduplicate and format cef_cpp_rewriter edit output.
 
 Usage:
-  # Pipe from tool output, then apply with CEF's apply_edits.py
   cef_cpp_rewriter ... | python3 process_edits.py | python3 apply_edits.py --base-dir out/ClangTool
-
-  # Or process saved files
   python3 process_edits.py raw_output1.txt raw_output2.txt > edits.txt
-  python3 apply_edits.py edits.txt --base-dir out/ClangTool
 """
 
-import os
 import sys
 
 
-def process_edits(input_lines):
-    """Process edit lines, deduplicating and filtering."""
-    seen_edits = set()
-    edits = []
-
-    for line in input_lines:
-        line = line.strip()
-        if not line:
-            continue
-
-        # Skip non-edit lines (processing messages, errors, etc.)
-        if not line.startswith('r:::') and not line.startswith('include-'):
-            continue
-
-        parts = line.split(':::')
-        if len(parts) < 2:
-            continue
-
-        # Keep the path as-is (don't normalize away directory components)
-        path = parts[1]
-
-        # Reconstruct the line
-        normalized_line = ':::'.join(parts)
-
-        # Deduplicate
-        if normalized_line in seen_edits:
-            continue
-        seen_edits.add(normalized_line)
-
-        edits.append(normalized_line)
-
-    return sorted(edits)
-
-
 def main():
-    # Read from files if provided, otherwise stdin
     # Read as binary to handle null bytes correctly
     if len(sys.argv) > 1:
-        data = b''
-        for filename in sys.argv[1:]:
-            with open(filename, 'rb') as f:
-                data += f.read()
+        data = b''.join(open(f, 'rb').read() for f in sys.argv[1:])
     else:
         data = sys.stdin.buffer.read()
 
-    # Split by newlines (tool uses \n as line separator, \0 within lines for embedded newlines)
     lines = data.decode('utf-8', errors='replace').split('\n')
 
-    edits = process_edits(lines)
+    seen = set()
+    edits = []
+    for line in lines:
+        line = line.strip()
+        if not line or not (line.startswith('r:::') or line.startswith('include-')):
+            continue
+        if line not in seen:
+            seen.add(line)
+            edits.append(line)
 
-    # Output with markers
     print('==== BEGIN EDITS ====')
-    for edit in edits:
+    for edit in sorted(edits):
         print(edit)
     print('==== END EDITS ====')
 
