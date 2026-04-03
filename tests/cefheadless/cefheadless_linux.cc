@@ -11,14 +11,17 @@
 #include "include/cef_command_line.h"
 #include "tests/cefheadless/headless_handler.h"
 #include "tests/shared/browser/main_message_loop_external_pump.h"
+#include "tests/shared/browser/main_message_loop_std.h"
 
 namespace {
+
+client::MainMessageLoop* g_message_loop = nullptr;
 
 gboolean OnSignalReceived(gpointer /*data*/) {
   if (auto* handler = HeadlessHandler::GetInstance()) {
     handler->CloseAllBrowsers(true);
-  } else if (auto* message_loop = client::MainMessageLoopExternalPump::Get()) {
-    message_loop->Quit();
+  } else if (g_message_loop) {
+    g_message_loop->Quit();
   }
   return G_SOURCE_REMOVE;
 }
@@ -40,7 +43,7 @@ int main(int argc, char* argv[]) {
   command_line->InitFromArgv(argc, argv);
 
   const bool use_external_message_pump =
-      command_line->HasSwitch(client::switches::kExternalMessagePump);
+      command_line->HasSwitch("external-message-pump");
 
   CefSettings settings;
 #if !defined(CEF_USE_SANDBOX)
@@ -61,6 +64,7 @@ int main(int argc, char* argv[]) {
   } else {
     message_loop = std::make_unique<client::MainMessageLoopStd>();
   }
+  g_message_loop = message_loop.get();
 
   g_unix_signal_add(SIGINT, &OnSignalReceived, nullptr);
   g_unix_signal_add(SIGTERM, &OnSignalReceived, nullptr);
@@ -73,6 +77,7 @@ int main(int argc, char* argv[]) {
             << " port=" << settings.remote_debugging_port;
 
   message_loop->Run();
+  g_message_loop = nullptr;
 
   CefShutdown();
   return 0;
