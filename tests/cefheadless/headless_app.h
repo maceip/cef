@@ -17,7 +17,6 @@ class HeadlessApp : public CefApp, public CefBrowserProcessHandler {
       const CefString& process_type,
       CefRefPtr<CefCommandLine> command_line) override;
   void OnContextInitialized() override;
-  void OnScheduleMessagePumpWork(int64_t delay_ms) override;
 
  private:
   CefRefPtr<HeadlessHandler> handler_;

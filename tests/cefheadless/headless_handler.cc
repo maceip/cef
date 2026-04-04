@@ -2,15 +2,13 @@
 
 #include <sstream>
 #include <string>
-#include <utility>
 
-#include "include/cef_app.h"
 #include "include/base/cef_logging.h"
+#include "include/cef_app.h"
 #include "include/cef_command_line.h"
 #include "include/cef_parser.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "include/wrapper/cef_helpers.h"
-#include "tests/shared/browser/main_message_loop_external_pump.h"
 
 namespace {
 
@@ -91,10 +89,6 @@ void HeadlessHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
   }
 
   if (browser_list_.empty()) {
-    if (auto* message_pump = client::MainMessageLoopExternalPump::Get()) {
-      message_pump->Quit();
-      return;
-    }
     CefQuitMessageLoop();
   }
 }
@@ -119,21 +113,6 @@ void HeadlessHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
   frame->LoadURL(GetDataURI(ss.str(), "text/html"));
 }
 
-void HeadlessHandler::GetViewRect(CefRefPtr<CefBrowser> browser,
-                                  CefRect& rect) {
-  CEF_REQUIRE_UI_THREAD();
-  rect = CefRect(0, 0, width_, height_);
-}
-
-void HeadlessHandler::OnPaint(CefRefPtr<CefBrowser> browser,
-                              PaintElementType type,
-                              const RectList& dirtyRects,
-                              const void* buffer,
-                              int width,
-                              int height) {
-  CEF_REQUIRE_UI_THREAD();
-}
-
 void HeadlessHandler::CloseAllBrowsers(bool force_close) {
   if (!CefCurrentlyOn(TID_UI)) {
     CefPostTask(
@@ -145,10 +124,6 @@ void HeadlessHandler::CloseAllBrowsers(bool force_close) {
   }
 
   if (browser_list_.empty()) {
-    if (auto* message_pump = client::MainMessageLoopExternalPump::Get()) {
-      message_pump->Quit();
-      return;
-    }
     CefQuitMessageLoop();
     return;
   }

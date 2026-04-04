@@ -9,7 +9,6 @@
 
 #include "include/cef_command_line.h"
 #include "include/wrapper/cef_helpers.h"
-#include "tests/shared/browser/main_message_loop_external_pump.h"
 #include "tests/shared/common/client_switches.h"
 
 namespace {
@@ -31,35 +30,42 @@ HeadlessApp::HeadlessApp() = default;
 void HeadlessApp::OnBeforeCommandLineProcessing(
     const CefString& process_type,
     CefRefPtr<CefCommandLine> command_line) {
-#if defined(OS_LINUX)
-  if (!command_line) {
+  if (!command_line || !process_type.empty()) {
     return;
   }
 
+  // Use Chrome's native --headless mode. This creates a virtual display
+  // surface internally so the compositor has a real frame sink. The DevTools
+  // agent host initializes normally and /json responds immediately.
+  //
+  // DO NOT use Alloy OSR (SetAsWindowless) for headless CDP. OSR without a
+  // display creates a browser with no compositor surface. The DevTools HTTP
+  // server starts (TCP port binds) but the agent host never fully initializes
+  // because there is no render frame until OnPaint starts producing frames —
+  // which requires a working compositor. Result: /json hangs forever.
+  command_line->AppendSwitch("headless");
+  command_line->AppendSwitch("disable-gpu");
+  command_line->AppendSwitch("no-sandbox");
+
+#if defined(OS_LINUX)
+  // Ozone headless platform — no X11/Wayland needed.
   if (!command_line->HasSwitch("enable-features")) {
     command_line->AppendSwitchWithValue("enable-features", "UseOzonePlatform");
   }
   if (!command_line->HasSwitch(client::switches::kOzonePlatform)) {
     command_line->AppendSwitchWithValue(client::switches::kOzonePlatform,
-                                        "headless");
+                                       "headless");
   }
-  if (!command_line->HasSwitch("headless")) {
-    command_line->AppendSwitch("headless");
+#endif
+
+  // CDP remote debugging.
+  if (!command_line->HasSwitch("remote-debugging-port")) {
+    command_line->AppendSwitchWithValue("remote-debugging-port", "9222");
   }
   if (!command_line->HasSwitch("remote-debugging-address")) {
     command_line->AppendSwitchWithValue("remote-debugging-address",
-                                        "127.0.0.1");
+                                       "127.0.0.1");
   }
-  if (!command_line->HasSwitch(client::switches::kOffScreenRenderingEnabled)) {
-    command_line->AppendSwitch(client::switches::kOffScreenRenderingEnabled);
-  }
-  if (!command_line->HasSwitch("disable-gpu")) {
-    command_line->AppendSwitch("disable-gpu");
-  }
-  if (!command_line->HasSwitch("disable-gpu-compositing")) {
-    command_line->AppendSwitch("disable-gpu-compositing");
-  }
-#endif
 }
 
 void HeadlessApp::OnContextInitialized() {
@@ -77,19 +83,14 @@ void HeadlessApp::OnContextInitialized() {
 
   handler_ = new HeadlessHandler(width, height, enable_stealth);
 
+  // Chrome runtime with normal window — NOT Alloy OSR.
+  // In headless mode Chrome provides a virtual compositor surface,
+  // so DevTools works correctly without a real display.
   CefWindowInfo window_info;
-  window_info.runtime_style = CEF_RUNTIME_STYLE_ALLOY;
-  window_info.SetAsWindowless(static_cast<cef_window_handle_t>(0));
+  window_info.runtime_style = CEF_RUNTIME_STYLE_DEFAULT;
 
   CefBrowserSettings browser_settings;
-  browser_settings.windowless_frame_rate = 30;
 
   CefBrowserHost::CreateBrowser(window_info, handler_, url, browser_settings,
                                 nullptr, nullptr);
-}
-
-void HeadlessApp::OnScheduleMessagePumpWork(int64_t delay_ms) {
-  if (auto* message_pump = client::MainMessageLoopExternalPump::Get()) {
-    message_pump->OnScheduleMessagePumpWork(delay_ms);
-  }
 }
