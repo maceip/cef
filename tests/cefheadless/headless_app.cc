@@ -47,6 +47,15 @@ void HeadlessApp::OnBeforeCommandLineProcessing(
   command_line->AppendSwitch("disable-gpu");
   command_line->AppendSwitch("no-sandbox");
 
+  // Chrome runtime requires a non-default --user-data-dir for remote
+  // debugging to be enabled. Without this, RemoteDebuggingServer::GetInstance()
+  // returns kDisabledByDefaultUserDataDir and the DevTools HTTP server is
+  // never created — the port opens (from the socket factory) but /json
+  // hangs forever because no handler processes the request.
+  if (!command_line->HasSwitch("user-data-dir")) {
+    command_line->AppendSwitchWithValue("user-data-dir", "/tmp/cefheadless");
+  }
+
 #if defined(OS_LINUX)
   // Ozone headless platform — no X11/Wayland needed.
   if (!command_line->HasSwitch("enable-features")) {
