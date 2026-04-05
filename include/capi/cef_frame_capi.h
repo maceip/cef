@@ -33,7 +33,7 @@
 // by hand. See the translator.README.txt file in the tools directory for
 // more information.
 //
-// $hash=dd70298bcb7d3c27ad90f93f04afc4785a1c0444$
+// $hash=ab635fbd15851f249b8d7ba743987dd8e8ea2021$
 //
 
 #ifndef CEF_INCLUDE_CAPI_CEF_FRAME_CAPI_H_
@@ -50,6 +50,7 @@
 #include "include/capi/cef_request_capi.h"
 #include "include/capi/cef_stream_capi.h"
 #include "include/capi/cef_string_visitor_capi.h"
+#include "include/capi/cef_values_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -59,6 +60,27 @@ struct _cef_browser_t;
 struct _cef_urlrequest_client_t;
 struct _cef_urlrequest_t;
 struct _cef_v8_context_t;
+
+///
+/// Callback structure for cef_frame_t::ExecuteJavaScriptWithResult.
+///
+/// NOTE: This struct is allocated client-side.
+///
+typedef struct _cef_java_script_result_callback_t {
+  ///
+  /// Base structure.
+  ///
+  cef_base_ref_counted_t base;
+
+  ///
+  /// Called with the result of JavaScript execution. |success| is true (1) if
+  /// execution completed without error. |result| contains the return value
+  /// serialized as a cef_value_t (may be null for void results). |error|
+  /// contains the error message if |success| is false (0).
+  ///
+  void (CEF_CALLBACK *on_complete)(struct _cef_java_script_result_callback_t* self, int success, struct _cef_value_t* result, const cef_string_t* error);
+} cef_java_script_result_callback_t;
+
 
 ///
 /// Structure used to represent a frame in the browser window. When used in the
@@ -162,11 +184,14 @@ typedef struct _cef_frame_t {
   void (CEF_CALLBACK *execute_java_script)(struct _cef_frame_t* self, const cef_string_t* code, const cef_string_t* script_url, int start_line);
 
   ///
-  /// Execute JavaScript and deliver the serialized result asynchronously via
-  /// |callback|. The |script_url| and |start_line| parameters follow the same
-  /// conventions as execute_java_script.
+  /// Execute JavaScript in this frame and return the result asynchronously. The
+  /// result is serialized as a cef_value_t (supports dict, list, string,
+  /// number, bool, null). Complex objects are serialized via JSON.stringify. If
+  /// execution fails, |result| will be null and |error| will contain the error
+  /// message. This function is optimized for coding agent workflows where
+  /// structured DOM data extraction is the primary use case.
   ///
-  void (CEF_CALLBACK *execute_java_script_with_result)(struct _cef_frame_t* self, const cef_string_t* code, const cef_string_t* script_url, int start_line, struct _cef_string_visitor_t* callback);
+  void (CEF_CALLBACK *execute_java_script_with_result)(struct _cef_frame_t* self, const cef_string_t* code, const cef_string_t* script_url, int start_line, struct _cef_java_script_result_callback_t* callback);
 
   ///
   /// Returns true (1) if this is the main (top-level) frame.

@@ -12,6 +12,8 @@
 #include "base/task/sequenced_task_runner.h"
 #include "base/task/thread_pool.h"
 
+#include <inttypes.h>
+
 namespace {
 
 // Shared task factory that can be cloned across iterations.
@@ -188,6 +190,11 @@ class EvalLoopRunner : public base::RefCountedThreadSafe<EvalLoopRunner> {
 };
 
 }  // namespace
+
+CefAgentScheduler::Config::Config()
+    : max_concurrent_tasks(8),
+      max_per_agent_tasks(4),
+      default_timeout(base::Seconds(60)) {}
 
 CefAgentScheduler::CefAgentScheduler(const Config& config) : config_(config) {}
 

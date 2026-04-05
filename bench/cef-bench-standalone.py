@@ -19,14 +19,34 @@ async def main():
     # Start CEF
     env = {**os.environ, "DISPLAY": ":99", "LD_LIBRARY_PATH": CEF_LIB}
     cef = subprocess.Popen(
-        [CEF_BIN, "--no-sandbox", "--remote-debugging-port=9333", "--url=about:blank"],
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env)
+        [
+            CEF_BIN,
+            "--no-sandbox",
+            "--off-screen-rendering-enabled",
+            "--external-message-pump",
+            "--remote-debugging-port=9333",
+            "--url=about:blank",
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        env=env)
     await asyncio.sleep(4)
 
-    # Get page target via subprocess curl (urllib hangs on CEF)
-    r = subprocess.run(["curl", "-s", "http://127.0.0.1:9333/json"],
-                       capture_output=True, text=True, timeout=5)
-    if not r.stdout.strip():
+    # Get page target via subprocess curl (urllib hangs on CEF). Retry because
+    # the DevTools endpoint can take a few seconds to become responsive.
+    r = None
+    for _ in range(10):
+        r = subprocess.run(
+            ["curl", "--max-time", "5", "-s", "http://127.0.0.1:9333/json/list"],
+            capture_output=True,
+            text=True,
+            timeout=8,
+        )
+        if r.stdout.strip():
+            break
+        await asyncio.sleep(1)
+
+    if not r or not r.stdout.strip():
         print("  FAIL: CEF not responding")
         cef.kill(); xvfb.kill()
         return

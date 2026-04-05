@@ -9,9 +9,10 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
-// $hash=086b0d3389c02fb6de22ae511a56be2618d6cb8d$
+// $hash=df615f4c9bb81ba11c44a8f4bd7e4f9601f08ac1$
 //
 
+#include "libcef_dll/cpptoc/eval_snapshot_callback_cpptoc.h"
 #include "libcef_dll/cpptoc/screenshot_callback_cpptoc.h"
 #include "libcef_dll/cpptoc/string_visitor_cpptoc.h"
 #include "libcef_dll/ctocpp/browser_capture_ctocpp.h"
@@ -42,10 +43,7 @@ NO_SANITIZE("cfi-icall") void CefBrowserCaptureCToCpp::Snapshot(const CefSnapsho
       CefStringVisitorCppToC_Wrap(callback));
 }
 
-NO_SANITIZE("cfi-icall") void CefBrowserCaptureCToCpp::EvalThenSnapshot(
-    const CefString& javascript,
-    const CefSnapshotSettings& snapshot_settings,
-    CefRefPtr<CefStringVisitor> callback) {
+NO_SANITIZE("cfi-icall") void CefBrowserCaptureCToCpp::EvalThenSnapshot(const CefString& code, const CefSnapshotSettings& settings, CefRefPtr<CefEvalSnapshotCallback> callback){
   shutdown_checker::AssertNotShutdown();
 
   auto* _struct = GetStruct();
@@ -58,9 +56,8 @@ NO_SANITIZE("cfi-icall") void CefBrowserCaptureCToCpp::EvalThenSnapshot(
     return;
   }
 
-  _struct->eval_then_snapshot(_struct, javascript.GetStruct(),
-                              &snapshot_settings,
-                              CefStringVisitorCppToC_Wrap(callback));
+  _struct->eval_then_snapshot(_struct, code.GetStruct(), &settings,
+                              CefEvalSnapshotCallbackCppToC_Wrap(callback));
 }
 
 NO_SANITIZE("cfi-icall") void CefBrowserCaptureCToCpp::CaptureAnnotatedScreenshot(const CefString& path, const CefAnnotatedScreenshotSettings& settings, CefRefPtr<CefScreenshotCallback> callback) {

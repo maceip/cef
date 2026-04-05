@@ -966,24 +966,45 @@ typedef enum {
   CEF_AUTOMATION_INSTRUCTION_TYPE_NAVIGATE,
 
   ///
+  /// Wait for a condition or timeout.
+  ///
+  CEF_AUTOMATION_INSTRUCTION_TYPE_WAIT,
+
+  ///
   /// Click a target element.
   ///
   CEF_AUTOMATION_INSTRUCTION_TYPE_CLICK,
 
   ///
-  /// Fill an input element.
+  /// Type text into the focused element.
   ///
-  CEF_AUTOMATION_INSTRUCTION_TYPE_FILL,
+  CEF_AUTOMATION_INSTRUCTION_TYPE_TYPE,
+
+  ///
+  /// Capture a text snapshot of the page.
+  ///
+  CEF_AUTOMATION_INSTRUCTION_TYPE_SNAPSHOT,
+
+  ///
+  /// Capture a screenshot.
+  ///
+  CEF_AUTOMATION_INSTRUCTION_TYPE_SCREENSHOT,
 
   ///
   /// Evaluate JavaScript.
   ///
-  CEF_AUTOMATION_INSTRUCTION_TYPE_EVAL,
+  CEF_AUTOMATION_INSTRUCTION_TYPE_EVALUATE,
 
   ///
-  /// Wait for a condition or timeout.
+  /// Wait for a specified duration.
   ///
-  CEF_AUTOMATION_INSTRUCTION_TYPE_WAIT,
+  CEF_AUTOMATION_INSTRUCTION_TYPE_DELAY,
+
+  // Backward-compatible aliases for previous enum names.
+  CEF_AUTOMATION_INSTRUCTION_TYPE_FILL =
+      CEF_AUTOMATION_INSTRUCTION_TYPE_TYPE,
+  CEF_AUTOMATION_INSTRUCTION_TYPE_EVAL =
+      CEF_AUTOMATION_INSTRUCTION_TYPE_EVALUATE,
 } cef_automation_instruction_type_t;
 
 ///

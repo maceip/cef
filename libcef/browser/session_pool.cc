@@ -5,10 +5,14 @@
 #include "cef/libcef/browser/session_pool.h"
 
 #include <algorithm>
+#include <inttypes.h>
 
 #include "base/logging.h"
 #include "base/strings/stringprintf.h"
 #include "cef/libcef/browser/thread_util.h"
+
+CefSessionPool::Config::Config()
+    : pool_size(2), max_idle_time(base::Minutes(5)) {}
 
 CefSessionPool::CefSessionPool(const Config& config) : config_(config) {
   Prewarm();
@@ -272,6 +276,7 @@ std::string CefSessionPool::GenerateCachePath() {
     return std::string();
   }
 
-  return base::StringPrintf("%s/pool_%" PRIu64, config_.base_cache_path.c_str(),
-                            next_context_id_++);
+  return base::StringPrintf("%s/pool_%llu",
+                            config_.base_cache_path.c_str(),
+                            static_cast<unsigned long long>(next_context_id_++));
 }

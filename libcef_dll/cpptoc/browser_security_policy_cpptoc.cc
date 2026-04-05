@@ -9,7 +9,7 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
-// $hash=37669caaa111f89aacc9233d42831ebed3d7d03c$
+// $hash=5bf0479a0e903ea022d667b36bfd333904270c05$
 //
 
 #include "include/cef_api_hash.h"
@@ -123,9 +123,7 @@ cef_string_userfree_t CEF_CALLBACK browser_security_policy_get_confirm_action_ca
   return _retval.DetachToUserFree();
 }
 
-int CEF_CALLBACK browser_security_policy_should_block_request(
-    struct _cef_browser_security_policy_0_t* self,
-    const cef_string_t* url) {
+int CEF_CALLBACK browser_security_policy_should_block_request(struct _cef_browser_security_policy_0_t* self, const cef_string_t* url){
   shutdown_checker::AssertNotShutdown();
 
   DCHECK(self);

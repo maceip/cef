@@ -9,7 +9,7 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
-// $hash=e10a1533810760f8b18f0d80c5d233054f867a30$
+// $hash=9cc666d4edb97c99aef7dc02f0750f83e43b9fc2$
 //
 
 #include "libcef_dll/cpptoc/browser_security_callback_cpptoc.h"
@@ -90,8 +90,7 @@ NO_SANITIZE("cfi-icall") CefString CefBrowserSecurityPolicyCToCpp::GetConfirmAct
   return _retvalStr;
 }
 
-NO_SANITIZE("cfi-icall") bool CefBrowserSecurityPolicyCToCpp::ShouldBlockRequest(
-    const CefString& url) {
+NO_SANITIZE("cfi-icall") bool CefBrowserSecurityPolicyCToCpp::ShouldBlockRequest(const CefString& url){
   shutdown_checker::AssertNotShutdown();
 
   auto* _struct = GetStruct();

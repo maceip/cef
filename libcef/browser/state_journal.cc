@@ -19,7 +19,7 @@ namespace {
 std::string BuildSetLine(const std::string& key,
                          const base::Value& value,
                          double timestamp) {
-  base::Value::Dict entry;
+  base::DictValue entry;
   entry.Set("op", "set");
   entry.Set("key", key);
   entry.Set("value", value.Clone());
@@ -35,7 +35,7 @@ std::string BuildSetLine(const std::string& key,
 
 // Build a JSON line for a "delete" operation.
 std::string BuildDeleteLine(const std::string& key, double timestamp) {
-  base::Value::Dict entry;
+  base::DictValue entry;
   entry.Set("op", "delete");
   entry.Set("key", key);
   entry.Set("ts", timestamp);
@@ -49,8 +49,8 @@ std::string BuildDeleteLine(const std::string& key, double timestamp) {
 }
 
 // Build a JSON line for a "snapshot" operation.
-std::string BuildSnapshotLine(const base::Value::Dict& data, double timestamp) {
-  base::Value::Dict entry;
+std::string BuildSnapshotLine(const base::DictValue& data, double timestamp) {
+  base::DictValue entry;
   entry.Set("op", "snapshot");
   entry.Set("data", data.Clone());
   entry.Set("ts", timestamp);
@@ -86,7 +86,7 @@ bool CefStateJournal::Initialize(const base::FilePath& journal_path) {
     if (!ReplayJournal(journal_path_)) {
       LOG(ERROR) << "Failed to replay journal: " << journal_path_.value();
       // Continue with empty state; the file may be corrupt.
-      state_ = base::Value::Dict();
+      state_ = base::DictValue();
       pending_ops_ = 0;
     }
   }
@@ -158,7 +158,7 @@ bool CefStateJournal::Has(const std::string& key) const {
   return state_.contains(key);
 }
 
-base::Value::Dict CefStateJournal::GetAll() const {
+base::DictValue CefStateJournal::GetAll() const {
   base::AutoLock lock(lock_);
   return state_.Clone();
 }
@@ -228,7 +228,7 @@ bool CefStateJournal::ReplayJournal(const base::FilePath& path) {
     return true;
   }
 
-  state_ = base::Value::Dict();
+  state_ = base::DictValue();
   pending_ops_ = 0;
 
   const std::vector<std::string> lines = base::SplitString(
@@ -239,7 +239,8 @@ bool CefStateJournal::ReplayJournal(const base::FilePath& path) {
       continue;
     }
 
-    std::optional<base::Value::Dict> entry = base::JSONReader::ReadDict(line);
+    std::optional<base::DictValue> entry =
+        base::JSONReader::ReadDict(line, base::JSON_PARSE_RFC);
     if (!entry.has_value()) {
       // Gracefully skip truncated or corrupt lines (e.g. last line after
       // a crash).
@@ -271,7 +272,7 @@ bool CefStateJournal::ReplayJournal(const base::FilePath& path) {
         LOG(WARNING) << "Skipping malformed delete entry.";
       }
     } else if (*op == "snapshot") {
-      const base::Value::Dict* data = entry->FindDict("data");
+      const base::DictValue* data = entry->FindDict("data");
       if (data) {
         state_ = data->Clone();
         // A snapshot resets the operation counter since the state is fully

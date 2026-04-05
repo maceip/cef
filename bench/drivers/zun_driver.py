@@ -1,6 +1,6 @@
 """Driver for our CEF (zun) browser using CDP WebSocket.
 
-Communicates with cefclient via the Chrome DevTools Protocol over WebSocket.
+Communicates with cefsimple via the Chrome DevTools Protocol over WebSocket.
 The CEF binary must be built and available on PATH (or passed explicitly).
 """
 
@@ -34,9 +34,10 @@ class ZunDriver(BrowserDriver):
         return self._version
 
     def __init__(self, cef_binary_path: Optional[str] = None, port: int = 9222):
-        self._binary = cef_binary_path or "cefclient"
+        self._binary = cef_binary_path or "cefsimple"
         self._port = port
         self._process: Optional[subprocess.Popen] = None
+        self._xvfb: Optional[subprocess.Popen] = None
         self._ws = None
         self._ws_url: Optional[str] = None
         self._msg_id = 0
@@ -44,30 +45,42 @@ class ZunDriver(BrowserDriver):
     async def setup(self) -> TimedResult:
         start = time.perf_counter()
         try:
+            env = dict(os.environ)
+            if not env.get("DISPLAY"):
+                self._xvfb = subprocess.Popen(
+                    ["Xvfb", ":99", "-screen", "0", "1920x1080x24"],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+                env["DISPLAY"] = ":99"
+                await asyncio.sleep(1)
+
             self._process = subprocess.Popen(
                 [
                     self._binary,
                     f"--remote-debugging-port={self._port}",
                     "--no-sandbox",
-                    "--disable-gpu",
-                    "--headless",
+                    "--off-screen-rendering-enabled",
+                    "--external-message-pump",
+                    "--url=about:blank",
                 ],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
+                env=env,
             )
             # Poll for DevTools endpoint
             for _ in range(50):
                 try:
                     resp = urllib.request.urlopen(
-                        f"http://127.0.0.1:{self._port}/json"
+                        f"http://127.0.0.1:{self._port}/json/version"
                     )
-                    targets = json.loads(resp.read())
-                    if targets:
-                        self._ws_url = targets[0]["webSocketDebuggerUrl"]
+                    info = json.loads(resp.read())
+                    self._ws_url = info.get("webSocketDebuggerUrl")
+                    if self._ws_url:
                         self._ws = await websockets.connect(self._ws_url)
                         break
                 except Exception:
-                    await asyncio.sleep(0.1)
+                    await asyncio.sleep(0.2)
 
             elapsed = (time.perf_counter() - start) * 1000
             if not self._ws:
@@ -99,6 +112,13 @@ class ZunDriver(BrowserDriver):
             except subprocess.TimeoutExpired:
                 self._process.kill()
             self._process = None
+        if self._xvfb:
+            self._xvfb.terminate()
+            try:
+                self._xvfb.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                self._xvfb.kill()
+            self._xvfb = None
         self._ws_url = None
         self._msg_id = 0
 

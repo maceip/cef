@@ -29,8 +29,8 @@ std::string GetDataURI(const std::string& data, const std::string& mime_type) {
 
 }  // namespace
 
-SimpleHandler::SimpleHandler(bool is_alloy_style)
-    : is_alloy_style_(is_alloy_style) {
+SimpleHandler::SimpleHandler(bool is_alloy_style, bool skip_style_check)
+    : is_alloy_style_(is_alloy_style), skip_style_check_(skip_style_check) {
   DCHECK(!g_instance);
   g_instance = this;
 }
@@ -48,6 +48,10 @@ void SimpleHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
                                   const CefString& title) {
   CEF_REQUIRE_UI_THREAD();
 
+  if (browser->GetHost()->IsWindowRenderingDisabled()) {
+    return;
+  }
+
   if (auto browser_view = CefBrowserView::GetForBrowser(browser)) {
     // Set the title of the window using the Views framework.
     CefRefPtr<CefWindow> window = browser_view->GetWindow();
@@ -64,8 +68,11 @@ void SimpleHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
   CEF_REQUIRE_UI_THREAD();
 
   // Sanity-check the configured runtime style.
-  CHECK_EQ(is_alloy_style_ ? CEF_RUNTIME_STYLE_ALLOY : CEF_RUNTIME_STYLE_CHROME,
-           browser->GetHost()->GetRuntimeStyle());
+  if (!skip_style_check_) {
+    CHECK_EQ(
+        is_alloy_style_ ? CEF_RUNTIME_STYLE_ALLOY : CEF_RUNTIME_STYLE_CHROME,
+        browser->GetHost()->GetRuntimeStyle());
+  }
 
   // Add to the list of existing browsers.
   browser_list_.push_back(browser);
@@ -135,6 +142,20 @@ void SimpleHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
      << " (" << errorCode << ").</h2></body></html>";
 
   frame->LoadURL(GetDataURI(ss.str(), "text/html"));
+}
+
+void SimpleHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) {
+  CEF_REQUIRE_UI_THREAD();
+  rect = CefRect(0, 0, 1280, 720);
+}
+
+void SimpleHandler::OnPaint(CefRefPtr<CefBrowser> browser,
+                            PaintElementType type,
+                            const RectList& dirtyRects,
+                            const void* buffer,
+                            int width,
+                            int height) {
+  CEF_REQUIRE_UI_THREAD();
 }
 
 void SimpleHandler::ShowMainWindow() {

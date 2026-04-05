@@ -10,7 +10,7 @@ Frameworks:
   1. agent-browser  (Vercel CLI, v0.22.3)
   2. Playwright     (browser-use / stagehand engine, v1.58.0)
   3. CDP Raw        (Chrome DevTools Protocol via Playwright CDP session)
-  4. CEF            (our fork, zun -- cefclient + websocket CDP)
+  4. CEF            (our fork, zun -- cefsimple + websocket CDP)
 
 Tasks:
   1. Job Search            (indeed.com)
@@ -40,7 +40,7 @@ STEP_TIMEOUT = 30          # seconds per individual step
 FRAMEWORK_TIMEOUT = 300    # seconds per framework script (playwright/cdp/cef)
 INTER_FRAMEWORK_SLEEP = 3  # seconds between frameworks
 
-CEF_BINARY = "/home/ubuntu/cef-build/chromium/src/out/Release_GN_x64/cefclient"
+CEF_BINARY = "/home/ubuntu/cef-build/chromium/src/out/Release_GN_x64/cefsimple"
 CEF_DEBUG_PORT = 9333
 CEF_DISPLAY = ":99"
 
@@ -489,7 +489,7 @@ def run_cdp():
 # ---------------------------------------------------------------------------
 
 def run_cef():
-    """Benchmark CEF via cefclient + websocket CDP connection."""
+    """Benchmark CEF via cefsimple + websocket CDP connection."""
     script = STEP_HELPER + textwrap.dedent('''\
     import subprocess, urllib.request
 
@@ -504,18 +504,20 @@ def run_cef():
         os.environ["DISPLAY"] = "CEF_DISPLAY"
         await asyncio.sleep(1)
 
-        # -- Start cefclient --
+        # -- Start cefsimple in the validated OSR + external-pump mode --
         cef = subprocess.Popen(
             [
                 "CEF_BINARY",
                 "--no-sandbox",
+                "--external-message-pump",
                 "--remote-debugging-port=CEF_PORT",
                 "--off-screen-rendering-enabled",
+                "--url=about:blank",
             ],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
             env={**os.environ, "DISPLAY": "CEF_DISPLAY"},
         )
-        await asyncio.sleep(3)
+        await asyncio.sleep(5)
 
         # -- Discover CDP websocket endpoint --
         ws_url = None
@@ -694,7 +696,7 @@ FRAMEWORKS = [
     ("agent-browser v0.22.3",                          run_agent_browser),
     ("Playwright v1.58.0 (browser-use/stagehand)",     run_playwright),
     ("CDP Raw (Chrome DevTools Protocol)",              run_cdp),
-    ("CEF (zun fork, cefclient)",                       run_cef),
+    ("CEF (zun fork, cefsimple)",                       run_cef),
 ]
 
 
