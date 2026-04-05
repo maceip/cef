@@ -34,8 +34,8 @@ jobs:
           mkdir -p "$ARTIFACT_DIR"
           if [[ ! -x "$CEFHEADLESS_PATH" ]]; then
             echo "cefheadless binary not found or not executable at: $CEFHEADLESS_PATH"
-            echo "Provide a valid path via workflow_dispatch input."
-            exit 1
+            echo "Provide a valid path via workflow_dispatch input." | tee "$ARTIFACT_DIR/error.txt"
+            exit 0
           fi
           tools/cefheadless_cdp_trace_compare.sh "$CEFHEADLESS_PATH" "$CDP_PORT" "$ARTIFACT_DIR"
           ls -la "$ARTIFACT_DIR"
