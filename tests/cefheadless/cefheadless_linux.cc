@@ -33,6 +33,8 @@ int main(int argc, char* argv[]) {
 
   CefRefPtr<CefCommandLine> command_line = CefCommandLine::CreateCommandLine();
   command_line->InitFromArgv(argc, argv);
+  const bool bad_windowless_mode =
+      command_line->HasSwitch("cdp-bad-windowless");
 
   CefSettings settings;
   settings.no_sandbox = true;
@@ -41,7 +43,7 @@ int main(int argc, char* argv[]) {
   // Chrome runtime headless mode uses a virtual display compositor,
   // not CEF's OSR (windowless) mode. Setting this to true forces the
   // Alloy OSR path which has no compositor surface and hangs on CDP.
-  settings.windowless_rendering_enabled = false;
+  settings.windowless_rendering_enabled = bad_windowless_mode;
 
   // Standard message loop — no external pump needed.
   settings.multi_threaded_message_loop = false;
@@ -49,6 +51,13 @@ int main(int argc, char* argv[]) {
 
   // Suppress verbose logging.
   settings.log_severity = LOGSEVERITY_WARNING;
+  LOG(WARNING) << "CDPTRACE_HEADLESS_SETTINGS"
+               << " windowless_rendering_enabled="
+               << settings.windowless_rendering_enabled
+               << " multi_threaded_message_loop="
+               << settings.multi_threaded_message_loop
+               << " external_message_pump=" << settings.external_message_pump
+               << " cdp_bad_windowless=" << bad_windowless_mode;
 
   // Signal handling for clean shutdown.
   signal(SIGINT, OnSignalReceived);
@@ -62,6 +71,15 @@ int main(int argc, char* argv[]) {
       command_line->GetSwitchValue("remote-debugging-port").ToString();
   LOG(WARNING) << "cefheadless running, CDP at http://127.0.0.1:"
                << (cdp_port.empty() ? "9222" : cdp_port) << "/json";
+  LOG(WARNING) << "CDPTRACE_HEADLESS_RUNTIME_SWITCHES"
+               << " user_data_dir="
+               << command_line->GetSwitchValue("user-data-dir").ToString()
+               << " ozone_platform="
+               << command_line->GetSwitchValue("ozone-platform").ToString()
+               << " has_headless=" << command_line->HasSwitch("headless")
+               << " remote_debugging_address="
+               << command_line->GetSwitchValue("remote-debugging-address")
+                      .ToString();
 
   // Standard CEF message loop. --headless + ozone-platform=headless
   // provides a virtual display, so the compositor works and DevTools

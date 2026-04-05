@@ -4,6 +4,7 @@
 
 #include "cef/libcef/browser/browser_frame.h"
 
+#include "base/logging.h"
 #include "cef/libcef/browser/browser_host_base.h"
 #include "cef/libcef/browser/browser_info_manager.h"
 #include "cef/libcef/browser/thread_util.h"
@@ -61,6 +62,10 @@ void CefBrowserFrame::SendSharedMemoryRegion(
 void CefBrowserFrame::FrameAttached(
     mojo::PendingRemote<cef::mojom::RenderFrame> render_frame,
     bool reattached) {
+  LOG(WARNING) << "CDPTRACE_READY_BROWSER_FRAME_ATTACHED frame="
+               << frame_util::GetFrameDebugString(
+                      render_frame_host()->GetGlobalFrameToken())
+               << " reattached=" << reattached;
   // Always send to the newly created RFH, which may be speculative when
   // navigating cross-origin.
   bool is_excluded;

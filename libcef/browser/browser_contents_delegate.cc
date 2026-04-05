@@ -4,6 +4,7 @@
 
 #include "cef/libcef/browser/browser_contents_delegate.h"
 
+#include "base/logging.h"
 #include "base/memory/raw_ptr.h"
 #include "cef/libcef/browser/browser_event_util.h"
 #include "cef/libcef/browser/browser_host_base.h"
@@ -92,6 +93,8 @@ void CefBrowserContentsDelegate::ObserveWebContents(
   WebContentsObserver::Observe(new_contents);
 
   if (new_contents) {
+    LOG(WARNING) << "CDPTRACE_READY_OBSERVE_WEBCONTENTS web_contents="
+                 << new_contents;
     // Make sure MaybeCreateFrame is called at least one time.
     // Create the frame representation before OnAfterCreated is called for a new
     // browser.
@@ -334,6 +337,11 @@ void CefBrowserContentsDelegate::DraggableRegionsChanged(
 
 void CefBrowserContentsDelegate::RenderFrameCreated(
     content::RenderFrameHost* render_frame_host) {
+  LOG(WARNING) << "CDPTRACE_READY_RENDER_FRAME_CREATED frame="
+               << frame_util::GetFrameDebugString(
+                      render_frame_host->GetGlobalFrameToken())
+               << " is_primary_main="
+               << (render_frame_host->GetParent() == nullptr);
   browser_info_->MaybeCreateFrame(render_frame_host);
   if (render_frame_host->GetParent() == nullptr) {
     auto render_view_host = render_frame_host->GetRenderViewHost();
@@ -384,6 +392,7 @@ void CefBrowserContentsDelegate::RenderWidgetCreated(
 }
 
 void CefBrowserContentsDelegate::RenderViewReady() {
+  LOG(WARNING) << "CDPTRACE_READY_RENDER_VIEW_READY";
   platform_delegate()->RenderViewReady();
 
   if (auto browser_host = browser_info_->browser()) {
@@ -476,6 +485,7 @@ void CefBrowserContentsDelegate::OnFrameFocused(
 }
 
 void CefBrowserContentsDelegate::PrimaryMainDocumentElementAvailable() {
+  LOG(WARNING) << "CDPTRACE_READY_PRIMARY_MAIN_DOCUMENT_AVAILABLE";
   has_document_ = true;
   OnStateChanged(State::kDocument);
 

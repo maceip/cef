@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <string>
 
+#include "include/base/cef_logging.h"
 #include "include/cef_command_line.h"
 #include "include/wrapper/cef_helpers.h"
 #include "tests/shared/common/client_switches.h"
@@ -34,6 +35,9 @@ void HeadlessApp::OnBeforeCommandLineProcessing(
     return;
   }
 
+  const bool bad_disable_user_data_dir =
+      command_line->HasSwitch("cdp-bad-no-user-data-dir");
+
   // Use Chrome's native --headless mode. This creates a virtual display
   // surface internally so the compositor has a real frame sink. The DevTools
   // agent host initializes normally and /json responds immediately.
@@ -52,7 +56,8 @@ void HeadlessApp::OnBeforeCommandLineProcessing(
   // returns kDisabledByDefaultUserDataDir and the DevTools HTTP server is
   // never created — the port opens (from the socket factory) but /json
   // hangs forever because no handler processes the request.
-  if (!command_line->HasSwitch("user-data-dir")) {
+  if (!command_line->HasSwitch("user-data-dir") &&
+      !bad_disable_user_data_dir) {
     command_line->AppendSwitchWithValue("user-data-dir", "/tmp/cefheadless");
   }
 
@@ -75,6 +80,17 @@ void HeadlessApp::OnBeforeCommandLineProcessing(
     command_line->AppendSwitchWithValue("remote-debugging-address",
                                        "127.0.0.1");
   }
+
+  LOG(WARNING) << "CDPTRACE_HEADLESS_CMDLINE_CONFIG"
+               << " cdp_bad_no_user_data_dir=" << bad_disable_user_data_dir
+               << " has_headless=" << command_line->HasSwitch("headless")
+               << " has_ozone_platform="
+               << command_line->HasSwitch(client::switches::kOzonePlatform)
+               << " has_user_data_dir="
+               << command_line->HasSwitch("user-data-dir")
+               << " remote_debugging_port="
+               << command_line->GetSwitchValue("remote-debugging-port")
+                      .ToString();
 }
 
 void HeadlessApp::OnContextInitialized() {
@@ -89,6 +105,9 @@ void HeadlessApp::OnContextInitialized() {
   const int width = GetIntSwitch(command_line, "width", 1280);
   const int height = GetIntSwitch(command_line, "height", 720);
   const bool enable_stealth = command_line->HasSwitch("stealth");
+  LOG(WARNING) << "CDPTRACE_HEADLESS_CONTEXT_INITIALIZED url=" << url
+               << " width=" << width << " height=" << height
+               << " stealth=" << enable_stealth;
 
   handler_ = new HeadlessHandler(width, height, enable_stealth);
 

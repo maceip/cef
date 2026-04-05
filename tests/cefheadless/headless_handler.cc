@@ -64,8 +64,11 @@ void HeadlessHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
   const auto command_line = CefCommandLine::GetGlobalCommandLine();
   const std::string port =
       command_line->GetSwitchValue("remote-debugging-port").ToString();
-  LOG(INFO) << "cefheadless browser created"
-            << (port.empty() ? "" : " (CDP port " + port + ")");
+  LOG(WARNING) << "CDPTRACE_READY_HEADLESS_BROWSER_CREATED browser_id="
+               << browser->GetIdentifier()
+               << " runtime_style=" << browser->GetHost()->GetRuntimeStyle()
+               << " browser_list_size=" << browser_list_.size()
+               << (port.empty() ? "" : " cdp_port=" + port);
 
   if (enable_stealth_) {
     ApplyStealth(browser);
@@ -89,6 +92,7 @@ void HeadlessHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
   }
 
   if (browser_list_.empty()) {
+    LOG(WARNING) << "CDPTRACE_READY_HEADLESS_ALL_BROWSERS_CLOSED";
     CefQuitMessageLoop();
   }
 }

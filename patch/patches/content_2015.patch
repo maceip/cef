@@ -1,25 +1,72 @@
 diff --git content/browser/devtools/devtools_http_handler.cc content/browser/devtools/devtools_http_handler.cc
-index 79bf965d5dd4a9466a518f29f55d4769d9cbb060..7af9f421e99e6f0ea10d5d1dc524a0ab2b8f3d8b 100644
+index 79bf965d5dd4a9466a518f29f55d4769d9cbb060..d10f0a4e8339ffd8d72c85c5dc0400dfce587242 100644
 --- content/browser/devtools/devtools_http_handler.cc
 +++ content/browser/devtools/devtools_http_handler.cc
-@@ -35,6 +35,7 @@
+@@ -35,6 +35,9 @@
  #include "base/uuid.h"
  #include "base/values.h"
++#include "base/threading/platform_thread.h"
  #include "build/build_config.h"
 +#include "cef/libcef/browser/browser_message_loop.h"
  #include "build/util/chromium_git_revision.h"
  #include "content/browser/devtools/devtools_manager.h"
++#include "content/public/browser/browser_thread.h"
  #include "content/public/browser/browser_task_traits.h"
-@@ -470,17 +471,20 @@ void ServerWrapper::OnHttpRequest(int connection_id,
-
-   if (base::StartsWith(info.path, "/json", base::CompareCase::SENSITIVE)) {
-     GetUIThreadTaskRunner({})->PostTask(
-         FROM_HERE, base::BindOnce(&DevToolsHttpHandler::OnJsonRequest, handler_,
-                                   connection_id, info));
+@@ -470,17 +473,43 @@ void ServerWrapper::OnHttpRequest(int connection_id,
++  LOG(WARNING) << "CDPTRACE_HTTP_ENTRY path=" << info.path
++            << " connection_id=" << connection_id
++            << " thread_id=" << base::PlatformThread::CurrentId()
++            << " on_ui="
++            << content::BrowserThread::CurrentlyOn(content::BrowserThread::UI)
++            << " on_io="
++            << content::BrowserThread::CurrentlyOn(content::BrowserThread::IO);
++
++  if (base::StartsWith(info.path, "/json", base::CompareCase::SENSITIVE)) {
++    if (info.path == "/json/version") {
++      LOG(WARNING) << "CDPTRACE_JSON_VERSION_REQUEST_ENTRY connection_id="
++                   << connection_id;
++    }
++    if (info.path == "/json/list" || info.path == "/json") {
++      LOG(WARNING) << "CDPTRACE_TARGET_DISCOVERY_START connection_id="
++                   << connection_id << " path=" << info.path;
++    }
++    LOG(WARNING) << "CDPTRACE_HTTP_IO_TO_UI_POST path=" << info.path
++              << " connection_id=" << connection_id
++              << " posted_thread_id=" << base::PlatformThread::CurrentId();
++    GetUIThreadTaskRunner({})->PostTask(
++        FROM_HERE, base::BindOnce(
++                       [](DevToolsHttpHandler* handler, int connection_id,
++                          const net::HttpServerRequestInfo& info) {
++                         if (info.path == "/json/version") {
++                           LOG(WARNING)
++                               << "CDPTRACE_JSON_VERSION_HANDLER_ENTRY "
++                               << "connection_id=" << connection_id;
++                         }
++                         if (info.path == "/json/list" ||
++                             info.path == "/json") {
++                           LOG(WARNING)
++                               << "CDPTRACE_TARGET_DISCOVERY_HANDLER_ENTRY "
++                               << "connection_id=" << connection_id
++                               << " path=" << info.path;
++                         }
++                         LOG(WARNING) << "CDPTRACE_HTTP_IO_TO_UI_RUN path="
++                                   << info.path
++                                   << " connection_id=" << connection_id
++                                   << " run_thread_id="
++                                   << base::PlatformThread::CurrentId()
++                                   << " on_ui="
++                                   << content::BrowserThread::CurrentlyOn(
++                                          content::BrowserThread::UI)
++                                   << " on_io="
++                                   << content::BrowserThread::CurrentlyOn(
++                                          content::BrowserThread::IO);
++                         handler->OnJsonRequest(connection_id, info);
++                       },
++                       handler_, connection_id, info));
 +    CefScheduleExternalMessagePumpWork(0);
-     return;
-   }
-
++    return;
++  }
+ 
    if (info.path.empty() || info.path == "/") {
      // Discovery page request.
      GetUIThreadTaskRunner({})->PostTask(
@@ -28,9 +75,9 @@ index 79bf965d5dd4a9466a518f29f55d4769d9cbb060..7af9f421e99e6f0ea10d5d1dc524a0ab
 +    CefScheduleExternalMessagePumpWork(0);
      return;
    }
-
+ 
    if (!base::StartsWith(info.path, "/devtools/",
-@@ -504,9 +508,10 @@ void ServerWrapper::OnHttpRequest(int connection_id,
+@@ -504,9 +533,10 @@ void ServerWrapper::OnHttpRequest(int connection_id,
    if (bundles_resources_) {
      GetUIThreadTaskRunner({})->PostTask(
          FROM_HERE,
@@ -40,7 +87,7 @@ index 79bf965d5dd4a9466a518f29f55d4769d9cbb060..7af9f421e99e6f0ea10d5d1dc524a0ab
      return;
    }
    server_->Send404(connection_id, kDevtoolsHttpHandlerTrafficAnnotation);
-@@ -522,17 +527,20 @@ void ServerWrapper::OnWebSocketRequest(
+@@ -522,17 +552,20 @@ void ServerWrapper::OnWebSocketRequest(
 
    GetUIThreadTaskRunner({})->PostTask(
        FROM_HERE, base::BindOnce(&DevToolsHttpHandler::OnWebSocketRequest,
@@ -61,7 +108,14 @@ index 79bf965d5dd4a9466a518f29f55d4769d9cbb060..7af9f421e99e6f0ea10d5d1dc524a0ab
        base::BindOnce(&DevToolsHttpHandler::OnClose, handler_, connection_id));
 +  CefScheduleExternalMessagePumpWork(0);
  }
-@@ -612,7 +612,7 @@ void DevToolsHttpHandler::OnJsonRequest(
+@@ -612,7 +645,13 @@ void DevToolsHttpHandler::OnJsonRequest(
++    LOG(WARNING) << "CDPTRACE_JSON_VERSION_HANDLER connection_id="
++              << connection_id << " path=" << info.path
++              << " thread_id=" << base::PlatformThread::CurrentId()
++              << " on_ui="
++              << content::BrowserThread::CurrentlyOn(content::BrowserThread::UI)
++              << " on_io="
++              << content::BrowserThread::CurrentlyOn(content::BrowserThread::IO);
      base::DictValue version;
      version.Set("Protocol-Version", DevToolsAgentHost::GetProtocolVersion());
      version.Set("WebKit-Version", GetWebKitVersion());
