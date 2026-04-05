@@ -23,6 +23,7 @@ from aws_cdk import (
     Duration,
     RemovalPolicy,
     CfnOutput,
+    CfnTag,
     Tags,
     aws_ec2 as ec2,
     aws_ecs as ecs,
@@ -213,14 +214,10 @@ class CefRunnerStack(Stack):
             group_metrics=[autoscaling.GroupMetrics.all()],
         )
 
-        # Scale based on SQS-like pattern: 0 when idle, spin up on demand
-        self.x86_asg.scale_on_metric(
+        # Scale based on CPU: 0 when idle, spin up on demand
+        self.x86_asg.scale_on_cpu_utilization(
             "ScaleOnCpu",
-            metric=self.x86_asg.metric_cpu_utilization(),
-            scaling_steps=[
-                autoscaling.ScalingInterval(change=-1, upper=10),
-                autoscaling.ScalingInterval(change=+1, lower=60),
-            ],
+            target_utilization_percent=60,
         )
 
         # --- ARM (Graviton) build fleet for native aarch64 ---
@@ -300,7 +297,7 @@ class CefSnapshotStack(Stack):
             execution_role_arn=dlm_role.role_arn,
             policy_details=dlm.CfnLifecyclePolicy.PolicyDetailsProperty(
                 resource_types=["VOLUME"],
-                target_tags=[{"Key": "cef:chromium-checkout", "Value": "true"}],
+                target_tags=[CfnTag(key="cef:chromium-checkout", value="true")],
                 schedules=[
                     dlm.CfnLifecyclePolicy.ScheduleProperty(
                         name="WeeklySnapshot",
