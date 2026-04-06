@@ -11,37 +11,36 @@
 #include "include/cef_app.h"
 #include "include/cef_client.h"
 
+// Client handler for headless Chrome runtime mode.
+//
+// Does NOT implement CefRenderHandler — Chrome runtime handles rendering
+// internally via a virtual compositor surface in --headless mode.
+// Screenshots are captured via CDP Page.captureScreenshot.
 class HeadlessHandler : public CefClient,
                         public CefLifeSpanHandler,
-                        public CefLoadHandler,
-                        public CefRenderHandler {
+                        public CefLoadHandler {
  public:
   HeadlessHandler(int width, int height, bool enable_stealth);
   ~HeadlessHandler() override;
 
   static HeadlessHandler* GetInstance();
 
+  // CefClient methods:
+  // No GetRenderHandler() — Chrome runtime doesn't use OSR.
   CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override { return this; }
   CefRefPtr<CefLoadHandler> GetLoadHandler() override { return this; }
-  CefRefPtr<CefRenderHandler> GetRenderHandler() override { return this; }
 
+  // CefLifeSpanHandler methods:
   void OnAfterCreated(CefRefPtr<CefBrowser> browser) override;
   bool DoClose(CefRefPtr<CefBrowser> browser) override;
   void OnBeforeClose(CefRefPtr<CefBrowser> browser) override;
 
+  // CefLoadHandler methods:
   void OnLoadError(CefRefPtr<CefBrowser> browser,
                    CefRefPtr<CefFrame> frame,
                    ErrorCode errorCode,
                    const CefString& errorText,
                    const CefString& failedUrl) override;
-
-  void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) override;
-  void OnPaint(CefRefPtr<CefBrowser> browser,
-               PaintElementType type,
-               const RectList& dirtyRects,
-               const void* buffer,
-               int width,
-               int height) override;
 
   void CloseAllBrowsers(bool force_close);
 

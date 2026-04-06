@@ -472,6 +472,10 @@ void ChromeBrowserHostImpl::Attach(content::WebContents* web_contents,
                                    bool is_devtools_popup,
                                    CefRefPtr<CefBrowserHostBase> opener) {
   DCHECK(web_contents);
+  LOG(WARNING) << "CDPTRACE_READY_BROWSER_HOST_ATTACH web_contents="
+               << web_contents
+               << " is_devtools_popup=" << is_devtools_popup
+               << " has_opener=" << static_cast<bool>(opener);
 
   if (opener) {
     opener_id_ = opener->GetIdentifier();
@@ -485,12 +489,16 @@ void ChromeBrowserHostImpl::Attach(content::WebContents* web_contents,
 
   platform_delegate_->WebContentsCreated(web_contents, /*owned=*/false);
   contents_delegate_.ObserveWebContents(web_contents);
+  LOG(WARNING) << "CDPTRACE_READY_WEBCONTENTS_CREATED web_contents="
+               << web_contents;
 
   // Associate the platform delegate with this browser.
   platform_delegate_->BrowserCreated(this);
 
   // Associate the base class with the WebContents.
   InitializeBrowser();
+  LOG(WARNING) << "CDPTRACE_READY_BROWSER_INITIALIZED browser_id="
+               << GetIdentifier();
 
   // Notify that the browser has been created. These must be delivered in the
   // expected order.

@@ -126,6 +126,8 @@ void CefBrowserInfo::MaybeCreateFrame(content::RenderFrameHost* host) {
 
   if (CefBrowserInfoManager::IsExcludedFrameHost(host)) {
     // Don't create a FrameHost for an excluded type.
+    LOG(WARNING) << "CDPTRACE_READY_FRAME_EXCLUDED frame="
+                 << frame_util::GetFrameDebugString(host->GetGlobalFrameToken());
     return;
   }
 
@@ -146,6 +148,10 @@ void CefBrowserInfo::MaybeCreateFrame(content::RenderFrameHost* host) {
                                    ->frame_tree_node()
                                    ->render_manager()
                                    ->current_frame_host() != host);
+  LOG(WARNING) << "CDPTRACE_READY_FRAME_CREATE frame="
+               << frame_util::GetFrameDebugString(host->GetGlobalFrameToken())
+               << " is_main=" << is_main_frame
+               << " is_speculative=" << is_speculative;
 
   {
     NotificationStateLock lock_scope(this);
@@ -209,6 +215,9 @@ void CefBrowserInfo::MaybeCreateFrame(content::RenderFrameHost* host) {
     if (auto* manager = CefBrowserInfoManager::GetInstance()) {
       manager->OnMainFrameCreated(host->GetGlobalFrameToken(),
                                   scoped_refptr<CefBrowserInfo>(this));
+      LOG(WARNING) << "CDPTRACE_READY_PRIMARY_MAIN_FRAME_CREATED frame="
+                   << frame_util::GetFrameDebugString(
+                          host->GetGlobalFrameToken());
     }
   }
 }
