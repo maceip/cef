@@ -410,7 +410,7 @@ impl TryFrom<&Path> for CefFile {
         let file_type = "minimal".to_string();
         let name = location
             .file_name()
-            .map(|f| f.display().to_string())
+            .map(|f| f.to_string_lossy().into_owned())
             .ok_or_else(|| Error::InvalidArchiveFile(location.display().to_string()))?;
         let sha1 = calculate_file_sha1(location);
         Ok(Self {
@@ -486,8 +486,8 @@ where
         .as_ref()
         .file_name()
         .unwrap() // Safe here due to File::open check above
-        .display()
-        .to_string();
+        .to_string_lossy()
+        .into_owned();
     let extracted_dir = extracted_dir
         .strip_suffix(".tar.bz2")
         .map(PathBuf::from)
