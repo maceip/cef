@@ -80,6 +80,7 @@ int CefDevToolsController::ExecuteDevToolsMethod(
 void CefDevToolsController::AgentHostClosed(
     content::DevToolsAgentHost* agent_host) {
   DCHECK(agent_host == agent_host_.get());
+  LOG(WARNING) << "CDPTRACE_AGENT_HOST_DETACHED agent_host=" << agent_host;
   agent_host_ = nullptr;
   for (auto& observer : observers_) {
     observer.OnDevToolsAgentDetached();
@@ -140,11 +141,17 @@ void CefDevToolsController::DispatchProtocolMessage(
 }
 
 bool CefDevToolsController::EnsureAgentHost() {
+  LOG(WARNING) << "CDPTRACE_AGENT_HOST_ENSURE_START inspected_contents="
+               << inspected_contents_;
   if (!agent_host_) {
     agent_host_ =
         content::DevToolsAgentHost::GetOrCreateFor(inspected_contents_);
+    LOG(WARNING) << "CDPTRACE_AGENT_HOST_GET_OR_CREATE_RESULT agent_host="
+                 << agent_host_.get();
     if (agent_host_) {
       agent_host_->AttachClient(this);
+      LOG(WARNING) << "CDPTRACE_AGENT_HOST_ATTACHED_CLIENT agent_host="
+                   << agent_host_.get();
       for (auto& observer : observers_) {
         observer.OnDevToolsAgentAttached();
       }

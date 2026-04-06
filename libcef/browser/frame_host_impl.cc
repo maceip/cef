@@ -872,6 +872,8 @@ void CefFrameHostImpl::OnRenderFrameDisconnect() {
   CEF_REQUIRE_UIT();
 
   DVLOG(1) << __func__ << ": " << GetDebugString();
+  LOG(WARNING) << "CDPTRACE_READY_RENDER_FRAME_DISCONNECT frame="
+               << GetDebugString();
 
   if (auto browser_info = GetBrowserInfo()) {
     if (auto browser = browser_info->browser()) {
@@ -923,6 +925,9 @@ void CefFrameHostImpl::FrameAttached(
 
   DVLOG(1) << __func__ << ": " << GetDebugString() << " "
            << (reattached ? "re" : "") << "connected";
+  LOG(WARNING) << "CDPTRACE_READY_RENDER_FRAME_ATTACHED frame="
+               << GetDebugString() << " reattached=" << reattached
+               << " queued_actions=" << queued_renderer_actions_.size();
 
   render_frame_.Bind(std::move(render_frame_remote));
   render_frame_.set_disconnect_handler(

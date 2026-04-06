@@ -360,6 +360,8 @@ void CefBrowserInfoManager::OnGetNewBrowserInfo(
     cef::mojom::BrowserManager::GetNewBrowserInfoCallback callback) {
   DCHECK(frame_util::IsValidGlobalToken(global_token));
   DCHECK(callback);
+  LOG(WARNING) << "CDPTRACE_READY_GET_NEW_BROWSER_INFO_REQUEST frame="
+               << frame_util::GetFrameDebugString(global_token);
 
   auto callback_runner = base::SequencedTaskRunner::GetCurrentDefault();
 
@@ -369,6 +371,8 @@ void CefBrowserInfoManager::OnGetNewBrowserInfo(
       GetBrowserInfoInternal(global_token);
 
   if (browser_info) {
+    LOG(WARNING) << "CDPTRACE_READY_GET_NEW_BROWSER_INFO_IMMEDIATE frame="
+                 << frame_util::GetFrameDebugString(global_token);
     // Send the response immediately.
     SendNewBrowserInfoResponse(browser_info, /*is_excluded=*/false,
                                std::move(callback), callback_runner);
@@ -389,6 +393,9 @@ void CefBrowserInfoManager::OnGetNewBrowserInfo(
   pending->callback_runner = callback_runner;
   pending_new_browser_info_map_.insert(
       std::make_pair(global_token, std::move(pending)));
+  LOG(WARNING) << "CDPTRACE_READY_GET_NEW_BROWSER_INFO_QUEUED frame="
+               << frame_util::GetFrameDebugString(global_token)
+               << " timeout_id=" << timeout_id;
 
   // Register a timeout for the pending response so that the renderer process
   // doesn't hang forever. With Chrome style, timeouts may occur in cases
@@ -416,6 +423,9 @@ void CefBrowserInfoManager::OnMainFrameCreated(
     scoped_refptr<CefBrowserInfo> browser_info) {
   DCHECK(frame_util::IsValidGlobalToken(global_token));
   DCHECK(browser_info);
+  LOG(WARNING) << "CDPTRACE_READY_MAIN_FRAME_CREATED frame="
+               << frame_util::GetFrameDebugString(global_token)
+               << " browser_id=" << browser_info->browser_id();
 
   ContinueNewBrowserInfo(global_token, browser_info, /*is_excluded=*/false);
 }
@@ -450,6 +460,10 @@ void CefBrowserInfoManager::ContinueNewBrowserInfo(
     scoped_refptr<CefBrowserInfo> browser_info,
     bool is_excluded) {
   base::AutoLock lock_scope(browser_info_lock_);
+  LOG(WARNING) << "CDPTRACE_READY_CONTINUE_NEW_BROWSER_INFO frame="
+               << frame_util::GetFrameDebugString(global_token)
+               << " browser_id=" << browser_info->browser_id()
+               << " is_excluded=" << is_excluded;
 
   // Continue any pending NewBrowserInfo request.
   auto it = pending_new_browser_info_map_.find(global_token);

@@ -4,26 +4,18 @@
 
 #include "tests/cefheadless/headless_app.h"
 
-#include <glib-unix.h>
 #include <signal.h>
 
 #include "include/base/cef_logging.h"
 #include "include/cef_command_line.h"
 #include "tests/cefheadless/headless_handler.h"
-#include "tests/shared/browser/main_message_loop_external_pump.h"
-#include "tests/shared/browser/main_message_loop_std.h"
 
 namespace {
 
-client::MainMessageLoop* g_message_loop = nullptr;
-
-gboolean OnSignalReceived(gpointer /*data*/) {
+void OnSignalReceived(int /*signal*/) {
   if (auto* handler = HeadlessHandler::GetInstance()) {
     handler->CloseAllBrowsers(true);
-  } else if (g_message_loop) {
-    g_message_loop->Quit();
   }
-  return G_SOURCE_REMOVE;
 }
 
 }  // namespace
@@ -41,44 +33,64 @@ int main(int argc, char* argv[]) {
 
   CefRefPtr<CefCommandLine> command_line = CefCommandLine::CreateCommandLine();
   command_line->InitFromArgv(argc, argv);
-
-  const bool use_external_message_pump =
-      command_line->HasSwitch("external-message-pump");
+  const bool bad_windowless_mode =
+      command_line->HasSwitch("cdp-bad-windowless");
 
   CefSettings settings;
 #if !defined(CEF_USE_SANDBOX)
   settings.no_sandbox = true;
 #endif
-  settings.external_message_pump = use_external_message_pump;
-  settings.windowless_rendering_enabled = true;
 
-  const std::string debug_port =
-      command_line->GetSwitchValue("remote-debugging-port");
-  if (!debug_port.empty()) {
-    settings.remote_debugging_port = std::stoi(debug_port);
-  }
+  // DO NOT set windowless_rendering_enabled = true.
+  // Chrome runtime headless mode uses a virtual display compositor,
+  // not CEF's OSR (windowless) mode. Setting this to true forces the
+  // Alloy OSR path which has no compositor surface and hangs on CDP.
+  settings.windowless_rendering_enabled = bad_windowless_mode;
 
-  std::unique_ptr<client::MainMessageLoop> message_loop;
-  if (use_external_message_pump) {
-    message_loop = client::MainMessageLoopExternalPump::Create();
-  } else {
-    message_loop = std::make_unique<client::MainMessageLoopStd>();
-  }
-  g_message_loop = message_loop.get();
+  // Standard message loop — no external pump needed.
+  settings.multi_threaded_message_loop = false;
+  settings.external_message_pump = false;
 
-  g_unix_signal_add(SIGINT, &OnSignalReceived, nullptr);
-  g_unix_signal_add(SIGTERM, &OnSignalReceived, nullptr);
+  // Suppress verbose logging.
+  settings.log_severity = LOGSEVERITY_WARNING;
+  LOG(WARNING) << "CDPTRACE_HEADLESS_SETTINGS"
+               << " windowless_rendering_enabled="
+               << settings.windowless_rendering_enabled
+               << " multi_threaded_message_loop="
+               << settings.multi_threaded_message_loop
+               << " external_message_pump=" << settings.external_message_pump
+               << " cdp_bad_windowless=" << bad_windowless_mode;
+
+  // Signal handling for clean shutdown.
+  signal(SIGINT, OnSignalReceived);
+  signal(SIGTERM, OnSignalReceived);
 
   if (!CefInitialize(main_args, settings, app.get(), nullptr)) {
+    LOG(WARNING) << "CDPTRACE_HEADLESS_CEF_INITIALIZE_FAILED exit_code="
+                 << CefGetExitCode();
     return CefGetExitCode();
   }
 
-  LOG(INFO) << "cefheadless running"
-            << " port=" << settings.remote_debugging_port;
+  const auto cdp_port =
+      command_line->GetSwitchValue("remote-debugging-port").ToString();
+  LOG(WARNING) << "cefheadless running, CDP at http://127.0.0.1:"
+               << (cdp_port.empty() ? "9222" : cdp_port) << "/json";
+  LOG(WARNING) << "CDPTRACE_HEADLESS_RUNTIME_SWITCHES"
+               << " user_data_dir="
+               << command_line->GetSwitchValue("user-data-dir").ToString()
+               << " ozone_platform="
+               << command_line->GetSwitchValue("ozone-platform").ToString()
+               << " has_headless=" << command_line->HasSwitch("headless")
+               << " remote_debugging_address="
+               << command_line->GetSwitchValue("remote-debugging-address")
+                      .ToString();
 
-  message_loop->Run();
-  g_message_loop = nullptr;
+  // Standard CEF message loop. --headless + ozone-platform=headless
+  // provides a virtual display, so the compositor works and DevTools
+  // agent host initializes normally.
+  CefRunMessageLoop();
 
+  LOG(WARNING) << "CDPTRACE_HEADLESS_MESSAGE_LOOP_EXIT";
   CefShutdown();
   return 0;
 }
