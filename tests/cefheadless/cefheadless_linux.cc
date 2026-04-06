@@ -66,6 +66,8 @@ int main(int argc, char* argv[]) {
   signal(SIGTERM, OnSignalReceived);
 
   if (!CefInitialize(main_args, settings, app.get(), nullptr)) {
+    LOG(WARNING) << "CDPTRACE_HEADLESS_CEF_INITIALIZE_FAILED exit_code="
+                 << CefGetExitCode();
     return CefGetExitCode();
   }
 
@@ -88,6 +90,7 @@ int main(int argc, char* argv[]) {
   // agent host initializes normally.
   CefRunMessageLoop();
 
+  LOG(WARNING) << "CDPTRACE_HEADLESS_MESSAGE_LOOP_EXIT";
   CefShutdown();
   return 0;
 }
