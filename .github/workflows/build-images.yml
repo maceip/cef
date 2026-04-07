@@ -1,0 +1,50 @@
+name: Build runner images
+
+# Rebuild Docker images when Dockerfiles or dependencies change.
+# Images are pushed to ECR for use by self-hosted runners.
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - infra/docker/**
+      - .github/workflows/build-images.yml
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+jobs:
+  build-and-push:
+    if: vars.USE_SELF_HOSTED == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - { file: Dockerfile.linux-x86, repo: cef-builder-linux, platform: linux/amd64 }
+          - { file: Dockerfile.linux-arm, repo: cef-builder-linux-arm, platform: linux/arm64 }
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+        id: ecr
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: infra/docker
+          file: infra/docker/${{ matrix.file }}
+          platforms: ${{ matrix.platform }}
+          push: true
+          tags: |
+            ${{ steps.ecr.outputs.registry }}/${{ matrix.repo }}:latest
+            ${{ steps.ecr.outputs.registry }}/${{ matrix.repo }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

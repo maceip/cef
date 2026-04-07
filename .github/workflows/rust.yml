@@ -1,0 +1,66 @@
+name: Rust validation
+
+on:
+  push:
+    branches: [dev, master]
+  pull_request:
+    branches: [dev, master]
+  workflow_dispatch:
+
+jobs:
+  rust:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: rust/cef-rs
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update -q && sudo apt-get install -yq libglib2.0-dev
+
+      - name: Check fmt
+        run: cargo fmt --check
+
+      - name: Cache CEF
+        id: cache-cef
+        uses: actions/cache@v5.0.4
+        with:
+          path: ~/.local/share/cef
+          key: cef-${{ matrix.os }}-${{ hashFiles('Cargo.toml') }}
+
+      - name: Export CEF
+        if: steps.cache-cef.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          CEF_DIR="$HOME/.local/share/cef"
+          [[ "$RUNNER_OS" == "Windows" ]] && CEF_DIR="$USERPROFILE/.local/share/cef"
+          cargo run -p export-cef-dir -- "$CEF_DIR"
+
+      - name: Set CEF environment
+        shell: bash
+        run: |
+          CEF_DIR="$HOME/.local/share/cef"
+          [[ "$RUNNER_OS" == "Windows" ]] && CEF_DIR="$USERPROFILE/.local/share/cef"
+          echo "CEF_PATH=$CEF_DIR" >> "$GITHUB_ENV"
+          case "$RUNNER_OS" in
+            macOS)   echo "DYLD_FALLBACK_LIBRARY_PATH=$DYLD_FALLBACK_LIBRARY_PATH:$CEF_DIR:$CEF_DIR/Chromium Embedded Framework.framework/Libraries" >> "$GITHUB_ENV" ;;
+            Windows) echo "PATH=$PATH;$CEF_DIR" >> "$GITHUB_ENV" ;;
+            *)       echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CEF_DIR" >> "$GITHUB_ENV" ;;
+          esac
+
+      - name: Build
+        run: cargo build --verbose
+
+      - name: Run tests
+        run: cargo test --verbose

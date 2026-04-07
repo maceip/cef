@@ -1,0 +1,105 @@
+name: Rust validation (self-hosted)
+
+# Parallel workflow to rust.yml that runs on AWS self-hosted runners.
+# Activate by setting repository variable USE_SELF_HOSTED=true.
+# Falls back to GitHub-hosted runners if self-hosted are unavailable.
+
+on:
+  push:
+    branches: [dev, master]
+  pull_request:
+    branches: [dev, master]
+  workflow_dispatch:
+
+env:
+  SCCACHE_BUCKET: ${{ vars.SCCACHE_BUCKET }}
+  SCCACHE_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+  SCCACHE_S3_KEY_PREFIX: sccache/
+  RUSTC_WRAPPER: sccache
+
+jobs:
+  pre-warm:
+    if: vars.USE_SELF_HOSTED == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scale up runners
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+        run: |
+          pip install awscli
+          X86_ASG=$(aws cloudformation describe-stacks --stack-name CefRunners \
+            --query "Stacks[0].Outputs[?OutputKey=='X86AsgName'].OutputValue" --output text)
+          aws autoscaling set-desired-capacity \
+            --auto-scaling-group-name "$X86_ASG" --desired-capacity 2
+
+  rust:
+    needs: [pre-warm]
+    if: always() && vars.USE_SELF_HOSTED == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { runner: [self-hosted, linux, x64, cef-builder], name: linux-x86 }
+          - { runner: [self-hosted, linux, arm64, cef-builder-arm], name: linux-arm }
+
+    runs-on: ${{ matrix.runner }}
+    name: rust (${{ matrix.name }})
+    defaults:
+      run:
+        working-directory: rust/cef-rs
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Start sccache
+        run: sccache --start-server || true
+
+      - name: Check fmt
+        run: cargo fmt --check
+
+      - name: Cache CEF
+        id: cache-cef
+        uses: actions/cache@v5.0.4
+        with:
+          path: ~/.local/share/cef
+          key: cef-${{ matrix.name }}-${{ hashFiles('Cargo.toml') }}
+
+      - name: Export CEF
+        if: steps.cache-cef.outputs.cache-hit != 'true'
+        run: cargo run -p export-cef-dir -- "$HOME/.local/share/cef"
+
+      - name: Set CEF environment
+        run: |
+          echo "CEF_PATH=$HOME/.local/share/cef" >> "$GITHUB_ENV"
+          echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/share/cef" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: cargo build --verbose
+
+      - name: Run tests
+        run: cargo test --verbose
+
+      - name: sccache stats
+        if: always()
+        run: sccache --show-stats
+
+  scale-down:
+    needs: [rust]
+    if: always() && vars.USE_SELF_HOSTED == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scale down runners
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+        run: |
+          pip install awscli
+          X86_ASG=$(aws cloudformation describe-stacks --stack-name CefRunners \
+            --query "Stacks[0].Outputs[?OutputKey=='X86AsgName'].OutputValue" --output text)
+          ARM_ASG=$(aws cloudformation describe-stacks --stack-name CefRunners \
+            --query "Stacks[0].Outputs[?OutputKey=='ArmAsgName'].OutputValue" --output text)
+          aws autoscaling set-desired-capacity --auto-scaling-group-name "$X86_ASG" --desired-capacity 0
+          aws autoscaling set-desired-capacity --auto-scaling-group-name "$ARM_ASG" --desired-capacity 0

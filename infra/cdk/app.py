@@ -302,8 +302,7 @@ class CefSnapshotStack(Stack):
                     dlm.CfnLifecyclePolicy.ScheduleProperty(
                         name="WeeklySnapshot",
                         create_rule=dlm.CfnLifecyclePolicy.CreateRuleProperty(
-                            interval=168,  # weekly
-                            interval_unit="HOURS",
+                            cron_expression="cron(0 3 ? * SUN *)",  # weekly on Sunday 03:00 UTC
                         ),
                         retain_rule=dlm.CfnLifecyclePolicy.RetainRuleProperty(count=3),
                         copy_tags=True,
