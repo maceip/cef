@@ -158,8 +158,8 @@ class CefRunnerStack(Stack):
         x86_user_data.add_commands(
             "#!/bin/bash",
             "set -euxo pipefail",
-            # Install runner dependencies
-            "yum install -y docker git jq",
+            # Install runner dependencies (libicu needed by .NET runtime in GH runner)
+            "yum install -y docker git jq libicu",
             "systemctl enable --now docker",
             # Install sccache
             "curl -fsSL https://github.com/mozilla/sccache/releases/download/v0.9.1/sccache-v0.9.1-x86_64-unknown-linux-musl.tar.gz"
@@ -167,17 +167,21 @@ class CefRunnerStack(Stack):
             # Fetch GitHub runner token from SSM
             f"RUNNER_TOKEN=$(aws ssm get-parameter --name /cef/github-runner-token"
             f" --with-decryption --query Parameter.Value --output text --region {self.region})",
-            # Install and configure GitHub Actions runner
-            "mkdir -p /opt/actions-runner && cd /opt/actions-runner",
+            # Create runner user and install GitHub Actions runner
+            "useradd -m -s /bin/bash runner",
+            "usermod -aG docker runner",
+            "mkdir -p /opt/actions-runner && chown runner:runner /opt/actions-runner",
+            "cd /opt/actions-runner",
             "curl -fsSL https://github.com/actions/runner/releases/download/v2.322.0/actions-runner-linux-x64-2.322.0.tar.gz"
             " | tar -xz",
+            "chown -R runner:runner /opt/actions-runner",
             'RUNNER_NAME="cef-x86-$(hostname)"',
-            "./config.sh --url https://github.com/maceip/cef"
+            'su - runner -c "cd /opt/actions-runner && ./config.sh --url https://github.com/maceip/cef'
             " --token $RUNNER_TOKEN"
-            ' --name "$RUNNER_NAME"'
+            ' --name \\"$RUNNER_NAME\\"'
             " --labels self-hosted,linux,x64,cef-builder"
-            " --unattended --replace",
-            "./svc.sh install && ./svc.sh start",
+            ' --unattended --replace"',
+            "./svc.sh install runner && ./svc.sh start",
         )
 
         x86_lt = ec2.LaunchTemplate(
@@ -225,22 +229,26 @@ class CefRunnerStack(Stack):
         arm_user_data.add_commands(
             "#!/bin/bash",
             "set -euxo pipefail",
-            "yum install -y docker git jq",
+            "yum install -y docker git jq libicu",
             "systemctl enable --now docker",
             "curl -fsSL https://github.com/mozilla/sccache/releases/download/v0.9.1/sccache-v0.9.1-aarch64-unknown-linux-musl.tar.gz"
             " | tar -xz -C /usr/local/bin --strip-components=1 --wildcards '*/sccache'",
             f"RUNNER_TOKEN=$(aws ssm get-parameter --name /cef/github-runner-token"
             f" --with-decryption --query Parameter.Value --output text --region {self.region})",
-            "mkdir -p /opt/actions-runner && cd /opt/actions-runner",
+            "useradd -m -s /bin/bash runner",
+            "usermod -aG docker runner",
+            "mkdir -p /opt/actions-runner && chown runner:runner /opt/actions-runner",
+            "cd /opt/actions-runner",
             "curl -fsSL https://github.com/actions/runner/releases/download/v2.322.0/actions-runner-linux-arm64-2.322.0.tar.gz"
             " | tar -xz",
+            "chown -R runner:runner /opt/actions-runner",
             'RUNNER_NAME="cef-arm-$(hostname)"',
-            "./config.sh --url https://github.com/maceip/cef"
+            'su - runner -c "cd /opt/actions-runner && ./config.sh --url https://github.com/maceip/cef'
             " --token $RUNNER_TOKEN"
-            ' --name "$RUNNER_NAME"'
+            ' --name \\"$RUNNER_NAME\\"'
             " --labels self-hosted,linux,arm64,cef-builder-arm"
-            " --unattended --replace",
-            "./svc.sh install && ./svc.sh start",
+            ' --unattended --replace"',
+            "./svc.sh install runner && ./svc.sh start",
         )
 
         arm_lt = ec2.LaunchTemplate(
