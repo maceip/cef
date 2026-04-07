@@ -37,9 +37,9 @@ jobs:
           AWS_REGION: ${{ vars.AWS_REGION || 'eu-central-1' }}
         run: |
           pip install -q awscli
-          X86_ASG=$(aws cloudformation describe-stacks --stack-name CefRunners \
+          X86_ASG=$(aws cloudformation describe-stacks --region "$AWS_REGION" --stack-name CefRunners \
             --query "Stacks[0].Outputs[?OutputKey=='X86AsgName'].OutputValue" --output text)
-          aws autoscaling set-desired-capacity \
+          aws autoscaling set-desired-capacity --region "$AWS_REGION" \
             --auto-scaling-group-name "$X86_ASG" --desired-capacity 1
           echo "Scaled $X86_ASG to 1, waiting for runner..."
 
@@ -151,7 +151,7 @@ jobs:
           AWS_REGION: ${{ vars.AWS_REGION || 'eu-central-1' }}
         run: |
           pip install -q awscli
-          X86_ASG=$(aws cloudformation describe-stacks --stack-name CefRunners \
+          X86_ASG=$(aws cloudformation describe-stacks --region "$AWS_REGION" --stack-name CefRunners \
             --query "Stacks[0].Outputs[?OutputKey=='X86AsgName'].OutputValue" --output text)
-          aws autoscaling set-desired-capacity \
+          aws autoscaling set-desired-capacity --region "$AWS_REGION" \
             --auto-scaling-group-name "$X86_ASG" --desired-capacity 0
