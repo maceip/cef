@@ -9,6 +9,7 @@
 #include "include/cef_parser.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "include/wrapper/cef_helpers.h"
+#include "tests/shared/browser/main_message_loop_external_pump.h"
 
 namespace {
 
@@ -94,7 +95,11 @@ void HeadlessHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
 
   if (browser_list_.empty()) {
     LOG(WARNING) << "CDPTRACE_READY_HEADLESS_ALL_BROWSERS_CLOSED";
-    CefQuitMessageLoop();
+    if (auto* message_pump = client::MainMessageLoopExternalPump::Get()) {
+      message_pump->Quit();
+    } else {
+      CefQuitMessageLoop();
+    }
   }
 }
 
@@ -129,7 +134,11 @@ void HeadlessHandler::CloseAllBrowsers(bool force_close) {
   }
 
   if (browser_list_.empty()) {
-    CefQuitMessageLoop();
+    if (auto* message_pump = client::MainMessageLoopExternalPump::Get()) {
+      message_pump->Quit();
+    } else {
+      CefQuitMessageLoop();
+    }
     return;
   }
 

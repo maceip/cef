@@ -4,13 +4,19 @@
 
 #include "tests/cefheadless/headless_app.h"
 
+#include <memory>
 #include <signal.h>
 
 #include "include/base/cef_logging.h"
 #include "include/cef_command_line.h"
 #include "tests/cefheadless/headless_handler.h"
+#include "tests/shared/browser/main_message_loop_external_pump.h"
+#include "tests/shared/browser/main_message_loop_std.h"
+#include "tests/shared/browser/main_message_loop.h"
 
 namespace {
+
+constexpr char kCdpStdMessageLoopSwitch[] = "cdp-std-message-loop";
 
 void OnSignalReceived(int /*signal*/) {
   if (auto* handler = HeadlessHandler::GetInstance()) {
@@ -35,6 +41,8 @@ int main(int argc, char* argv[]) {
   command_line->InitFromArgv(argc, argv);
   const bool bad_windowless_mode =
       command_line->HasSwitch("cdp-bad-windowless");
+  const bool std_message_loop =
+      command_line->HasSwitch(kCdpStdMessageLoopSwitch);
 
   CefSettings settings;
 #if !defined(CEF_USE_SANDBOX)
@@ -47,9 +55,14 @@ int main(int argc, char* argv[]) {
   // Alloy OSR path which has no compositor surface and hangs on CDP.
   settings.windowless_rendering_enabled = bad_windowless_mode;
 
-  // Standard message loop — no external pump needed.
   settings.multi_threaded_message_loop = false;
-  settings.external_message_pump = false;
+  // content_2015.patch (DevTools HTTP) posts /json/* work to the UI thread and
+  // calls CefScheduleExternalMessagePumpWork. That helper only runs when
+  // |external_message_pump| is true (see browser_message_loop.cc). Match the
+  // known-good cefsimple OSR+Xvfb configuration here so /json and websockets
+  // stay responsive. Pass --cdp-std-message-loop to reproduce the old stall
+  // for A/B tracing.
+  settings.external_message_pump = !std_message_loop;
 
   // Suppress verbose logging.
   settings.log_severity = LOGSEVERITY_WARNING;
@@ -59,7 +72,15 @@ int main(int argc, char* argv[]) {
                << " multi_threaded_message_loop="
                << settings.multi_threaded_message_loop
                << " external_message_pump=" << settings.external_message_pump
-               << " cdp_bad_windowless=" << bad_windowless_mode;
+               << " cdp_bad_windowless=" << bad_windowless_mode
+               << " cdp_std_message_loop=" << std_message_loop;
+
+  std::unique_ptr<client::MainMessageLoop> message_loop;
+  if (settings.external_message_pump) {
+    message_loop = client::MainMessageLoopExternalPump::Create();
+  } else {
+    message_loop = std::make_unique<client::MainMessageLoopStd>();
+  }
 
   // Signal handling for clean shutdown.
   signal(SIGINT, OnSignalReceived);
@@ -85,12 +106,9 @@ int main(int argc, char* argv[]) {
                << command_line->GetSwitchValue("remote-debugging-address")
                       .ToString();
 
-  // Standard CEF message loop. --headless + ozone-platform=headless
-  // provides a virtual display, so the compositor works and DevTools
-  // agent host initializes normally.
-  CefRunMessageLoop();
+  const int run_result = message_loop->Run();
 
-  LOG(WARNING) << "CDPTRACE_HEADLESS_MESSAGE_LOOP_EXIT";
+  LOG(WARNING) << "CDPTRACE_HEADLESS_MESSAGE_LOOP_EXIT result=" << run_result;
   CefShutdown();
   return 0;
 }

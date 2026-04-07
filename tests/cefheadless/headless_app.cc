@@ -10,6 +10,7 @@
 #include "include/base/cef_logging.h"
 #include "include/cef_command_line.h"
 #include "include/wrapper/cef_helpers.h"
+#include "tests/shared/browser/main_message_loop_external_pump.h"
 #include "tests/shared/common/client_switches.h"
 
 namespace {
@@ -121,4 +122,16 @@ void HeadlessApp::OnContextInitialized() {
 
   CefBrowserHost::CreateBrowser(window_info, handler_, url, browser_settings,
                                 nullptr, nullptr);
+}
+
+void HeadlessApp::OnScheduleMessagePumpWork(int64_t delay_ms) {
+  // Required when |external_message_pump| is true. DevTools HTTP for
+  // /json/version and /json/list (see content_2015.patch →
+  // CefScheduleExternalMessagePumpWork) depends on this path; without it those
+  // handlers can stall after IO-thread posts to the UI thread.
+  LOG(WARNING) << "CDPTRACE_HEADLESS_ON_SCHEDULE_PUMP_WORK delay_ms="
+               << delay_ms;
+  if (auto* message_pump = client::MainMessageLoopExternalPump::Get()) {
+    message_pump->OnScheduleMessagePumpWork(delay_ms);
+  }
 }
