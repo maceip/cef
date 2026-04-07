@@ -20,7 +20,7 @@ on:
         type: boolean
 
 env:
-  DOWNLOAD_DIR: /home/ubuntu/cef-build
+  DOWNLOAD_DIR: /home/runner/cef-build
   SCCACHE_BUCKET: ${{ vars.SCCACHE_BUCKET || format('cef-build-cache-{0}', secrets.AWS_ACCOUNT_ID) }}
   SCCACHE_REGION: ${{ vars.AWS_REGION || 'eu-central-1' }}
   SCCACHE_S3_KEY_PREFIX: sccache/
