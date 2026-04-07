@@ -3,10 +3,8 @@ name: Get latest CEF version
 on:
   schedule:
     - cron: "0 0 * * *"
-
   push:
-    branches:
-      - dev
+    branches: [dev]
     paths:
       - get-latest/**
       - .github/workflows/get-latest.yml
@@ -28,7 +26,6 @@ jobs:
         run: |
           git config --global user.email "tauri-bot@users.noreply.github.com"
           git config --global user.name "tauri"
-
           RESET_REV=$(git rev-parse HEAD)
           echo "reset-rev=${RESET_REV}" >> "$GITHUB_OUTPUT"
           cargo run -p get-latest -- -u
@@ -43,29 +40,23 @@ jobs:
         run: |
           git switch -c get-latest
           git add .
-
           CHANGED=($(git diff --name-only --staged | xargs))
-          if [ ${#CHANGED[@]} -gt 0 ]; then
-            git push --force -u origin get-latest
+          [ ${#CHANGED[@]} -eq 0 ] && exit 0
 
-            FILES=()
-            for VALUE in ${CHANGED[@]}; do
-              base64 -w0 "${VALUE}" > "${VALUE}.base64"
-              FILES+=("-F" "files[][path]=${VALUE}" "-F" "files[][contents]=@${VALUE}.base64")
-            done
-
-            gh api graphql \
-              -F githubRepository=${GITHUB_REPOSITORY} \
-              -F branchName=get-latest \
-              -F expectedHeadOid=${RESET_REV} \
-              -F "commitMessage=${COMMIT_MESSAGE}" \
-              -F query=@.github/api/createCommitOnBranch.graphql \
-              ${FILES[@]}
-
-            echo "updated=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "updated=false" >> "$GITHUB_OUTPUT"
-          fi
+          git push --force -u origin get-latest
+          FILES=()
+          for VALUE in ${CHANGED[@]}; do
+            base64 -w0 "${VALUE}" > "${VALUE}.base64"
+            FILES+=("-F" "files[][path]=${VALUE}" "-F" "files[][contents]=@${VALUE}.base64")
+          done
+          gh api graphql \
+            -F githubRepository=${GITHUB_REPOSITORY} \
+            -F branchName=get-latest \
+            -F expectedHeadOid=${RESET_REV} \
+            -F "commitMessage=${COMMIT_MESSAGE}" \
+            -F query=@.github/api/createCommitOnBranch.graphql \
+            ${FILES[@]}
+          echo "updated=true" >> "$GITHUB_OUTPUT"
 
   update-bindings:
     needs: get-latest
@@ -78,13 +69,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: update-bindings
     if: needs.update-bindings.outputs.published == 'false'
-
     steps:
       - uses: actions/checkout@v6
         with:
           ref: get-latest
           fetch-depth: 0
-
       - name: Publish PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

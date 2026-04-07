@@ -1,21 +1,8 @@
 #!/bin/bash
-# CEF Local Build Pipeline
-# Usage:
-#   ./tools/claude/build.sh setup    # First-time setup: fetch depot_tools + chromium
-#   ./tools/claude/build.sh build    # Build CEF (debug)
-#   ./tools/claude/build.sh release  # Build CEF (release)
-#   ./tools/claude/build.sh test     # Run ceftests
-#   ./tools/claude/build.sh quick    # Incremental build + test (fastest iteration)
-#   ./tools/claude/build.sh check    # Syntax/compilation check only (no link)
-#   ./tools/claude/build.sh all      # Full build + test
-
+# CEF Local Build Pipeline — run ./tools/claude/build.sh help for usage.
 set -euo pipefail
 
 CEF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-# Standard CEF build expects:
-#   chromium_src/
-#   chromium_src/cef/   (symlinked or cloned)
-#   chromium_src/out/Debug_GN_x64/
 CHROMIUM_DIR="${CHROMIUM_DIR:-$(dirname "$CEF_DIR")}"
 DEPOT_TOOLS="${DEPOT_TOOLS:-$HOME/depot_tools}"
 BUILD_DIR_DEBUG="${CHROMIUM_DIR}/out/Debug_GN_x64"
@@ -36,26 +23,15 @@ ensure_depot_tools() {
 cmd_setup() {
   log "Setting up CEF build environment"
   ensure_depot_tools
-
-  log "Running automate-git.py to fetch/update Chromium + build..."
-  log "This will take a LONG time on first run (downloading ~30GB of source)"
-  log ""
-  log "If you already have a Chromium checkout, set CHROMIUM_DIR to point to it"
-  log "and ensure cef/ is symlinked inside it."
-  log ""
-
-  # Create the build directories
   mkdir -p "$BUILD_DIR_DEBUG"
 
-  # Verify the CEF directory is accessible from Chromium
-  if [ ! -d "$CHROMIUM_DIR/cef" ] && [ ! -L "$CHROMIUM_DIR/cef" ]; then
-    if [ "$CHROMIUM_DIR" != "$(dirname "$CEF_DIR")" ]; then
-      log "Symlinking $CEF_DIR -> $CHROMIUM_DIR/cef"
-      ln -sf "$CEF_DIR" "$CHROMIUM_DIR/cef"
-    fi
+  # Symlink CEF into Chromium if needed
+  if [ ! -d "$CHROMIUM_DIR/cef" ] && [ ! -L "$CHROMIUM_DIR/cef" ] \
+     && [ "$CHROMIUM_DIR" != "$(dirname "$CEF_DIR")" ]; then
+    log "Symlinking $CEF_DIR -> $CHROMIUM_DIR/cef"
+    ln -sf "$CEF_DIR" "$CHROMIUM_DIR/cef"
   fi
 
-  # Write args.gn for debug build
   cat > "$BUILD_DIR_DEBUG/args.gn" << 'ARGS'
 is_debug = true
 is_component_build = true
@@ -66,16 +42,8 @@ use_allocator = "none"
 treat_warnings_as_errors = false
 ARGS
 
-  log "Running GN gen..."
-  if command -v gn &>/dev/null; then
-    gn gen "$BUILD_DIR_DEBUG"
-  else
-    log "gn not found. Ensure depot_tools is in PATH or run:"
-    log "  export PATH=\$HOME/depot_tools:\$PATH"
-    log "  gn gen $BUILD_DIR_DEBUG"
-  fi
-
-  log "Setup complete. Run: ./tools/claude/build.sh build"
+  command -v gn &>/dev/null && gn gen "$BUILD_DIR_DEBUG" \
+    || err "gn not found. Add depot_tools to PATH: export PATH=\$HOME/depot_tools:\$PATH"
 }
 
 cmd_build() {
@@ -127,18 +95,28 @@ cmd_test() {
 }
 
 cmd_test_perf() {
-  log "Running performance optimization tests only..."
-
   local test_binary="$BUILD_DIR_DEBUG/ceftests"
   if [ ! -f "$test_binary" ]; then
     err "ceftests binary not found. Run: ./tools/claude/build.sh build"
   fi
 
-  "$test_binary" \
-    --gtest_filter="StateJournal.*:PageModelCache.*:AgentScheduler.*:SecurityPolicy.*:DirtyTracking.*:SessionPool.*" \
-    --no-sandbox 2>&1 | tee /tmp/ceftests-perf.log
+  local suites=("StateJournal" "PageModelCache" "AgentScheduler" "SecurityPolicy" "DirtyTracking" "SessionPool")
+  local filter="" verbose=""
 
-  log "Results saved to /tmp/ceftests-perf.log"
+  for arg in "$@"; do
+    case "$arg" in
+      -v|--verbose) verbose="--gtest_print_time=1" ;;
+      *) filter="$arg.*" ;;
+    esac
+  done
+
+  if [ -z "$filter" ]; then
+    filter=$(IFS=":"; echo "${suites[*]/%/.*}")
+    filter="${filter// /}"
+  fi
+
+  log "Running perf tests: $filter"
+  "$test_binary" --gtest_filter="$filter" $verbose --no-sandbox 2>&1 | tee /tmp/ceftests-perf.log
 }
 
 cmd_quick() {
@@ -200,7 +178,7 @@ case "${1:-help}" in
   build)     cmd_build ;;
   release)   cmd_release ;;
   test)      cmd_test "${2:-*}" ;;
-  test-perf) cmd_test_perf ;;
+  test-perf) shift; cmd_test_perf "$@" ;;
   quick)     cmd_quick ;;
   check)     cmd_check ;;
   all)       cmd_all ;;

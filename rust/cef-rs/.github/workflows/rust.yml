@@ -2,21 +2,16 @@ name: Rust validation
 
 on:
   push:
-    branches:
-      - dev
+    branches: [dev]
   pull_request:
-    branches:
-      - dev
+    branches: [dev]
 
 jobs:
   rust:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -24,11 +19,8 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Install dependencies
-        run: |
-          ${{ matrix.os == 'ubuntu-latest'
-            && 'sudo apt-get update -q; sudo apt-get install -yq libglib2.0-dev'
-            || 'echo "No additional dependencies."'
-          }}
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update -q && sudo apt-get install -yq libglib2.0-dev
 
       - name: Check fmt
         run: cargo fmt --check
@@ -40,28 +32,25 @@ jobs:
           path: ~/.local/share/cef
           key: cef-${{ matrix.os }}-${{ hashFiles('Cargo.toml') }}
 
-      - name: ${{ steps.cache-cef.outputs.cache-hit && 'Use cache' || 'Export CEF' }}
+      - name: Export CEF
+        if: steps.cache-cef.outputs.cache-hit != 'true'
+        shell: bash
         run: |
-          ${{ steps.cache-cef.outputs.cache-hit && 'echo "Cached CEF"'
-            || (matrix.os == 'windows-latest'
-              && 'cargo run -p export-cef-dir -- "$env:USERPROFILE/.local/share/cef"'
-              || 'cargo run -p export-cef-dir -- "$HOME/.local/share/cef"')
-          }}
-          echo "CEF_PATH=${{ matrix.os == 'windows-latest'
-            && '$env:USERPROFILE'
-            || '$HOME'
-          }}/.local/share/cef" >> "$${{ matrix.os == 'windows-latest'
-            && 'env:'
-            || ''
-          }}GITHUB_ENV"
-          echo "${{ matrix.os == 'macos-latest'
-            && 'DYLD_FALLBACK_LIBRARY_PATH=$DYLD_FALLBACK_LIBRARY_PATH:$HOME/.local/share/cef:$HOME/.local/share/cef/Chromium Embedded Framework.framework/Libraries'
-            || (matrix.os == 'windows-latest'
-              && 'PATH=$env:PATH;$env:USERPROFILE/.local/share/cef'
-              || 'LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/share/cef') }}" >> "$${{ matrix.os == 'windows-latest'
-                    && 'env:'
-                    || ''
-                  }}GITHUB_ENV"
+          CEF_DIR="$HOME/.local/share/cef"
+          [[ "$RUNNER_OS" == "Windows" ]] && CEF_DIR="$USERPROFILE/.local/share/cef"
+          cargo run -p export-cef-dir -- "$CEF_DIR"
+
+      - name: Set CEF environment
+        shell: bash
+        run: |
+          CEF_DIR="$HOME/.local/share/cef"
+          [[ "$RUNNER_OS" == "Windows" ]] && CEF_DIR="$USERPROFILE/.local/share/cef"
+          echo "CEF_PATH=$CEF_DIR" >> "$GITHUB_ENV"
+          case "$RUNNER_OS" in
+            macOS)   echo "DYLD_FALLBACK_LIBRARY_PATH=$DYLD_FALLBACK_LIBRARY_PATH:$CEF_DIR:$CEF_DIR/Chromium Embedded Framework.framework/Libraries" >> "$GITHUB_ENV" ;;
+            Windows) echo "PATH=$PATH;$CEF_DIR" >> "$GITHUB_ENV" ;;
+            *)       echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CEF_DIR" >> "$GITHUB_ENV" ;;
+          esac
 
       - name: Build
         run: cargo build --verbose

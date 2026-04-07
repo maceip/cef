@@ -1,18 +1,6 @@
 #!/bin/bash
-# Automated CEF patch application with conflict resolution.
-#
-# Problem: CEF patches often add methods/features that get upstreamed into
-# Chromium in later versions. When we rebase to a newer Chromium tag, these
-# patches cause "class member cannot be redeclared" or similar errors.
-#
-# Solution: Apply patches one-by-one, test-compile the affected file after
-# each, and automatically revert patches that cause compilation errors.
-#
-# Usage:
-#   ./tools/claude/apply-patches.sh              # Apply all patches with conflict detection
-#   ./tools/claude/apply-patches.sh --dry-run    # Show what would happen without changing files
-#   ./tools/claude/apply-patches.sh --revert     # Revert all patches
-#   ./tools/claude/apply-patches.sh --status     # Show which patches are applied/skipped
+# Automated CEF patch application — applies patches one-by-one and skips
+# conflicts (likely upstreamed features). Run with --help for usage.
 
 set -euo pipefail
 
@@ -76,45 +64,6 @@ apply_patch() {
   fi
 }
 
-# Test if a patched file compiles
-test_compile() {
-  local file="$1"
-  local obj_file
-
-  # Only test C/C++ files
-  case "$file" in
-    *.cc|*.cpp|*.c|*.h|*.hpp)
-      ;;
-    *)
-      return 0  # Skip non-C++ files
-      ;;
-  esac
-
-  # For header files, we can't easily compile them alone.
-  # Just check if the patch applied cleanly.
-  case "$file" in
-    *.h|*.hpp)
-      return 0
-      ;;
-  esac
-
-  cd "$SRC_DIR"
-  obj_file="out/Debug_GN_x64/obj/$(echo "$file" | sed 's/\.cc$/.o/' | sed 's/\.cpp$/.o/' | sed 's/\.c$/.o/')"
-
-  # Try compiling just this file
-  if autoninja -C out/Debug_GN_x64 "$obj_file" -j1 2>/dev/null; then
-    return 0
-  else
-    return 1
-  fi
-}
-
-# Get files modified by a patch
-get_patch_files() {
-  local patch_file="$1"
-  grep '^diff --git' "$patch_file" | sed 's|diff --git a/||' | sed 's| b/.*||'
-}
-
 cmd_apply() {
   local dry_run="${1:-}"
 
@@ -125,10 +74,7 @@ cmd_apply() {
   > "$SKIP_FILE" 2>/dev/null || true
   > "$APPLIED_FILE" 2>/dev/null || true
 
-  local total=0
-  local applied=0
-  local skipped=0
-  local failed=0
+  local total=0 applied=0 skipped=0
 
   while IFS='|' read -r name path condition; do
     [ -z "$name" ] && continue
@@ -168,7 +114,7 @@ cmd_apply() {
   done < <(get_patches)
 
   log ""
-  log "Results: $applied applied, $skipped skipped, $failed failed (of $total total)"
+  log "Results: $applied applied, $skipped skipped (of $total total)"
 
   if [ -s "$SKIP_FILE" ]; then
     log ""
