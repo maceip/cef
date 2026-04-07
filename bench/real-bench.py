@@ -40,7 +40,7 @@ STEP_TIMEOUT = 30          # seconds per individual step
 FRAMEWORK_TIMEOUT = 300    # seconds per framework script (playwright/cdp/cef)
 INTER_FRAMEWORK_SLEEP = 3  # seconds between frameworks
 
-CEF_BINARY = "/home/ubuntu/cef-build/chromium/src/out/Release_GN_x64/cefsimple"
+CEF_BINARY = "/home/ubuntu/cef-build/chromium/src/out/Release_GN_x64/cefheadless"
 CEF_DEBUG_PORT = 9333
 CEF_DISPLAY = ":99"
 
@@ -489,43 +489,35 @@ def run_cdp():
 # ---------------------------------------------------------------------------
 
 def run_cef():
-    """Benchmark CEF via cefsimple + websocket CDP connection."""
+    """Benchmark CEF via cefheadless + websocket CDP connection."""
     script = STEP_HELPER + textwrap.dedent('''\
     import subprocess, urllib.request
 
     async def main():
-        import websockets
+        import websockets, time
 
-        # -- Start Xvfb --
-        xvfb = subprocess.Popen(
-            ["Xvfb", "CEF_DISPLAY", "-screen", "0", "1920x1080x24"],
-            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-        )
-        os.environ["DISPLAY"] = "CEF_DISPLAY"
-        await asyncio.sleep(1)
-
-        # -- Start cefsimple in the validated OSR + external-pump mode --
+        # -- Start cefheadless (native headless, no Xvfb needed) --
         cef = subprocess.Popen(
             [
                 "CEF_BINARY",
                 "--no-sandbox",
-                "--external-message-pump",
                 "--remote-debugging-port=CEF_PORT",
-                "--off-screen-rendering-enabled",
                 "--url=about:blank",
+                "--user-data-dir=/tmp/cef-bench-run",
             ],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-            env={**os.environ, "DISPLAY": "CEF_DISPLAY"},
+            env={**os.environ, "LD_LIBRARY_PATH": "/home/ubuntu/cef-build/chromium/src/out/Release_GN_x64"},
         )
         await asyncio.sleep(5)
 
-        # -- Discover CDP websocket endpoint --
+        # -- Discover CDP websocket endpoint (page target) --
         ws_url = None
         for attempt in range(10):
             try:
-                resp = urllib.request.urlopen("http://127.0.0.1:CEF_PORT/json/version")
-                info = json.loads(resp.read())
-                ws_url = info.get("webSocketDebuggerUrl")
+                resp = urllib.request.urlopen("http://127.0.0.1:CEF_PORT/json/list")
+                targets = json.loads(resp.read())
+                if targets:
+                    ws_url = targets[0].get("webSocketDebuggerUrl")
                 if ws_url:
                     break
             except Exception:
@@ -534,12 +526,33 @@ def run_cef():
         if not ws_url:
             print("  FAIL: Could not connect to CEF CDP endpoint")
             cef.terminate()
-            xvfb.terminate()
             return
 
         print(f"  Connected to CEF at {ws_url}")
 
         msg_id = 0
+        # Proper CDP transport: background reader dispatches to futures and event queues
+        response_futures = {}  # msg_id -> asyncio.Future
+        event_queues = {}      # event_name -> asyncio.Queue
+        _reader_task = None
+
+        def _get_event_queue(name):
+            if name not in event_queues:
+                event_queues[name] = asyncio.Queue()
+            return event_queues[name]
+
+        async def _reader(ws):
+            """Background task that reads all messages and dispatches them."""
+            try:
+                async for raw in ws:
+                    msg = json.loads(raw)
+                    if "id" in msg and msg["id"] in response_futures:
+                        response_futures.pop(msg["id"]).set_result(msg)
+                    elif "method" in msg:
+                        q = _get_event_queue(msg["method"])
+                        await q.put(msg)
+            except Exception:
+                pass
 
         async def cdp_send(ws, method, params=None):
             nonlocal msg_id
@@ -547,14 +560,13 @@ def run_cef():
             cmd = {"id": msg_id, "method": method}
             if params:
                 cmd["params"] = params
+            fut = asyncio.get_event_loop().create_future()
+            response_futures[msg_id] = fut
             await ws.send(json.dumps(cmd))
-            while True:
-                raw = await asyncio.wait_for(ws.recv(), timeout=30)
-                resp = json.loads(raw)
-                if resp.get("id") == msg_id:
-                    if "error" in resp:
-                        raise RuntimeError(resp["error"].get("message", str(resp["error"])))
-                    return resp.get("result", {})
+            resp = await asyncio.wait_for(fut, timeout=30)
+            if "error" in resp:
+                raise RuntimeError(resp["error"].get("message", str(resp["error"])))
+            return resp.get("result", {})
 
         async def cdp_eval(ws, expr):
             r = await cdp_send(ws, "Runtime.evaluate", {
@@ -564,13 +576,29 @@ def run_cef():
             })
             return r.get("result", {}).get("value")
 
+        async def cdp_wait_event(event_name, timeout=15):
+            """Wait for a specific CDP event. Equivalent to Playwright wait_for_load_state."""
+            q = _get_event_queue(event_name)
+            # Drain any stale events
+            while not q.empty():
+                try: q.get_nowait()
+                except asyncio.QueueEmpty: break
+            return await asyncio.wait_for(q.get(), timeout=timeout)
+
         async def cdp_navigate(ws, url):
+            """Navigate and wait for domContentEventFired — same as CDP Raw page.goto(wait_until=domcontentloaded)."""
+            q = _get_event_queue("Page.domContentEventFired")
+            while not q.empty():
+                try: q.get_nowait()
+                except asyncio.QueueEmpty: break
             await cdp_send(ws, "Page.navigate", {"url": url})
-            # Wait for load
-            await asyncio.sleep(2)
+            await asyncio.wait_for(q.get(), timeout=15)
 
         try:
             async with websockets.connect(ws_url, max_size=50*1024*1024) as ws:
+                # Start background reader
+                _reader_task = asyncio.create_task(_reader(ws))
+
                 # Enable domains
                 await cdp_send(ws, "Page.enable")
                 await cdp_send(ws, "Runtime.enable")
@@ -581,8 +609,8 @@ def run_cef():
                 await S.run("fill_what",        cdp_eval(ws, "document.querySelector('input#text-input-what').value='software engineer'"))
                 await S.run("fill_where",       cdp_eval(ws, "document.querySelector('input#text-input-where').value='San Francisco'"))
                 await S.run("click_search",     cdp_eval(ws, "document.querySelector('button[type=submit]')?.click()"))
-                await S.run("wait_load",        asyncio.sleep(3))
-                await S.run("eval_job_cards",   cdp_eval(ws, """JSON.stringify(Array.from(document.querySelectorAll('[data-testid=slider_item],.job_seen_beacon,.resultContent')).slice(0,10).map(el=>({title:el.querySelector('h2,a')?.textContent?.trim()})))"""))
+                await S.run("wait_results",     cdp_wait_event("Page.domContentEventFired"))
+                await S.run("eval_job_cards",   cdp_eval(ws, """JSON.stringify(Array.from(document.querySelectorAll('[data-testid=slider_item],.job_seen_beacon,.resultContent')).slice(0,10).map(el=>({title:el.querySelector('h2,a')?.textContent?.trim(),company:el.querySelector('[data-testid=company-name],.companyName')?.textContent?.trim()})))"""))
                 await S.run("ax_tree",          cdp_send(ws, "Accessibility.getFullAXTree"))
                 await S.run("screenshot",       cdp_send(ws, "Page.captureScreenshot", {"format": "png"}))
 
@@ -591,14 +619,14 @@ def run_cef():
                 await S.run("navigate",         cdp_navigate(ws, "https://www.amazon.com"))
                 await S.run("fill_search",      cdp_eval(ws, "document.querySelector('input#twotabsearchtextbox').value='usb-c cable'"))
                 await S.run("click_search",     cdp_eval(ws, "document.querySelector('input#nav-search-submit-button')?.click()"))
-                await S.run("wait_results",     asyncio.sleep(3))
+                await S.run("wait_results",     cdp_wait_event("Page.domContentEventFired"))
                 await S.run("ax_tree",          cdp_send(ws, "Accessibility.getFullAXTree"))
-                await S.run("eval_first",       cdp_eval(ws, """JSON.stringify((() => { const c = document.querySelector('[data-component-type=s-search-result]'); return { title: c?.querySelector('h2')?.textContent?.trim(), price: c?.querySelector('.a-price .a-offscreen')?.textContent }; })())"""))
+                await S.run("eval_first",       cdp_eval(ws, """JSON.stringify((() => { const c = document.querySelector('[data-component-type=s-search-result]'); return { title: c?.querySelector('h2')?.textContent?.trim(), price: c?.querySelector('.a-price .a-offscreen')?.textContent, rating: c?.querySelector('.a-icon-alt')?.textContent }; })())"""))
                 await S.run("click_first",      cdp_eval(ws, "document.querySelector('[data-component-type=s-search-result] h2 a')?.click()"))
-                await S.run("wait_product",     asyncio.sleep(3))
-                await S.run("eval_product",     cdp_eval(ws, """JSON.stringify({title:document.querySelector('#productTitle')?.textContent?.trim(),price:document.querySelector('.a-price .a-offscreen')?.textContent})"""))
+                await S.run("wait_product",     cdp_wait_event("Page.domContentEventFired"))
+                await S.run("eval_product",     cdp_eval(ws, """JSON.stringify({title:document.querySelector('#productTitle')?.textContent?.trim(),price:document.querySelector('.a-price .a-offscreen')?.textContent,rating:document.querySelector('#acrPopover .a-icon-alt')?.textContent})"""))
                 await S.run("go_back",          cdp_eval(ws, "history.back()"))
-                await S.run("wait_back",        asyncio.sleep(2))
+                await S.run("wait_back",        cdp_wait_event("Page.domContentEventFired"))
                 await S.run("click_second",     cdp_eval(ws, "document.querySelector('[data-component-type=s-search-result]:nth-child(2) h2 a')?.click()"))
                 await S.run("eval_product_2",   cdp_eval(ws, """JSON.stringify({title:document.querySelector('#productTitle')?.textContent?.trim(),price:document.querySelector('.a-price .a-offscreen')?.textContent})"""))
                 await S.run("screenshot",       cdp_send(ws, "Page.captureScreenshot", {"format": "png"}))
@@ -606,7 +634,7 @@ def run_cef():
                 # -- Task 3: Travel Research --
                 print("\\n  --- Task 3: Travel Research (google.com/travel/flights) ---")
                 await S.run("navigate",         cdp_navigate(ws, "https://www.google.com/travel/flights"))
-                await S.run("eval_find_inputs", cdp_eval(ws, """JSON.stringify(Array.from(document.querySelectorAll('input')).map(i=>({name:i.name,ariaLabel:i.getAttribute('aria-label')})))"""))
+                await S.run("eval_find_inputs", cdp_eval(ws, """JSON.stringify(Array.from(document.querySelectorAll('input')).map(i=>({name:i.name,placeholder:i.placeholder,ariaLabel:i.getAttribute('aria-label')})))"""))
                 await S.run("fill_origin",      cdp_eval(ws, "document.querySelector('input[aria-label*=Where]').value='SFO'"))
                 await S.run("fill_dest",        cdp_eval(ws, "document.querySelector('input[aria-label*=Where]:last-of-type').value='JFK'"))
                 await S.run("ax_tree",          cdp_send(ws, "Accessibility.getFullAXTree"))
@@ -620,10 +648,10 @@ def run_cef():
                 await S.run("eval_stories",     cdp_eval(ws, """JSON.stringify(Array.from(document.querySelectorAll('.athing')).map(el=>({title:el.querySelector('.titleline a')?.textContent,url:el.querySelector('.titleline a')?.href,score:el.nextElementSibling?.querySelector('.score')?.textContent})))"""))
                 await S.run("screenshot",       cdp_send(ws, "Page.captureScreenshot", {"format": "png"}))
                 await S.run("click_more",       cdp_eval(ws, "document.querySelector('a.morelink')?.click()"))
-                await S.run("wait_page2",       asyncio.sleep(2))
+                await S.run("wait_page2",       cdp_wait_event("Page.domContentEventFired"))
                 await S.run("eval_page2",       cdp_eval(ws, """JSON.stringify(Array.from(document.querySelectorAll('.athing')).map(el=>({title:el.querySelector('.titleline a')?.textContent,url:el.querySelector('.titleline a')?.href,score:el.nextElementSibling?.querySelector('.score')?.textContent})))"""))
                 await S.run("click_comments",   cdp_eval(ws, "document.querySelector('.subtext a[href*=item]')?.click()"))
-                await S.run("wait_comments",    asyncio.sleep(2))
+                await S.run("wait_comments",    cdp_wait_event("Page.domContentEventFired"))
                 await S.run("eval_comments",    cdp_eval(ws, """JSON.stringify(Array.from(document.querySelectorAll('.commtext')).slice(0,5).map(c=>c.textContent?.trim()?.slice(0,200)))"""))
                 await S.run("ax_tree_comments", cdp_send(ws, "Accessibility.getFullAXTree"))
 
@@ -631,7 +659,7 @@ def run_cef():
                 print("\\n  --- Task 5: Reference Lookup (wikipedia.org) ---")
                 await S.run("navigate",         cdp_navigate(ws, "https://en.wikipedia.org/wiki/Special:Search?search=Chromium+web+browser"))
                 await S.run("click_first",      cdp_eval(ws, "document.querySelector('.mw-search-result-heading a')?.click()"))
-                await S.run("wait_article",     asyncio.sleep(3))
+                await S.run("wait_article",     cdp_wait_event("Page.domContentEventFired"))
                 await S.run("ax_tree",          cdp_send(ws, "Accessibility.getFullAXTree"))
                 await S.run("eval_toc",         cdp_eval(ws, """JSON.stringify(Array.from(document.querySelectorAll('#toc a,.toc a,[class*=toc] a')).map(a=>a.textContent.trim()).filter(Boolean))"""))
                 await S.run("eval_infobox",     cdp_eval(ws, """JSON.stringify(Array.from(document.querySelectorAll('table.infobox tr')).slice(0,15).map(tr=>tr.textContent.trim()))"""))
@@ -651,7 +679,7 @@ def run_cef():
                 await S.run("set_topping_1",    cdp_eval(ws, "document.querySelector('input[name=topping][value=cheese]').checked=true"))
                 await S.run("set_topping_2",    cdp_eval(ws, "document.querySelector('input[name=topping][value=mushroom]').checked=true"))
                 await S.run("submit",           cdp_eval(ws, "document.querySelector('button[type=submit]')?.click()"))
-                await S.run("wait_response",    asyncio.sleep(2))
+                await S.run("wait_response",    cdp_wait_event("Page.domContentEventFired"))
                 await S.run("eval_response",    cdp_eval(ws, "document.body.textContent?.trim()?.slice(0,500)"))
                 await S.run("verify_values",    cdp_eval(ws, """JSON.stringify({has_name:document.body.textContent.includes('John Doe'),has_phone:document.body.textContent.includes('555-0123'),has_email:document.body.textContent.includes('john@example.com')})"""))
                 await S.run("screenshot",       cdp_send(ws, "Page.captureScreenshot", {"format": "png"}))
@@ -660,16 +688,13 @@ def run_cef():
             print(f"  CEF session error: {e}")
             traceback.print_exc()
         finally:
+            if _reader_task:
+                _reader_task.cancel()
             cef.terminate()
-            xvfb.terminate()
             try:
                 cef.wait(timeout=5)
             except Exception:
                 cef.kill()
-            try:
-                xvfb.wait(timeout=5)
-            except Exception:
-                xvfb.kill()
 
     asyncio.run(main())
     ''').replace(
@@ -693,10 +718,8 @@ def run_cef():
 # ---------------------------------------------------------------------------
 
 FRAMEWORKS = [
-    ("agent-browser v0.22.3",                          run_agent_browser),
-    ("Playwright v1.58.0 (browser-use/stagehand)",     run_playwright),
     ("CDP Raw (Chrome DevTools Protocol)",              run_cdp),
-    ("CEF (zun fork, cefsimple)",                       run_cef),
+    ("CEF (zun fork, cefheadless)",                     run_cef),
 ]
 
 
