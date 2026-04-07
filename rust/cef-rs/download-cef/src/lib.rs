@@ -292,10 +292,7 @@ impl CefVersion {
                     .progress_chars("##-"),
             );
             bar.set_message("Downloading");
-            std::io::copy(
-                &mut bar.wrap_read(resp.into_reader()),
-                &mut file,
-            )
+            std::io::copy(&mut bar.wrap_read(resp.into_reader()), &mut file)
         } else {
             let mut reader = resp.into_reader();
             std::io::copy(&mut reader, &mut file)
