@@ -54,57 +54,8 @@
 class CefAutomationProgram : public virtual CefBaseRefCounted {
  public:
   ///
-  /// Instruction types that can be added to the program.
-  ///
-  typedef enum {
-    ///
-    /// Navigate to a URL.
-    /// Params: "url" (string, required).
-    ///
-    INSTRUCTION_NAVIGATE = 0,
-    ///
-    /// Wait for a condition (load, networkidle, selector).
-    /// Params: "condition" (string: "load"|"networkidle"|"selector"),
-    ///         "selector" (string, required when condition is "selector"),
-    ///         "timeout" (int, optional, milliseconds).
-    ///
-    INSTRUCTION_WAIT,
-    ///
-    /// Click an element by selector.
-    /// Params: "selector" (string, required),
-    ///         "button" (string, optional: "left"|"right"|"middle").
-    ///
-    INSTRUCTION_CLICK,
-    ///
-    /// Type text into the focused element.
-    /// Params: "text" (string, required),
-    ///         "delay" (int, optional, milliseconds between keystrokes).
-    ///
-    INSTRUCTION_TYPE,
-    ///
-    /// Capture a text snapshot of the page.
-    /// Params: none.
-    ///
-    INSTRUCTION_SNAPSHOT,
-    ///
-    /// Capture a screenshot.
-    /// Params: "format" (string, optional: "png"|"jpeg"),
-    ///         "quality" (int, optional, 0-100 for jpeg).
-    ///
-    INSTRUCTION_SCREENSHOT,
-    ///
-    /// Execute JavaScript (goes through normal Runtime.evaluate path).
-    /// Params: "expression" (string, required),
-    ///         "await_promise" (bool, optional).
-    ///
-    INSTRUCTION_EVALUATE,
-    ///
-    /// Wait for a specified duration.
-    /// Params: "milliseconds" (int, required).
-    ///
-    INSTRUCTION_DELAY,
-  } InstructionType;
-
+  /// Instruction types that can be added to the program. The enum values are
+  /// defined in cef_automation_instruction_type_t.
   ///
   /// Create a new empty automation program.
   ///
@@ -118,7 +69,7 @@ class CefAutomationProgram : public virtual CefBaseRefCounted {
   /// Returns the instruction index.
   ///
   /*--cef()--*/
-  virtual int AddInstruction(InstructionType type,
+  virtual int AddInstruction(cef_automation_instruction_type_t type,
                              CefRefPtr<CefDictionaryValue> params) = 0;
 
   ///

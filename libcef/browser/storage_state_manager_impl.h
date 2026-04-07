@@ -20,9 +20,24 @@
 #include "cef/libcef/browser/state_journal.h"
 #include "cef/libcef/browser/thread_util.h"
 
-struct StorageStateListResult;
-struct StorageStateReadResult;
-struct StorageStateActionResult;
+struct StorageStateListResult {
+  bool success = false;
+  std::string error;
+  base::FilePath directory;
+  std::vector<base::DictValue> entries;
+};
+
+struct StorageStateReadResult {
+  bool success = false;
+  std::string error;
+  base::DictValue result;
+};
+
+struct StorageStateActionResult {
+  bool success = false;
+  std::string error;
+  base::FilePath path;
+};
 
 // Implementation of the CefStorageStateManager interface. May be created on any
 // thread. Methods execute on the browser process UI thread unless otherwise
@@ -122,7 +137,7 @@ class CefStorageStateManagerImpl : public CefStorageStateManager {
   // Cached directory listing to avoid re-enumeration.
   struct CachedDirectoryState {
     base::TimeTicks last_enumerated;
-    std::vector<base::Value::Dict> entries;
+    std::vector<base::DictValue> entries;
     base::FilePath directory;
     bool valid = false;
   };

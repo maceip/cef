@@ -46,6 +46,7 @@
 
 #include "include/capi/cef_base_capi.h"
 #include "include/capi/cef_values_capi.h"
+#include "include/internal/cef_types.h"
 
 #ifdef __cplusplus
 extern "C" {

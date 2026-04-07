@@ -14,7 +14,7 @@ CefRefPtr<CefAutomationProgram> CefAutomationProgram::Create() {
 CefAutomationProgramImpl::CefAutomationProgramImpl() = default;
 
 int CefAutomationProgramImpl::AddInstruction(
-    InstructionType type,
+    cef_automation_instruction_type_t type,
     CefRefPtr<CefDictionaryValue> params) {
   DCHECK(params.get());
   if (!params.get()) {

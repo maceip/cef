@@ -1,0 +1,6 @@
+# cef-rs pulls transitive crates that require a recent toolchain (e.g.
+# cargo_metadata 0.23 pulls cargo-platform 0.3.2, which currently
+# requires rustc 1.88+). Pin the workspace so `cargo check` / CI match.
+[toolchain]
+channel = "1.88.0"
+components = ["rustfmt", "clippy"]

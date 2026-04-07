@@ -71,6 +71,9 @@ int main(int argc, char* argv[]) {
 
   settings.external_message_pump =
       command_line->HasSwitch(client::switches::kExternalMessagePump);
+  settings.windowless_rendering_enabled =
+      command_line->HasSwitch(client::switches::kOffScreenRenderingEnabled) ||
+      command_line->HasSwitch(client::switches::kUseOzoneHeadless);
 
   // SimpleApp implements application-level callbacks for the browser process.
   // It will create the first browser instance in OnContextInitialized() after

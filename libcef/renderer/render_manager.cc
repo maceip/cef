@@ -20,6 +20,7 @@
 #endif
 
 #include "base/command_line.h"
+#include "base/logging.h"
 #include "base/strings/string_number_conversions.h"
 #include "cef/libcef/common/app_manager.h"
 #include "cef/libcef/common/cef_switches.h"
@@ -85,6 +86,7 @@ CefRenderManager* CefRenderManager::Get() {
 }
 
 void CefRenderManager::RenderThreadConnected() {
+  LOG(WARNING) << "CDPTRACE_RENDER_MANAGER_THREAD_CONNECTED";
   // Retrieve the new render thread information synchronously.
   auto params = cef::mojom::NewRenderThreadInfo::New();
   GetBrowserManager()->GetNewRenderThreadInfo(&params);
@@ -127,10 +129,14 @@ void CefRenderManager::WebViewCreated(
 
 void CefRenderManager::DevToolsAgentAttached() {
   ++devtools_agent_count_;
+  LOG(WARNING) << "CDPTRACE_RENDER_MANAGER_AGENT_ATTACHED count="
+               << devtools_agent_count_;
 }
 
 void CefRenderManager::DevToolsAgentDetached() {
   --devtools_agent_count_;
+  LOG(WARNING) << "CDPTRACE_RENDER_MANAGER_AGENT_DETACHED count="
+               << devtools_agent_count_;
   if (devtools_agent_count_ == 0 && uncaught_exception_stack_size_ > 0) {
     // When the last DevToolsAgent is detached the stack size is set to 0.
     // Restore the user-specified stack size here.

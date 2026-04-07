@@ -9,10 +9,11 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
-// $hash=b3f333f7672a97b0b84d27f24c26c85931a4f20d$
+// $hash=a46e11a6f5c27d68aeedadd215afbcdfcdadfb43$
 //
 
 #include "libcef_dll/cpptoc/domvisitor_cpptoc.h"
+#include "libcef_dll/cpptoc/java_script_result_callback_cpptoc.h"
 #include "libcef_dll/cpptoc/string_visitor_cpptoc.h"
 #include "libcef_dll/cpptoc/urlrequest_client_cpptoc.h"
 #include "libcef_dll/ctocpp/browser_ctocpp.h"
@@ -277,11 +278,7 @@ NO_SANITIZE("cfi-icall") void CefFrameCToCpp::ExecuteJavaScript(const CefString&
       start_line);
 }
 
-NO_SANITIZE("cfi-icall") void CefFrameCToCpp::ExecuteJavaScriptWithResult(
-    const CefString& code,
-    const CefString& script_url,
-    int start_line,
-    CefRefPtr<CefStringVisitor> callback) {
+NO_SANITIZE("cfi-icall") void CefFrameCToCpp::ExecuteJavaScriptWithResult(const CefString& code, const CefString& script_url, int start_line, CefRefPtr<CefJavaScriptResultCallback> callback){
   shutdown_checker::AssertNotShutdown();
 
   auto* _struct = GetStruct();
@@ -296,7 +293,7 @@ NO_SANITIZE("cfi-icall") void CefFrameCToCpp::ExecuteJavaScriptWithResult(
 
   _struct->execute_java_script_with_result(
       _struct, code.GetStruct(), script_url.GetStruct(), start_line,
-      CefStringVisitorCppToC_Wrap(callback));
+      CefJavaScriptResultCallbackCppToC_Wrap(callback));
 }
 
 NO_SANITIZE("cfi-icall") bool CefFrameCToCpp::IsMain() {

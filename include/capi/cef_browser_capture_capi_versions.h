@@ -8,7 +8,7 @@
 // by hand. See the translator.README.txt file in the tools directory for
 // more information.
 //
-// $hash=f1056d83af5c79742f6fc6f2babd2b7fabbc0a5c$
+// $hash=bdb2ca1a61786322b2b0fc5054ffef1f041af12a$
 //
 
 #ifndef CEF_INCLUDE_CAPI_CEF_BROWSER_CAPTURE_CAPI_VERSIONS_H_
@@ -21,6 +21,7 @@
 
 #include "include/capi/cef_base_capi.h"
 #include "include/capi/cef_string_visitor_capi_versions.h"
+#include "include/capi/cef_values_capi_versions.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,10 +32,15 @@ typedef struct _cef_screenshot_callback_0_t {
   void (CEF_CALLBACK *on_screenshot_captured)(struct _cef_screenshot_callback_0_t* self, const cef_string_t* path, const cef_string_t* error);
 } cef_screenshot_callback_0_t;
 
+typedef struct _cef_eval_snapshot_callback_0_t {
+  cef_base_ref_counted_t base;
+  void (CEF_CALLBACK *on_complete)(struct _cef_eval_snapshot_callback_0_t* self, int eval_success, struct _cef_value_0_t* eval_result, const cef_string_t* eval_error, const cef_string_t* snapshot);
+} cef_eval_snapshot_callback_0_t;
+
 typedef struct _cef_browser_capture_0_t {
   cef_base_ref_counted_t base;
   void (CEF_CALLBACK *snapshot)(struct _cef_browser_capture_0_t* self, const struct _cef_snapshot_settings_t* settings, struct _cef_string_visitor_0_t* callback);
-  void (CEF_CALLBACK *eval_then_snapshot)(struct _cef_browser_capture_0_t* self, const cef_string_t* javascript, const struct _cef_snapshot_settings_t* snapshot_settings, struct _cef_string_visitor_0_t* callback);
+  void (CEF_CALLBACK *eval_then_snapshot)(struct _cef_browser_capture_0_t* self, const cef_string_t* code, const struct _cef_snapshot_settings_t* settings, struct _cef_eval_snapshot_callback_0_t* callback);
   void (CEF_CALLBACK *capture_annotated_screenshot)(struct _cef_browser_capture_0_t* self, const cef_string_t* path, const struct _cef_annotated_screenshot_settings_t* settings, struct _cef_screenshot_callback_0_t* callback);
 } cef_browser_capture_0_t;
 

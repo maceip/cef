@@ -1,16 +1,17 @@
 diff --git chrome/browser/devtools/chrome_devtools_manager_delegate.cc chrome/browser/devtools/chrome_devtools_manager_delegate.cc
-index 556a9c5a4c986838a887f67ac8adf348cfdf5a74..55e01236478e655b04dca5ed321f333596d58855 100644
+index 556a9c5a4c986838a887f67ac8adf348cfdf5a74..76ec65d6bac8fdbccafcc0e3a380e9f1b374ca99 100644
 --- chrome/browser/devtools/chrome_devtools_manager_delegate.cc
 +++ chrome/browser/devtools/chrome_devtools_manager_delegate.cc
-@@ -13,6 +13,7 @@
+@@ -13,6 +13,8 @@
  #include "base/strings/strcat.h"
  #include "base/strings/utf_string_conversions.h"
++#include "base/logging.h"
  #include "build/build_config.h"
 +#include "cef/libcef/features/features.h"
  #include "chrome/browser/browser_features.h"
  #include "chrome/browser/devtools/chrome_devtools_session.h"
  #include "chrome/browser/devtools/device/android_device_manager.h"
-@@ -69,6 +70,10 @@
+@@ -69,6 +71,10 @@
  #include "chromeos/constants/chromeos_features.h"
  #endif
  
@@ -21,16 +22,28 @@ index 556a9c5a4c986838a887f67ac8adf348cfdf5a74..55e01236478e655b04dca5ed321f3335
  using content::DevToolsAgentHost;
  
  const char ChromeDevToolsManagerDelegate::kTypeApp[] = "app";
-@@ -316,6 +321,12 @@ std::string ChromeDevToolsManagerDelegate::GetTargetType(
+@@ -316,6 +322,24 @@ std::string ChromeDevToolsManagerDelegate::GetTargetType(
++  LOG(WARNING) << "CDPTRACE_TARGET_ENUMERATION candidate_url="
++            << web_contents->GetVisibleURL()
++            << " has_outer_web_contents="
++            << static_cast<bool>(web_contents->GetOuterWebContents());
+   if (web_contents->GetOuterWebContents()) {
++    LOG(WARNING) << "CDPTRACE_TARGET_CLASSIFIED type=page reason=outer_contents";
      return DevToolsAgentHost::kTypePage;
    }
  
 +#if BUILDFLAG(ENABLE_CEF)
-+  if (cef::IsAlloyContents(web_contents, /*primary_only=*/true)) {
++  const bool is_alloy_contents =
++      cef::IsAlloyContents(web_contents, /*primary_only=*/true);
++  LOG(WARNING) << "CDPTRACE_TARGET_ENUMERATION alloy_contents="
++            << is_alloy_contents;
++  if (is_alloy_contents) {
++    LOG(WARNING) << "CDPTRACE_TARGET_CLASSIFIED type=page reason=alloy_contents";
 +    return DevToolsAgentHost::kTypePage;
 +  }
 +#endif
 +
++  LOG(WARNING) << "CDPTRACE_TARGET_CLASSIFIED type=other";
    return DevToolsAgentHost::kTypeOther;
  }
  

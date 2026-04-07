@@ -9,11 +9,12 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
-// $hash=451ece847001220dba363d8ed2e736ab5fc05b80$
+// $hash=adbd34bc3ea3ee49743bdbd3dc5c681eb7e7df92$
 //
 
 #include "include/cef_api_hash.h"
 #include "libcef_dll/cpptoc/browser_capture_cpptoc.h"
+#include "libcef_dll/ctocpp/eval_snapshot_callback_ctocpp.h"
 #include "libcef_dll/ctocpp/screenshot_callback_ctocpp.h"
 #include "libcef_dll/ctocpp/string_visitor_ctocpp.h"
 #include "libcef_dll/shutdown_checker.h"
@@ -59,40 +60,46 @@ void CEF_CALLBACK browser_capture_snapshot(struct _cef_browser_capture_0_t* self
       CefStringVisitorCToCpp_Wrap(callback));
 }
 
-void CEF_CALLBACK browser_capture_eval_then_snapshot(
-    struct _cef_browser_capture_0_t* self,
-    const cef_string_t* javascript,
-    const struct _cef_snapshot_settings_t* snapshot_settings,
-    struct _cef_string_visitor_0_t* callback) {
+void CEF_CALLBACK browser_capture_eval_then_snapshot(struct _cef_browser_capture_0_t* self, const cef_string_t* code, const struct _cef_snapshot_settings_t* settings, struct _cef_eval_snapshot_callback_0_t* callback) {
   shutdown_checker::AssertNotShutdown();
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   DCHECK(self);
   if (!self) {
     return;
   }
-  DCHECK(javascript);
-  if (!javascript) {
+  // Verify param: code; type: string_byref_const
+  DCHECK(code);
+  if (!code) {
     return;
   }
-  DCHECK(snapshot_settings);
-  if (!snapshot_settings) {
+  // Verify param: settings; type: struct_byref_const
+  DCHECK(settings);
+  if (!settings) {
     return;
   }
-  if (!template_util::has_valid_size(snapshot_settings)) {
-    DCHECK(false) << "invalid snapshot_settings->[base.]size";
+  if (!template_util::has_valid_size(settings)) {
+    DCHECK(false) << "invalid settings->[base.]size";
     return;
   }
+  // Verify param: callback; type: refptr_diff
   DCHECK(callback);
   if (!callback) {
     return;
   }
 
-  CefSnapshotSettings snapshotObj;
-  snapshotObj.Set(*snapshot_settings, false);
+  // Translate param: settings; type: struct_byref_const
+  CefSnapshotSettings settingsObj;
+  if (settings) {
+    settingsObj.Set(*settings, false);
+  }
 
+  // Execute
   CefBrowserCapture_0_CppToC::Get(self)->EvalThenSnapshot(
-      CefString(javascript), snapshotObj,
-      CefStringVisitorCToCpp_Wrap(callback));
+      CefString(code),
+      settingsObj,
+      CefEvalSnapshotCallbackCToCpp_Wrap(callback));
 }
 
 void CEF_CALLBACK browser_capture_capture_annotated_screenshot(struct _cef_browser_capture_0_t* self, const cef_string_t* path, const struct _cef_annotated_screenshot_settings_t* settings, struct _cef_screenshot_callback_0_t* callback) {

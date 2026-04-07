@@ -5,6 +5,7 @@
 
 #include "cef/libcef/renderer/chrome/chrome_content_renderer_client_cef.h"
 
+#include "base/logging.h"
 #include "cef/libcef/renderer/blink_glue.h"
 #include "cef/libcef/renderer/render_frame_observer.h"
 #include "cef/libcef/renderer/render_manager.h"
@@ -36,6 +37,7 @@ void ChromeContentRendererClientCef::RenderThreadStarted() {
 
 void ChromeContentRendererClientCef::RenderThreadConnected() {
   ChromeContentRendererClient::RenderThreadConnected();
+  LOG(WARNING) << "CDPTRACE_RENDER_THREAD_CONNECTED";
 
   render_manager_->RenderThreadConnected();
 }
@@ -84,6 +86,7 @@ void ChromeContentRendererClientCef::WebViewCreated(
 void ChromeContentRendererClientCef::DevToolsAgentAttached() {
   // WebWorkers may be creating agents on a different thread.
   if (!render_task_runner_->BelongsToCurrentThread()) {
+    LOG(WARNING) << "CDPTRACE_RENDER_AGENT_ATTACHED_POST_TO_RT";
     render_task_runner_->PostTask(
         FROM_HERE,
         base::BindOnce(&ChromeContentRendererClientCef::DevToolsAgentAttached,
@@ -91,12 +94,14 @@ void ChromeContentRendererClientCef::DevToolsAgentAttached() {
     return;
   }
 
+  LOG(WARNING) << "CDPTRACE_RENDER_AGENT_ATTACHED_RUN_ON_RT";
   render_manager_->DevToolsAgentAttached();
 }
 
 void ChromeContentRendererClientCef::DevToolsAgentDetached() {
   // WebWorkers may be creating agents on a different thread.
   if (!render_task_runner_->BelongsToCurrentThread()) {
+    LOG(WARNING) << "CDPTRACE_RENDER_AGENT_DETACHED_POST_TO_RT";
     render_task_runner_->PostTask(
         FROM_HERE,
         base::BindOnce(&ChromeContentRendererClientCef::DevToolsAgentDetached,
@@ -104,6 +109,7 @@ void ChromeContentRendererClientCef::DevToolsAgentDetached() {
     return;
   }
 
+  LOG(WARNING) << "CDPTRACE_RENDER_AGENT_DETACHED_RUN_ON_RT";
   render_manager_->DevToolsAgentDetached();
 }
 

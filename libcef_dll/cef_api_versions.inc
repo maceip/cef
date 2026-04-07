@@ -36,6 +36,8 @@ const ApiVersionHash kApiVersionHashes[] = {
 {14500, CEF_API_HASH_14500},
 {14600, CEF_API_HASH_14600},
 {14700, CEF_API_HASH_14700},
+{999998, CEF_API_HASH_999998},
+{999999, CEF_API_HASH_999999},
 };
 
 }  // namespace

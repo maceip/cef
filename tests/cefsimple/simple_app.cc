@@ -108,6 +108,40 @@ class SimpleBrowserViewDelegate : public CefBrowserViewDelegate {
 
 SimpleApp::SimpleApp() = default;
 
+void SimpleApp::OnBeforeCommandLineProcessing(const CefString& process_type,
+                                              CefRefPtr<CefCommandLine> command_line) {
+#if defined(OS_LINUX)
+  if (!command_line ||
+      !command_line->HasSwitch(client::switches::kUseOzoneHeadless)) {
+    return;
+  }
+
+  if (!command_line->HasSwitch("enable-features")) {
+    command_line->AppendSwitchWithValue("enable-features", "UseOzonePlatform");
+  }
+  if (!command_line->HasSwitch(client::switches::kOzonePlatform)) {
+    command_line->AppendSwitchWithValue(client::switches::kOzonePlatform,
+                                        "headless");
+  }
+  if (!command_line->HasSwitch("headless")) {
+    command_line->AppendSwitch("headless");
+  }
+  if (!command_line->HasSwitch("remote-debugging-address")) {
+    command_line->AppendSwitchWithValue("remote-debugging-address",
+                                        "127.0.0.1");
+  }
+  if (!command_line->HasSwitch(client::switches::kOffScreenRenderingEnabled)) {
+    command_line->AppendSwitch(client::switches::kOffScreenRenderingEnabled);
+  }
+  if (!command_line->HasSwitch("disable-gpu")) {
+    command_line->AppendSwitch("disable-gpu");
+  }
+  if (!command_line->HasSwitch("disable-gpu-compositing")) {
+    command_line->AppendSwitch("disable-gpu-compositing");
+  }
+#endif
+}
+
 void SimpleApp::OnContextInitialized() {
   CEF_REQUIRE_UI_THREAD();
 
@@ -117,12 +151,30 @@ void SimpleApp::OnContextInitialized() {
   // Check if Alloy style will be used.
   cef_runtime_style_t runtime_style = CEF_RUNTIME_STYLE_DEFAULT;
   bool use_alloy_style = command_line->HasSwitch("use-alloy-style");
+#if defined(OS_LINUX)
+  // Ozone headless currently runs cleanly in the windowless Alloy path.
+  if (command_line->HasSwitch(client::switches::kUseOzoneHeadless)) {
+    use_alloy_style = true;
+  }
+#endif
+#if defined(OS_LINUX)
+  const bool use_headless_osr =
+      command_line->HasSwitch(client::switches::kUseOzoneHeadless);
+#endif
+
   if (use_alloy_style) {
     runtime_style = CEF_RUNTIME_STYLE_ALLOY;
   }
 
   // SimpleHandler implements browser-level callbacks.
-  CefRefPtr<SimpleHandler> handler(new SimpleHandler(use_alloy_style));
+  CefRefPtr<SimpleHandler> handler(
+      new SimpleHandler(use_alloy_style,
+#if defined(OS_LINUX)
+                        use_headless_osr
+#else
+                        false
+#endif
+                        ));
 
   // Specify CEF browser settings here.
   CefBrowserSettings browser_settings;
@@ -136,26 +188,12 @@ void SimpleApp::OnContextInitialized() {
     url = "https://www.google.com";
   }
 
-#if defined(OS_LINUX)
-  if (command_line->HasSwitch(client::switches::kUseOzoneHeadless)) {
-    if (!command_line->HasSwitch("enable-features")) {
-      command_line->AppendSwitchWithValue("enable-features", "UseOzonePlatform");
-    }
-    if (!command_line->HasSwitch(client::switches::kOzonePlatform)) {
-      command_line->AppendSwitchWithValue(client::switches::kOzonePlatform,
-                                      "headless");
-    }
-    if (!command_line->HasSwitch("headless")) {
-      command_line->AppendSwitch("headless");
-    }
-    if (!command_line->HasSwitch("remote-debugging-address")) {
-      command_line->AppendSwitchWithValue("remote-debugging-address", "127.0.0.1");
-    }
-  }
-#endif
-
   // Views is enabled by default (add `--use-native` to disable).
-  const bool use_views = !command_line->HasSwitch("use-native");
+  const bool use_views =
+#if defined(OS_LINUX)
+      !use_headless_osr &&
+#endif
+      !command_line->HasSwitch("use-native");
 
   // If using Views create the browser using the Views framework, otherwise
   // create the browser using the native platform framework.
@@ -188,6 +226,11 @@ void SimpleApp::OnContextInitialized() {
     // Information used when creating the native window.
     CefWindowInfo window_info;
 
+#if defined(OS_LINUX)
+    if (use_headless_osr) {
+      window_info.SetAsWindowless(static_cast<cef_window_handle_t>(0));
+    } else
+#endif
 #if defined(OS_WIN)
     // On Windows we need to specify certain flags that will be passed to
     // CreateWindowEx().

@@ -18,9 +18,6 @@
 #include "cef/libcef/common/values_impl.h"
 #include "cef/libcef/browser/page_model_cache.h"
 #include "cef/libcef/browser/thread_util.h"
-#include "content/browser/accessibility/browser_accessibility.h"
-#include "content/browser/accessibility/browser_accessibility_manager.h"
-#include "content/browser/renderer_host/render_frame_host_impl.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
 #include "third_party/skia/include/core/SkBitmap.h"
@@ -57,6 +54,7 @@ void RunScreenshotCallback(CefRefPtr<CefScreenshotCallback> callback,
                      path, error));
 }
 
+#if 0
 // Returns true if the given AX role represents an interactive element that
 // should be annotated in the screenshot.
 bool IsInteractiveRole(ax::mojom::Role role) {
@@ -514,6 +512,7 @@ class AnnotatedScreenshotHelper
   std::string output_dir_;
   CefRefPtr<CefScreenshotCallback> callback_;
 };
+#endif  // 0
 
 }  // namespace
 
@@ -616,7 +615,8 @@ void CefBrowserCaptureImpl::EvalThenSnapshot(
       CefString eval_error;
 
       if (success) {
-        auto parsed = base::JSONReader::ReadDict(result_str);
+        auto parsed =
+            base::JSONReader::ReadDict(result_str, base::JSON_PARSE_RFC);
         if (parsed) {
           const auto* res = parsed->FindDict("result");
           if (res) {
@@ -741,10 +741,9 @@ void CefBrowserCaptureImpl::CaptureAnnotatedScreenshot(
     RunScreenshotCallback(callback, CefString(), "Browser is not available.");
     return;
   }
-
-  auto helper = base::MakeRefCounted<AnnotatedScreenshotHelper>(
-      browser_, path, settings, callback);
-  helper->Start();
+  RunScreenshotCallback(
+      callback, path,
+      "Browser capture screenshot scaffolding is not implemented.");
 }
 
 void CefBrowserCaptureImpl::ExecuteCompoundOperation(

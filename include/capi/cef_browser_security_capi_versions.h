@@ -8,7 +8,7 @@
 // by hand. See the translator.README.txt file in the tools directory for
 // more information.
 //
-// $hash=3a5981e3c93bbf82de531546d970f259d115adc1$
+// $hash=7e9adee5231b60fc7cff1673de1661a7d6e8771e$
 //
 
 #ifndef CEF_INCLUDE_CAPI_CEF_BROWSER_SECURITY_CAPI_VERSIONS_H_

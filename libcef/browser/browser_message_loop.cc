@@ -5,6 +5,7 @@
 #include "cef/libcef/browser/browser_message_loop.h"
 
 #include "cef/libcef/browser/context.h"
+#include "base/logging.h"
 #include "base/memory/ptr_util.h"
 #include "base/message_loop/message_pump.h"
 #include "base/message_loop/message_pump_for_ui.h"
@@ -126,6 +127,12 @@ void CefScheduleExternalMessagePumpWork(int64_t delay_ms) {
   if (!context || !context->settings().external_message_pump) {
     return;
   }
+
+  LOG(WARNING) << "CDPTRACE_PUMP_SCHEDULE_WORK delay_ms=" << delay_ms
+               << " on_ui_thread="
+               << content::BrowserThread::CurrentlyOn(content::BrowserThread::UI)
+               << " on_io_thread="
+               << content::BrowserThread::CurrentlyOn(content::BrowserThread::IO);
 
   if (auto handler = GetBrowserProcessHandler()) {
     handler->OnScheduleMessagePumpWork(delay_ms);

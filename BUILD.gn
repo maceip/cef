@@ -320,6 +320,7 @@ group("cef") {
   testonly = true
   deps = [
     ":cefsimple",
+    ":cefheadless",
     ":cefsimple_capi",
     ":ceftests",
     ":libcef_static_unittests",
@@ -2694,6 +2695,44 @@ if (is_mac) {
 
       if (!is_component_build) {
         # Set rpath to find our own libfreetype even in a non-component build.
+        configs += [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
+      }
+    }
+  }
+
+  #
+  # cefheadless target.
+  #
+
+  executable("cefheadless") {
+    testonly = true
+
+    sources = includes_common +
+              gypi_paths2.includes_wrapper +
+              gypi_paths2.cefheadless_sources_common
+
+    deps = [
+      ":libcef",
+      ":libcef_dll_wrapper",
+    ]
+
+    defines = [
+      "CEF_USE_SANDBOX",
+    ]
+
+    use_libcxx_modules = false
+
+    if (is_linux) {
+      sources += includes_linux +
+                 gypi_paths2.cefheadless_sources_linux
+
+      if (cef_use_gtk) {
+        configs += [
+          ":gtk",
+        ]
+      }
+
+      if (!is_component_build) {
         configs += [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
       }
     }

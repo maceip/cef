@@ -14,6 +14,7 @@
 #include "base/synchronization/lock.h"
 #include "base/time/time.h"
 #include "cef/include/cef_request_context.h"
+#include "cef/include/cef_request_context_handler.h"
 
 // Session pool for prewarmed browser contexts.
 //
@@ -38,13 +39,15 @@ class CefSessionPool {
  public:
   struct Config {
     // Number of contexts to keep prewarmed in the pool.
-    size_t pool_size = 2;
+    size_t pool_size;
 
     // Maximum idle time before a prewarmed context is discarded.
-    base::TimeDelta max_idle_time = base::Minutes(5);
+    base::TimeDelta max_idle_time;
 
     // Base cache path for pooled contexts (each gets a unique subdirectory).
     std::string base_cache_path;
+
+    Config();
   };
 
   explicit CefSessionPool(const Config& config = Config());

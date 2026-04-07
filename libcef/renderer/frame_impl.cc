@@ -176,16 +176,15 @@ void CefFrameImpl::ExecuteJavaScriptWithResult(
     const CefString& code,
     const CefString& script_url,
     int start_line,
-    CefRefPtr<CefStringVisitor> callback) {
+    CefRefPtr<CefJavaScriptResultCallback> callback) {
   CEF_REQUIRE_RT_RETURN_VOID();
 
   if (!callback) {
     return;
   }
-  CefString message;
-  message.FromString(
+  callback->OnComplete(
+      false, nullptr,
       "ExecuteJavaScriptWithResult is not yet implemented in the renderer.");
-  callback->Visit(message);
 }
 
 bool CefFrameImpl::IsMain() {
