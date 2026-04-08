@@ -1,0 +1,823 @@
+
+================================================================================
+PATCH UPDATE SUMMARY
+================================================================================
+Total patches: 22
+✓ Successful: 1
+✗ Failed: 21
+Success rate: 4.5%
+
+FAILED PATCHES REQUIRING MANUAL FIXES:
+--------------------------------------------------------------------------------
+
+1. gritsettings (1 file(s) with problems)
+   Patch file: cef/patch/patches/gritsettings.patch
+   Original files in patch (1 total):
+      ✓ /tmp/phase_ab_worktree/tools/gritsettings/resource_ids.spec
+
+   ✗ tools/gritsettings/resource_ids.spec (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- tools/gritsettings/resource_ids.spec
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch gritsettings
+
+2. gn_config (7 file(s) with problems)
+   Patch file: cef/patch/patches/gn_config.patch
+   Original files in patch (7 total):
+      ✓ /tmp/phase_ab_worktree/.gn
+      ✓ /tmp/phase_ab_worktree/BUILD.gn
+      ✓ /tmp/phase_ab_worktree/build/config/win/visual_studio_version.gni
+      ✓ /tmp/phase_ab_worktree/chrome/chrome_paks.gni
+      ✓ /tmp/phase_ab_worktree/chrome/chrome_repack_locales.gni
+      ✓ /tmp/phase_ab_worktree/chrome/installer/mini_installer/BUILD.gn
+      ✓ /tmp/phase_ab_worktree/tools/grit/grit_args.gni
+
+   ✗ .gn (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- .gn
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ BUILD.gn - 2 hunk(s) failed (#1 at line 21, #2 at line 283)
+      Reject: BUILD.gn.rej
+      View reject: cat BUILD.gn.rej
+      View file: cat BUILD.gn
+      See changes: git diff --no-prefix refs/tags/146.0.7680.0...refs/tags/147.0.7727.0 -- BUILD.gn
+   ✗ build/config/win/visual_studio_version.gni (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- build/config/win/visual_studio_version.gni
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/chrome_paks.gni (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/chrome_paks.gni
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/chrome_repack_locales.gni (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/chrome_repack_locales.gni
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/installer/mini_installer/BUILD.gn (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/installer/mini_installer/BUILD.gn
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ tools/grit/grit_args.gni (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- tools/grit/grit_args.gni
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch gn_config
+
+3. runhooks (2 file(s) with problems)
+   Patch file: cef/patch/patches/runhooks.patch
+   Original files in patch (2 total):
+      ✓ /tmp/phase_ab_worktree/build/toolchain/win/setup_toolchain.py
+      ✓ /tmp/phase_ab_worktree/build/vs_toolchain.py
+
+   ✗ build/toolchain/win/setup_toolchain.py (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- build/toolchain/win/setup_toolchain.py
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ build/vs_toolchain.py (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- build/vs_toolchain.py
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch runhooks
+
+4. component_build (6 file(s) with problems)
+   Patch file: cef/patch/patches/component_build.patch
+   Original files in patch (6 total):
+      ✓ /tmp/phase_ab_worktree/content/browser/devtools/devtools_instrumentation.h
+      ✓ /tmp/phase_ab_worktree/content/browser/renderer_host/input/mouse_wheel_phase_handler.h
+      ✓ /tmp/phase_ab_worktree/content/browser/renderer_host/input/synthetic_gesture_target_base.h
+      ✓ /tmp/phase_ab_worktree/third_party/blink/renderer/controller/BUILD.gn
+      ✓ /tmp/phase_ab_worktree/ui/events/keycodes/BUILD.gn
+      ✓ /tmp/phase_ab_worktree/ui/events/keycodes/keyboard_code_conversion_xkb.h
+
+   ✗ content/browser/devtools/devtools_instrumentation.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/browser/devtools/devtools_instrumentation.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/browser/renderer_host/input/mouse_wheel_phase_handler.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/browser/renderer_host/input/mouse_wheel_phase_handler.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/browser/renderer_host/input/synthetic_gesture_target_base.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/browser/renderer_host/input/synthetic_gesture_target_base.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ third_party/blink/renderer/controller/BUILD.gn (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- third_party/blink/renderer/controller/BUILD.gn
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/events/keycodes/BUILD.gn (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/events/keycodes/BUILD.gn
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/events/keycodes/keyboard_code_conversion_xkb.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/events/keycodes/keyboard_code_conversion_xkb.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch component_build
+
+5. message_loop (3 file(s) with problems)
+   Patch file: cef/patch/patches/message_loop.patch
+   Original files in patch (3 total):
+      ✓ /tmp/phase_ab_worktree/base/message_loop/message_pump_win.cc
+      ✓ /tmp/phase_ab_worktree/base/task/current_thread.cc
+      ✓ /tmp/phase_ab_worktree/base/task/current_thread.h
+
+   ✗ base/message_loop/message_pump_win.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- base/message_loop/message_pump_win.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ base/task/current_thread.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- base/task/current_thread.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ base/task/current_thread.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- base/task/current_thread.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch message_loop
+
+6. trace_event (1 file(s) with problems)
+   Patch file: cef/patch/patches/trace_event.patch
+   Original files in patch (1 total):
+      ✓ /tmp/phase_ab_worktree/base/trace_event/builtin_categories.h
+
+   ✗ base/trace_event/builtin_categories.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- base/trace_event/builtin_categories.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch trace_event
+
+7. webkit_move_pip (12 file(s) with problems)
+   Patch file: cef/patch/patches/webkit_move_pip.patch
+   Original files in patch (12 total):
+      ✓ /tmp/phase_ab_worktree/chrome/browser/picture_in_picture/picture_in_picture_window_manager.cc
+      ✓ /tmp/phase_ab_worktree/content/renderer/render_frame_impl.cc
+      ✓ /tmp/phase_ab_worktree/third_party/blink/public/mojom/picture_in_picture_window_options/picture_in_picture_window_options.mojom
+      ✓ /tmp/phase_ab_worktree/third_party/blink/public/web/web_picture_in_picture_window_options.h
+      ✓ /tmp/phase_ab_worktree/third_party/blink/public/web/web_view.h
+      ✓ /tmp/phase_ab_worktree/third_party/blink/renderer/bindings/generated_in_modules.gni
+      ✓ /tmp/phase_ab_worktree/third_party/blink/renderer/core/exported/web_view_impl.h
+      ✓ /tmp/phase_ab_worktree/third_party/blink/renderer/core/frame/local_dom_window.cc
+      ✓ /tmp/phase_ab_worktree/third_party/blink/renderer/core/frame/local_dom_window.h
+      ✓ /tmp/phase_ab_worktree/third_party/blink/renderer/modules/document_picture_in_picture/document_picture_in_picture_options.idl
+      ✓ /tmp/phase_ab_worktree/third_party/blink/renderer/modules/document_picture_in_picture/picture_in_picture_controller_impl.cc
+      ✓ /tmp/phase_ab_worktree/third_party/blink/renderer/platform/runtime_enabled_features.override.json5
+
+   ✗ chrome/browser/picture_in_picture/picture_in_picture_window_manager.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/picture_in_picture/picture_in_picture_window_manager.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/renderer/render_frame_impl.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/renderer/render_frame_impl.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ third_party/blink/public/mojom/picture_in_picture_window_options/picture_in_picture_window_options.mojom (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- third_party/blink/public/mojom/picture_in_picture_window_options/picture_in_picture_window_options.mojom
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ third_party/blink/public/web/web_picture_in_picture_window_options.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- third_party/blink/public/web/web_picture_in_picture_window_options.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ third_party/blink/public/web/web_view.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- third_party/blink/public/web/web_view.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ third_party/blink/renderer/bindings/generated_in_modules.gni (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- third_party/blink/renderer/bindings/generated_in_modules.gni
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ third_party/blink/renderer/core/exported/web_view_impl.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- third_party/blink/renderer/core/exported/web_view_impl.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ third_party/blink/renderer/core/frame/local_dom_window.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- third_party/blink/renderer/core/frame/local_dom_window.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ third_party/blink/renderer/core/frame/local_dom_window.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- third_party/blink/renderer/core/frame/local_dom_window.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ third_party/blink/renderer/modules/document_picture_in_picture/document_picture_in_picture_options.idl (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- third_party/blink/renderer/modules/document_picture_in_picture/document_picture_in_picture_options.idl
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ third_party/blink/renderer/modules/document_picture_in_picture/picture_in_picture_controller_impl.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- third_party/blink/renderer/modules/document_picture_in_picture/picture_in_picture_controller_impl.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ third_party/blink/renderer/platform/runtime_enabled_features.override.json5 (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- third_party/blink/renderer/platform/runtime_enabled_features.override.json5
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch webkit_move_pip
+
+8. views_widget (24 file(s) with problems)
+   Patch file: cef/patch/patches/views_widget.patch
+   Original files in patch (24 total):
+      ✓ /tmp/phase_ab_worktree/chrome/browser/extensions/api/sessions/sessions_api.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/apps/chrome_native_app_window_views_aura.cc
+      ✓ /tmp/phase_ab_worktree/components/sessions/core/session_service_commands.cc
+      ✓ /tmp/phase_ab_worktree/components/sessions/core/tab_restore_service_impl.cc
+      ✓ /tmp/phase_ab_worktree/content/browser/renderer_host/render_widget_host_view_base.cc
+      ✓ /tmp/phase_ab_worktree/content/browser/renderer_host/render_widget_host_view_base.h
+      ✓ /tmp/phase_ab_worktree/content/browser/renderer_host/render_widget_host_view_event_handler.cc
+      ✓ /tmp/phase_ab_worktree/content/public/browser/render_widget_host_view.h
+      ✓ /tmp/phase_ab_worktree/third_party/blink/renderer/core/exported/web_view_impl.cc
+      ✓ /tmp/phase_ab_worktree/ui/aura/native_window_occlusion_tracker_win.cc
+      ✓ /tmp/phase_ab_worktree/ui/base/mojom/window_show_state.mojom
+      ✓ /tmp/phase_ab_worktree/ui/ozone/platform/x11/x11_window.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/widget/desktop_aura/desktop_screen_win.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/widget/desktop_aura/desktop_window_tree_host_linux.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/widget/desktop_aura/desktop_window_tree_host_linux.h
+      ✓ /tmp/phase_ab_worktree/ui/views/widget/desktop_aura/desktop_window_tree_host_platform.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/widget/desktop_aura/desktop_window_tree_host_win.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/widget/desktop_aura/desktop_window_tree_host_win.h
+      ✓ /tmp/phase_ab_worktree/ui/views/widget/native_widget_mac.mm
+      ✓ /tmp/phase_ab_worktree/ui/views/widget/widget.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/widget/widget.h
+      ✓ /tmp/phase_ab_worktree/ui/views/widget/widget_delegate.h
+      ✓ /tmp/phase_ab_worktree/ui/views/widget/widget_hwnd_utils.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/win/hwnd_message_handler.cc
+
+   ✗ chrome/browser/extensions/api/sessions/sessions_api.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/extensions/api/sessions/sessions_api.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/apps/chrome_native_app_window_views_aura.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/apps/chrome_native_app_window_views_aura.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ components/sessions/core/session_service_commands.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- components/sessions/core/session_service_commands.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ components/sessions/core/tab_restore_service_impl.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- components/sessions/core/tab_restore_service_impl.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/browser/renderer_host/render_widget_host_view_base.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/browser/renderer_host/render_widget_host_view_base.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/browser/renderer_host/render_widget_host_view_base.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/browser/renderer_host/render_widget_host_view_base.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/browser/renderer_host/render_widget_host_view_event_handler.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/browser/renderer_host/render_widget_host_view_event_handler.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/public/browser/render_widget_host_view.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/public/browser/render_widget_host_view.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ third_party/blink/renderer/core/exported/web_view_impl.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- third_party/blink/renderer/core/exported/web_view_impl.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/aura/native_window_occlusion_tracker_win.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/aura/native_window_occlusion_tracker_win.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/base/mojom/window_show_state.mojom (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/base/mojom/window_show_state.mojom
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/ozone/platform/x11/x11_window.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/ozone/platform/x11/x11_window.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/widget/desktop_aura/desktop_screen_win.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/widget/desktop_aura/desktop_screen_win.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/widget/desktop_aura/desktop_window_tree_host_linux.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/widget/desktop_aura/desktop_window_tree_host_linux.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/widget/desktop_aura/desktop_window_tree_host_linux.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/widget/desktop_aura/desktop_window_tree_host_linux.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/widget/desktop_aura/desktop_window_tree_host_platform.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/widget/desktop_aura/desktop_window_tree_host_platform.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/widget/desktop_aura/desktop_window_tree_host_win.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/widget/desktop_aura/desktop_window_tree_host_win.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/widget/desktop_aura/desktop_window_tree_host_win.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/widget/desktop_aura/desktop_window_tree_host_win.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/widget/native_widget_mac.mm (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/widget/native_widget_mac.mm
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/widget/widget.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/widget/widget.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/widget/widget.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/widget/widget.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/widget/widget_delegate.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/widget/widget_delegate.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/widget/widget_hwnd_utils.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/widget/widget_hwnd_utils.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/win/hwnd_message_handler.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/win/hwnd_message_handler.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch views_widget
+
+9. web_contents_1257_1565 (4 file(s) with problems)
+   Patch file: cef/patch/patches/web_contents_1257_1565.patch
+   Original files in patch (4 total):
+      ✓ /tmp/phase_ab_worktree/content/browser/web_contents/web_contents_impl.cc
+      ✓ /tmp/phase_ab_worktree/content/public/browser/web_contents.h
+      ✓ /tmp/phase_ab_worktree/content/public/browser/web_contents_delegate.h
+      ✓ /tmp/phase_ab_worktree/content/public/browser/web_contents_observer.h
+
+   ✗ content/browser/web_contents/web_contents_impl.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/browser/web_contents/web_contents_impl.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/public/browser/web_contents.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/public/browser/web_contents.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/public/browser/web_contents_delegate.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/public/browser/web_contents_delegate.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/public/browser/web_contents_observer.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/public/browser/web_contents_observer.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch web_contents_1257_1565
+
+10. mime_handler_view_guest_1565_2727 (3 file(s) with problems)
+   Patch file: cef/patch/patches/mime_handler_view_guest_1565_2727.patch
+   Original files in patch (3 total):
+      ✓ /tmp/phase_ab_worktree/content/browser/web_contents/web_contents_view.h
+      ✓ /tmp/phase_ab_worktree/extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest.cc
+      ✓ /tmp/phase_ab_worktree/extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest_delegate.h
+
+   ✗ content/browser/web_contents/web_contents_view.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/browser/web_contents/web_contents_view.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest_delegate.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest_delegate.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch mime_handler_view_guest_1565_2727
+
+11. ui_dragdrop_355390 (1 file(s) with problems)
+   Patch file: cef/patch/patches/ui_dragdrop_355390.patch
+   Original files in patch (1 total):
+      ✓ /tmp/phase_ab_worktree/ui/base/x/x11_os_exchange_data_provider.cc
+
+   ✗ ui/base/x/x11_os_exchange_data_provider.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/base/x/x11_os_exchange_data_provider.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch ui_dragdrop_355390
+
+12. content_main_654986 (5 file(s) with problems)
+   Patch file: cef/patch/patches/content_main_654986.patch
+   Original files in patch (5 total):
+      ✓ /tmp/phase_ab_worktree/base/process/set_process_title.cc
+      ✓ /tmp/phase_ab_worktree/content/app/content_main.cc
+      ✓ /tmp/phase_ab_worktree/content/app/content_main_runner_impl.cc
+      ✓ /tmp/phase_ab_worktree/content/app/content_main_runner_impl.h
+      ✓ /tmp/phase_ab_worktree/content/public/app/content_main.h
+
+   ✗ base/process/set_process_title.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- base/process/set_process_title.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/app/content_main.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/app/content_main.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/app/content_main_runner_impl.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/app/content_main_runner_impl.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/app/content_main_runner_impl.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/app/content_main_runner_impl.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ content/public/app/content_main.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- content/public/app/content_main.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch content_main_654986
+
+13. views_1749_2102_3330 (33 file(s) with problems)
+   Patch file: cef/patch/patches/views_1749_2102_3330.patch
+   Original files in patch (33 total):
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/toolbar/app_menu.cc
+      ✓ /tmp/phase_ab_worktree/ui/base/models/menu_model.h
+      ✓ /tmp/phase_ab_worktree/ui/gfx/render_text.cc
+      ✓ /tmp/phase_ab_worktree/ui/gfx/render_text.h
+      ✓ /tmp/phase_ab_worktree/ui/views/animation/ink_drop_host.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/button/label_button.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/button/label_button.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/label.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/label.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_controller.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_controller.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_delegate.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_host.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_host.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_item_view.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_model_adapter.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_model_adapter.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_adapter.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_adapter.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_cocoa.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_cocoa.mm
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_interface.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_mac.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_mac.mm
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_remote_cocoa.h
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_remote_cocoa.mm
+      ✓ /tmp/phase_ab_worktree/ui/views/controls/menu/menu_scroll_view_container.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/test/ui_controls_factory_desktop_aura_ozone.cc
+      ✓ /tmp/phase_ab_worktree/ui/views/view.h
+
+   ✗ chrome/browser/ui/views/toolbar/app_menu.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/toolbar/app_menu.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/base/models/menu_model.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/base/models/menu_model.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/gfx/render_text.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/gfx/render_text.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/gfx/render_text.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/gfx/render_text.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/animation/ink_drop_host.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/animation/ink_drop_host.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/button/label_button.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/button/label_button.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/button/label_button.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/button/label_button.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/label.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/label.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/label.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/label.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_controller.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_controller.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_controller.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_controller.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_delegate.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_delegate.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_host.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_host.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_host.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_host.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_item_view.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_item_view.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_model_adapter.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_model_adapter.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_model_adapter.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_model_adapter.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_runner.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_runner.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_runner.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_runner.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_runner_impl.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_runner_impl.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_runner_impl.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_runner_impl.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_runner_impl_adapter.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_runner_impl_adapter.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_runner_impl_adapter.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_runner_impl_adapter.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_runner_impl_cocoa.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_runner_impl_cocoa.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_runner_impl_cocoa.mm (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_runner_impl_cocoa.mm
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_runner_impl_interface.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_runner_impl_interface.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_runner_impl_mac.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_runner_impl_mac.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_runner_impl_mac.mm (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_runner_impl_mac.mm
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_runner_impl_remote_cocoa.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_runner_impl_remote_cocoa.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_runner_impl_remote_cocoa.mm (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_runner_impl_remote_cocoa.mm
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/controls/menu/menu_scroll_view_container.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/controls/menu/menu_scroll_view_container.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/test/ui_controls_factory_desktop_aura_ozone.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/test/ui_controls_factory_desktop_aura_ozone.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ ui/views/view.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- ui/views/view.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch views_1749_2102_3330
+
+14. chrome_browser (1 file(s) with problems)
+   Patch file: cef/patch/patches/chrome_browser.patch
+   Original files in patch (1 total):
+      ✓ /tmp/phase_ab_worktree/chrome/browser/BUILD.gn
+
+   ✗ chrome/browser/BUILD.gn (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/BUILD.gn
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch chrome_browser
+
+15. chrome_renderer (1 file(s) with problems)
+   Patch file: cef/patch/patches/chrome_renderer.patch
+   Original files in patch (1 total):
+      ✓ /tmp/phase_ab_worktree/chrome/renderer/BUILD.gn
+
+   ✗ chrome/renderer/BUILD.gn (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/renderer/BUILD.gn
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch chrome_renderer
+
+16. chrome_renderer_print_preview (2 file(s) with problems)
+   Patch file: cef/patch/patches/chrome_renderer_print_preview.patch
+   Original files in patch (2 total):
+      ✓ /tmp/phase_ab_worktree/chrome/renderer/printing/chrome_print_render_frame_helper_delegate.cc
+      ✓ /tmp/phase_ab_worktree/chrome/renderer/printing/chrome_print_render_frame_helper_delegate.h
+
+   ✗ chrome/renderer/printing/chrome_print_render_frame_helper_delegate.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/renderer/printing/chrome_print_render_frame_helper_delegate.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/renderer/printing/chrome_print_render_frame_helper_delegate.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/renderer/printing/chrome_print_render_frame_helper_delegate.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch chrome_renderer_print_preview
+
+17. chrome_runtime (10 file(s) with problems)
+   Patch file: cef/patch/patches/chrome_runtime.patch
+   Original files in patch (10 total):
+      ✓ /tmp/phase_ab_worktree/chrome/app/chrome_main_delegate.cc
+      ✓ /tmp/phase_ab_worktree/chrome/app/chrome_main_delegate.h
+      ✓ /tmp/phase_ab_worktree/chrome/app_shim/BUILD.gn
+      ✓ /tmp/phase_ab_worktree/chrome/app_shim/app_shim_main_delegate.mm
+      ✓ /tmp/phase_ab_worktree/chrome/browser/chrome_browser_main.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/chrome_browser_main_mac.mm
+      ✓ /tmp/phase_ab_worktree/chrome/browser/chrome_browser_main_win.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/chrome_content_browser_client.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/chrome_content_browser_client.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/prefs/browser_prefs.cc
+
+   ✗ chrome/app/chrome_main_delegate.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/app/chrome_main_delegate.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/app/chrome_main_delegate.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/app/chrome_main_delegate.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/app_shim/BUILD.gn (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/app_shim/BUILD.gn
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/app_shim/app_shim_main_delegate.mm (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/app_shim/app_shim_main_delegate.mm
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/chrome_browser_main.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/chrome_browser_main.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/chrome_browser_main_mac.mm (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/chrome_browser_main_mac.mm
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/chrome_browser_main_win.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/chrome_browser_main_win.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/chrome_content_browser_client.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/chrome_content_browser_client.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/chrome_content_browser_client.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/chrome_content_browser_client.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/prefs/browser_prefs.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/prefs/browser_prefs.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch chrome_runtime
+
+18. chrome_runtime_views (19 file(s) with problems)
+   Patch file: cef/patch/patches/chrome_runtime_views.patch
+   Original files in patch (19 total):
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/browser_command_controller.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/toolbar/app_menu_model.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/toolbar/app_menu_model.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/browser_view.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/browser_view.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/browser_widget.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/browser_widget.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/layout/browser_view_layout.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/layout/browser_view_layout.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/layout/browser_view_layout_delegate.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/layout/browser_view_layout_impl.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/picture_in_picture_browser_frame_view.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/shadow_overlay_view.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/omnibox/omnibox_popup_closer.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/page_action/page_action_icon_controller.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/toolbar/toolbar_view.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/toolbar/toolbar_view.h
+
+   ✗ chrome/browser/ui/browser_command_controller.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/browser_command_controller.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/toolbar/app_menu_model.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/toolbar/app_menu_model.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/toolbar/app_menu_model.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/toolbar/app_menu_model.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/frame/browser_view.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/frame/browser_view.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/frame/browser_view.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/frame/browser_view.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/frame/browser_widget.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/frame/browser_widget.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/frame/browser_widget.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/frame/browser_widget.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/frame/layout/browser_view_layout.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/frame/layout/browser_view_layout.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/frame/layout/browser_view_layout.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/frame/layout/browser_view_layout.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/frame/layout/browser_view_layout_delegate.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/frame/layout/browser_view_layout_delegate.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/frame/layout/browser_view_layout_impl.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/frame/layout/browser_view_layout_impl.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/frame/picture_in_picture_browser_frame_view.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/frame/picture_in_picture_browser_frame_view.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/frame/shadow_overlay_view.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/frame/shadow_overlay_view.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/omnibox/omnibox_popup_closer.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/omnibox/omnibox_popup_closer.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/page_action/page_action_icon_controller.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/page_action/page_action_icon_controller.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/toolbar/toolbar_view.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/toolbar/toolbar_view.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/toolbar/toolbar_view.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/toolbar/toolbar_view.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch chrome_runtime_views
+
+19. chrome_browser_browser (13 file(s) with problems)
+   Patch file: cef/patch/patches/chrome_browser_browser.patch
+   Original files in patch (13 total):
+      ✓ /tmp/phase_ab_worktree/chrome/browser/browser_about_handler.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/devtools/devtools_window.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/BUILD.gn
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/browser.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/browser.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/browser_finder.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/browser_manager_service.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/browser_navigator.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/browser_tabstrip.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/browser_window/internal/browser_window_features.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/browser_window/public/browser_window_features.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/browser_window/public/browser_window_interface.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/horizontal_tab_strip_region_view.cc
+
+   ✗ chrome/browser/browser_about_handler.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/browser_about_handler.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/devtools/devtools_window.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/devtools/devtools_window.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/BUILD.gn (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/BUILD.gn
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/browser.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/browser.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/browser.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/browser.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/browser_finder.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/browser_finder.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/browser_manager_service.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/browser_manager_service.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/browser_navigator.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/browser_navigator.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/browser_tabstrip.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/browser_tabstrip.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/browser_window/internal/browser_window_features.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/browser_window/internal/browser_window_features.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/browser_window/public/browser_window_features.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/browser_window/public/browser_window_features.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/browser_window/public/browser_window_interface.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/browser_window/public/browser_window_interface.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/frame/horizontal_tab_strip_region_view.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/frame/horizontal_tab_strip_region_view.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch chrome_browser_browser
+
+20. chrome_browser_content_settings (1 file(s) with problems)
+   Patch file: cef/patch/patches/chrome_browser_content_settings.patch
+   Original files in patch (1 total):
+      ✓ /tmp/phase_ab_worktree/components/content_settings/renderer/content_settings_agent_impl.cc
+
+   ✗ components/content_settings/renderer/content_settings_agent_impl.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- components/content_settings/renderer/content_settings_agent_impl.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch chrome_browser_content_settings
+
+21. chrome_browser_context_menus (19 file(s) with problems)
+   Patch file: cef/patch/patches/chrome_browser_context_menus.patch
+   Original files in patch (19 total):
+      ✓ /tmp/phase_ab_worktree/chrome/browser/renderer_context_menu/render_view_context_menu.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/renderer_context_menu/render_view_context_menu.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.mm
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.mm
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.cc
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.h
+      ✓ /tmp/phase_ab_worktree/chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.mm
+      ✓ /tmp/phase_ab_worktree/components/renderer_context_menu/context_menu_delegate.h
+      ✓ /tmp/phase_ab_worktree/components/renderer_context_menu/render_view_context_menu_base.cc
+      ✓ /tmp/phase_ab_worktree/components/renderer_context_menu/render_view_context_menu_base.h
+      ✓ /tmp/phase_ab_worktree/components/renderer_context_menu/render_view_context_menu_observer.cc
+      ✓ /tmp/phase_ab_worktree/components/renderer_context_menu/render_view_context_menu_observer.h
+      ✓ /tmp/phase_ab_worktree/components/renderer_context_menu/views/toolkit_delegate_views.cc
+      ✓ /tmp/phase_ab_worktree/components/renderer_context_menu/views/toolkit_delegate_views.h
+
+   ✗ chrome/browser/renderer_context_menu/render_view_context_menu.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/renderer_context_menu/render_view_context_menu.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/renderer_context_menu/render_view_context_menu.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/renderer_context_menu/render_view_context_menu.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.mm (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.mm
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.mm (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.mm
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.mm (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.mm
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ components/renderer_context_menu/context_menu_delegate.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- components/renderer_context_menu/context_menu_delegate.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ components/renderer_context_menu/render_view_context_menu_base.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- components/renderer_context_menu/render_view_context_menu_base.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ components/renderer_context_menu/render_view_context_menu_base.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- components/renderer_context_menu/render_view_context_menu_base.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ components/renderer_context_menu/render_view_context_menu_observer.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- components/renderer_context_menu/render_view_context_menu_observer.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ components/renderer_context_menu/render_view_context_menu_observer.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- components/renderer_context_menu/render_view_context_menu_observer.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ components/renderer_context_menu/views/toolkit_delegate_views.cc (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- components/renderer_context_menu/views/toolkit_delegate_views.cc
+      Regenerate patch: Use git diff with all original files at their new locations
+   ✗ components/renderer_context_menu/views/toolkit_delegate_views.h (FILE MISSING)
+      Find what happened: git log --full-history -1 --stat -- components/renderer_context_menu/views/toolkit_delegate_views.h
+      Regenerate patch: Use git diff with all original files at their new locations
+   Fix and resave: python3 patch_updater.py --resave --patch chrome_browser_context_menus
+
+--------------------------------------------------------------------------------
+NEXT STEPS:
+1. Fix each failed patch by manually editing the Chromium source files
+2. Use the commands above to understand what changed in Chromium
+3. Apply the CEF changes from the .rej files manually
+4. Resave each patch: python3 patch_updater.py --resave --patch <name>
+5. Verify: See Step 5 (Final Verification) in cef/tools/claude/CLAUDE_PATCH_INSTRUCTIONS.md
+
+For detailed instructions: see cef/tools/claude/CLAUDE_PATCH_INSTRUCTIONS.md
+================================================================================
+

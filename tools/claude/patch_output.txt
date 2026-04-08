@@ -1,0 +1,2146 @@
+--> Reading patch config /tmp/phase_ab_worktree/cef/patch/patch.cfg
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/gritsettings.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/tools/gritsettings/resource_ids.spec
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git tools/gritsettings/resource_ids.spec tools/gritsettings/resource_ids.spec
+|index bb7dc253bbc1a9e8b194bc55de59bd4e6b7aecc4..000fc0c8f9547a57d679af23ba01ed8e15b64c0c 100644
+|--- tools/gritsettings/resource_ids.spec
+|+++ tools/gritsettings/resource_ids.spec
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply gritsettings, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/gn_config.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/.gn
+--> Reverting changes to /tmp/phase_ab_worktree/BUILD.gn
+--> Skipping non-existing file /tmp/phase_ab_worktree/build/config/win/visual_studio_version.gni
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/chrome_paks.gni
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/chrome_repack_locales.gni
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/installer/mini_installer/BUILD.gn
+--> Skipping non-existing file /tmp/phase_ab_worktree/tools/grit/grit_args.gni
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git .gn .gn
+|index ae58a0b0a64ae1fdb3f9cd8587041d71a121c6b9..35e01ee64e5d75496b687870abb6a42d1bc96352 100644
+|--- .gn
+|+++ .gn
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+patching file BUILD.gn
+Hunk #1 FAILED at 21.
+Hunk #2 FAILED at 283.
+2 out of 2 hunks FAILED -- saving rejects to file BUILD.gn.rej
+can't find file to patch at input line 41
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git build/config/win/visual_studio_version.gni build/config/win/visual_studio_version.gni
+|index bd411669389525e8f03eb329a4cf700ad89b62f3..fba7843d79796b903b592b69e2e1f2c72ecaea34 100644
+|--- build/config/win/visual_studio_version.gni
+|+++ build/config/win/visual_studio_version.gni
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 84
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/chrome_paks.gni chrome/chrome_paks.gni
+|index 503cc9a40c00522c4b16b147837e7c1e640c2eb2..23cc07f39d1363611c48895e2f0c2848840df642 100644
+|--- chrome/chrome_paks.gni
+|+++ chrome/chrome_paks.gni
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 108
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/chrome_repack_locales.gni chrome/chrome_repack_locales.gni
+|index 03fad836d3ee83e643dbe9cd5d0f2426aacfab97..e21ec561beddeb43bbcf93ad127fa82089836c9e 100644
+|--- chrome/chrome_repack_locales.gni
+|+++ chrome/chrome_repack_locales.gni
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 131
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/installer/mini_installer/BUILD.gn chrome/installer/mini_installer/BUILD.gn
+|index 5f9acdb7f355036ba23859ccbe26f7d2bce3b90d..8a33b46e4f7ea54dc83b32f1ed3d3ce7649b3840 100644
+|--- chrome/installer/mini_installer/BUILD.gn
+|+++ chrome/installer/mini_installer/BUILD.gn
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 158
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git tools/grit/grit_args.gni tools/grit/grit_args.gni
+|index cd2b6b933766377a959291da317d38508463e34e..7d1fcae8e1ac50e46f91eabab95301eaf835c43e 100644
+|--- tools/grit/grit_args.gni
+|+++ tools/grit/grit_args.gni
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply gn_config, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/runhooks.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/build/toolchain/win/setup_toolchain.py
+--> Skipping non-existing file /tmp/phase_ab_worktree/build/vs_toolchain.py
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git build/toolchain/win/setup_toolchain.py build/toolchain/win/setup_toolchain.py
+|index e0b7c03a522040d58afdf82cbe20acc38f96b43e..f1583a4f4dcd04bbf4c12c1a567a245a76a0f908 100644
+|--- build/toolchain/win/setup_toolchain.py
+|+++ build/toolchain/win/setup_toolchain.py
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 32
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git build/vs_toolchain.py build/vs_toolchain.py
+|index 88489da743f6dddbe443013806e905f04e4fc82b..5c592dfe902c1c92052764d52f31ae83e59095e0 100755
+|--- build/vs_toolchain.py
+|+++ build/vs_toolchain.py
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply runhooks, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/component_build.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/browser/devtools/devtools_instrumentation.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/browser/renderer_host/input/mouse_wheel_phase_handler.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/browser/renderer_host/input/synthetic_gesture_target_base.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/third_party/blink/renderer/controller/BUILD.gn
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/events/keycodes/BUILD.gn
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/events/keycodes/keyboard_code_conversion_xkb.h
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/browser/devtools/devtools_instrumentation.h content/browser/devtools/devtools_instrumentation.h
+|index 3c026461c142cac5e76acdb5338bb29d5aa7ac9b..22cdb3a9bb32951341cfefc84668b2f4d04facf4 100644
+|--- content/browser/devtools/devtools_instrumentation.h
+|+++ content/browser/devtools/devtools_instrumentation.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 18
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/browser/renderer_host/input/mouse_wheel_phase_handler.h content/browser/renderer_host/input/mouse_wheel_phase_handler.h
+|index 9c6e2f83d387c32c73b2c0850151fcd9747b83fc..cb7e04e798a09c525326994365409ebacca88339 100644
+|--- content/browser/renderer_host/input/mouse_wheel_phase_handler.h
+|+++ content/browser/renderer_host/input/mouse_wheel_phase_handler.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 30
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/browser/renderer_host/input/synthetic_gesture_target_base.h content/browser/renderer_host/input/synthetic_gesture_target_base.h
+|index 09d80f2ba678df9ab1b9b2b74ad66d4546036fb2..5dbff44c280a145c65146279a971620fc18db54c 100644
+|--- content/browser/renderer_host/input/synthetic_gesture_target_base.h
+|+++ content/browser/renderer_host/input/synthetic_gesture_target_base.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 52
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git third_party/blink/renderer/controller/BUILD.gn third_party/blink/renderer/controller/BUILD.gn
+|index b229de2731dc6a86b9909322c0d0e94e8f2e7eb7..1d55f8ee98f93d77252badbb9fc8f67078c0907f 100644
+|--- third_party/blink/renderer/controller/BUILD.gn
+|+++ third_party/blink/renderer/controller/BUILD.gn
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 80
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/events/keycodes/BUILD.gn ui/events/keycodes/BUILD.gn
+|index 4f4fbfb769cf8d7a8a10c6772f39b2eef8362b53..a794da2d8343bb8aafe59dd8e60d2c3d2dfd62e3 100644
+|--- ui/events/keycodes/BUILD.gn
+|+++ ui/events/keycodes/BUILD.gn
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 93
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/events/keycodes/keyboard_code_conversion_xkb.h ui/events/keycodes/keyboard_code_conversion_xkb.h
+|index 5693e3a1c4bc4c5b4277fd20f6aaf1290f5efe35..88c0cc6d590987f7834c53b6069ac9576a1eeb2f 100644
+|--- ui/events/keycodes/keyboard_code_conversion_xkb.h
+|+++ ui/events/keycodes/keyboard_code_conversion_xkb.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply component_build, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/message_loop.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/base/message_loop/message_pump_win.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/base/task/current_thread.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/base/task/current_thread.h
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git base/message_loop/message_pump_win.cc base/message_loop/message_pump_win.cc
+|index 4e20010e351905ec5c1daa576aecf8d6eeec48ac..588c3dbdcc204f235561290493d6ad0ca64d67cb 100644
+|--- base/message_loop/message_pump_win.cc
+|+++ base/message_loop/message_pump_win.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 36
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git base/task/current_thread.cc base/task/current_thread.cc
+|index 97b9355dc2a0b2c8f86a868d597839af53adcfa6..14fa5274f51fe08bb3735df2f8eb0d87b624bc9b 100644
+|--- base/task/current_thread.cc
+|+++ base/task/current_thread.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 49
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git base/task/current_thread.h base/task/current_thread.h
+|index ffd90d20a9ed1366555d3b18638a3c3559d06c90..05ed6fe922c13a96ddfe630dadf2c16feb9a2159 100644
+|--- base/task/current_thread.h
+|+++ base/task/current_thread.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply message_loop, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/trace_event.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/base/trace_event/builtin_categories.h
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git base/trace_event/builtin_categories.h base/trace_event/builtin_categories.h
+|index 39168e90fd6ea68e562f0a2c6d8ba1162bc29e71..fe73dce2bcf8dcb21c76c86a41ec79cd05fb586e 100644
+|--- base/trace_event/builtin_categories.h
+|+++ base/trace_event/builtin_categories.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply trace_event, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/webkit_move_pip.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/picture_in_picture/picture_in_picture_window_manager.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/renderer/render_frame_impl.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/third_party/blink/public/mojom/picture_in_picture_window_options/picture_in_picture_window_options.mojom
+--> Skipping non-existing file /tmp/phase_ab_worktree/third_party/blink/public/web/web_picture_in_picture_window_options.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/third_party/blink/public/web/web_view.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/third_party/blink/renderer/bindings/generated_in_modules.gni
+--> Skipping non-existing file /tmp/phase_ab_worktree/third_party/blink/renderer/core/exported/web_view_impl.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/third_party/blink/renderer/core/frame/local_dom_window.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/third_party/blink/renderer/core/frame/local_dom_window.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/third_party/blink/renderer/modules/document_picture_in_picture/document_picture_in_picture_options.idl
+--> Skipping non-existing file /tmp/phase_ab_worktree/third_party/blink/renderer/modules/document_picture_in_picture/picture_in_picture_controller_impl.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/third_party/blink/renderer/platform/runtime_enabled_features.override.json5
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/picture_in_picture/picture_in_picture_window_manager.cc chrome/browser/picture_in_picture/picture_in_picture_window_manager.cc
+|index cccf164d978761dac8148d11fbddfbeb9ecfb048..29cabb837ae536394ac467a42be50461e2b485f2 100644
+|--- chrome/browser/picture_in_picture/picture_in_picture_window_manager.cc
+|+++ chrome/browser/picture_in_picture/picture_in_picture_window_manager.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 31
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/renderer/render_frame_impl.cc content/renderer/render_frame_impl.cc
+|index 6ee766c52202804adc532b1585224b4e35239f9a..91265a8e96e1e7abd30b7d8b7ed4a1adc9174831 100644
+|--- content/renderer/render_frame_impl.cc
+|+++ content/renderer/render_frame_impl.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 44
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git third_party/blink/public/mojom/picture_in_picture_window_options/picture_in_picture_window_options.mojom third_party/blink/public/mojom/picture_in_picture_window_options/picture_in_picture_window_options.mojom
+|index 0a10dd95413ad7fc333eec91c866d73339dd8c11..72495326c304f46d91de3e7f911a2e2a2467e8e1 100644
+|--- third_party/blink/public/mojom/picture_in_picture_window_options/picture_in_picture_window_options.mojom
+|+++ third_party/blink/public/mojom/picture_in_picture_window_options/picture_in_picture_window_options.mojom
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 66
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git third_party/blink/public/web/web_picture_in_picture_window_options.h third_party/blink/public/web/web_picture_in_picture_window_options.h
+|index f3a5b90b3bb119558da1d9c56a73675c9f32cefd..53c5c690bcf2b6af49d44945e93df58bf3b9f5b4 100644
+|--- third_party/blink/public/web/web_picture_in_picture_window_options.h
+|+++ third_party/blink/public/web/web_picture_in_picture_window_options.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 90
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git third_party/blink/public/web/web_view.h third_party/blink/public/web/web_view.h
+|index 932658273154ef2e022358e493a8e7c00c86e732..6a1b5bbe94772a947ac8055e4e0971f7b3e166e1 100644
+|--- third_party/blink/public/web/web_view.h
+|+++ third_party/blink/public/web/web_view.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 111
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git third_party/blink/renderer/bindings/generated_in_modules.gni third_party/blink/renderer/bindings/generated_in_modules.gni
+|index 07b1d2f33ae1a787b1993f103b57ece2b1bc22cd..49f09470555228c15a2c854206cbd1d706095c38 100644
+|--- third_party/blink/renderer/bindings/generated_in_modules.gni
+|+++ third_party/blink/renderer/bindings/generated_in_modules.gni
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 126
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git third_party/blink/renderer/core/exported/web_view_impl.h third_party/blink/renderer/core/exported/web_view_impl.h
+|index ff153875857fe718676389ee4f0096ca41407cf3..f816c7d9783d71f6ae628ad93fb069c2564cc73d 100644
+|--- third_party/blink/renderer/core/exported/web_view_impl.h
+|+++ third_party/blink/renderer/core/exported/web_view_impl.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 161
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git third_party/blink/renderer/core/frame/local_dom_window.cc third_party/blink/renderer/core/frame/local_dom_window.cc
+|index 06efc300ee7a014759de6d0d61d0ced6c8bb965f..37362b6621b8f243d4f3fff5d791dd8aeba6a6ff 100644
+|--- third_party/blink/renderer/core/frame/local_dom_window.cc
+|+++ third_party/blink/renderer/core/frame/local_dom_window.cc
+--------------------------
+No file to patch.  Skipping patch.
+7 out of 7 hunks ignored
+can't find file to patch at input line 236
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git third_party/blink/renderer/core/frame/local_dom_window.h third_party/blink/renderer/core/frame/local_dom_window.h
+|index cf995f0b8ae6c192247aa9d5769a0043e490e8c3..8e9de1504c5318b01c1b8ef4128bc6574a8f5235 100644
+|--- third_party/blink/renderer/core/frame/local_dom_window.h
+|+++ third_party/blink/renderer/core/frame/local_dom_window.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 261
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git third_party/blink/renderer/modules/document_picture_in_picture/document_picture_in_picture_options.idl third_party/blink/renderer/modules/document_picture_in_picture/document_picture_in_picture_options.idl
+|index de4f0294a2f7ea20517c71cad3d17fb0f1975211..8fa3befaf1d90d20ffe819ed09667511be1b8cf9 100644
+|--- third_party/blink/renderer/modules/document_picture_in_picture/document_picture_in_picture_options.idl
+|+++ third_party/blink/renderer/modules/document_picture_in_picture/document_picture_in_picture_options.idl
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 286
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git third_party/blink/renderer/modules/document_picture_in_picture/picture_in_picture_controller_impl.cc third_party/blink/renderer/modules/document_picture_in_picture/picture_in_picture_controller_impl.cc
+|index 12d793161d71deb8ba4997ff214a3a4291e67ec2..858583165eccea97e28e2167b24ac2ef7acb1d99 100644
+|--- third_party/blink/renderer/modules/document_picture_in_picture/picture_in_picture_controller_impl.cc
+|+++ third_party/blink/renderer/modules/document_picture_in_picture/picture_in_picture_controller_impl.cc
+--------------------------
+No file to patch.  Skipping patch.
+4 out of 4 hunks ignored
+can't find file to patch at input line 351
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git third_party/blink/renderer/platform/runtime_enabled_features.override.json5 third_party/blink/renderer/platform/runtime_enabled_features.override.json5
+|index 43cfe5a54118d60898fb4f6bfbcae7ec3a96c53d..2d80c0463e2774ce5a1189348814289e5a837d16 100644
+|--- third_party/blink/renderer/platform/runtime_enabled_features.override.json5
+|+++ third_party/blink/renderer/platform/runtime_enabled_features.override.json5
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply webkit_move_pip, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/views_widget.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/extensions/api/sessions/sessions_api.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/apps/chrome_native_app_window_views_aura.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/components/sessions/core/session_service_commands.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/components/sessions/core/tab_restore_service_impl.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/browser/renderer_host/render_widget_host_view_base.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/browser/renderer_host/render_widget_host_view_base.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/browser/renderer_host/render_widget_host_view_event_handler.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/public/browser/render_widget_host_view.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/third_party/blink/renderer/core/exported/web_view_impl.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/aura/native_window_occlusion_tracker_win.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/base/mojom/window_show_state.mojom
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/ozone/platform/x11/x11_window.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/widget/desktop_aura/desktop_screen_win.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/widget/desktop_aura/desktop_window_tree_host_linux.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/widget/desktop_aura/desktop_window_tree_host_linux.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/widget/desktop_aura/desktop_window_tree_host_platform.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/widget/desktop_aura/desktop_window_tree_host_win.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/widget/desktop_aura/desktop_window_tree_host_win.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/widget/native_widget_mac.mm
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/widget/widget.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/widget/widget.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/widget/widget_delegate.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/widget/widget_hwnd_utils.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/win/hwnd_message_handler.cc
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/extensions/api/sessions/sessions_api.cc chrome/browser/extensions/api/sessions/sessions_api.cc
+|index f24702b40f4e7a3475aff45ec819b5fb6529e97e..708a14a7209ae64f97f847688216c42a7a6e216f 100644
+|--- chrome/browser/extensions/api/sessions/sessions_api.cc
+|+++ chrome/browser/extensions/api/sessions/sessions_api.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 17
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/apps/chrome_native_app_window_views_aura.cc chrome/browser/ui/views/apps/chrome_native_app_window_views_aura.cc
+|index 8ddd4ef4e130fdcc0a3dfe1c8dc238ebbccc20b6..3a31affed1ee8bb879a35447b6ecf67f3d56535e 100644
+|--- chrome/browser/ui/views/apps/chrome_native_app_window_views_aura.cc
+|+++ chrome/browser/ui/views/apps/chrome_native_app_window_views_aura.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 29
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git components/sessions/core/session_service_commands.cc components/sessions/core/session_service_commands.cc
+|index 002fd18e29fd20e0898261a1c20ae24c10114949..051d6da65371a43ad04bd6592c1a90d74bd2d19e 100644
+|--- components/sessions/core/session_service_commands.cc
+|+++ components/sessions/core/session_service_commands.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 55
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git components/sessions/core/tab_restore_service_impl.cc components/sessions/core/tab_restore_service_impl.cc
+|index 5728c8e4804fd5f63b8aa95655c8b79bb3528bac..465713f704c3da76a6bb7dbb09efcfb55dd3b8d4 100644
+|--- components/sessions/core/tab_restore_service_impl.cc
+|+++ components/sessions/core/tab_restore_service_impl.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 67
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/browser/renderer_host/render_widget_host_view_base.cc content/browser/renderer_host/render_widget_host_view_base.cc
+|index f63a7b0b7a1506f83027f3f29cbb951277883b04..01d6ef4bdfa97fce974e80e6a281eb6bf24995d4 100644
+|--- content/browser/renderer_host/render_widget_host_view_base.cc
+|+++ content/browser/renderer_host/render_widget_host_view_base.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 86
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/browser/renderer_host/render_widget_host_view_base.h content/browser/renderer_host/render_widget_host_view_base.h
+|index 1a18bdda39f76cfae36adc0ffde136e788a98262..bfed240010bf74b5c148dcec2f6c599c2dbde4ae 100644
+|--- content/browser/renderer_host/render_widget_host_view_base.h
+|+++ content/browser/renderer_host/render_widget_host_view_base.h
+--------------------------
+No file to patch.  Skipping patch.
+6 out of 6 hunks ignored
+can't find file to patch at input line 154
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/browser/renderer_host/render_widget_host_view_event_handler.cc content/browser/renderer_host/render_widget_host_view_event_handler.cc
+|index a51a44a147e89c1f71bf31d7d13b150a6bc1faee..8750a98e5bddc65af96e4e79b319816355e684f8 100644
+|--- content/browser/renderer_host/render_widget_host_view_event_handler.cc
+|+++ content/browser/renderer_host/render_widget_host_view_event_handler.cc
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 202
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/public/browser/render_widget_host_view.h content/public/browser/render_widget_host_view.h
+|index c87f079a6541866fa00cc96e7dfed11d743ba182..17c949f873124021ae69b2fe9d46991311f3de21 100644
+|--- content/public/browser/render_widget_host_view.h
+|+++ content/public/browser/render_widget_host_view.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 221
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git third_party/blink/renderer/core/exported/web_view_impl.cc third_party/blink/renderer/core/exported/web_view_impl.cc
+|index f5bdcb8176a94705a3710ba5dbc536a96b35fed9..09122a6fdc4dbdc61fb580110473265c6ee2c661 100644
+|--- third_party/blink/renderer/core/exported/web_view_impl.cc
+|+++ third_party/blink/renderer/core/exported/web_view_impl.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 233
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/aura/native_window_occlusion_tracker_win.cc ui/aura/native_window_occlusion_tracker_win.cc
+|index 883f23810672adf94c8b86f8ec54dc6ac9e7acbb..5d1a2b11c2cea3b247077f96c35780e40efa70f5 100644
+|--- ui/aura/native_window_occlusion_tracker_win.cc
+|+++ ui/aura/native_window_occlusion_tracker_win.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 251
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/base/mojom/window_show_state.mojom ui/base/mojom/window_show_state.mojom
+|index aeaf8e35f7eda89598149117fe8508d197bf2610..4b7cc3f03d3cf9c91ac8efe11ae820cf2b34b8b0 100644
+|--- ui/base/mojom/window_show_state.mojom
+|+++ ui/base/mojom/window_show_state.mojom
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 264
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/ozone/platform/x11/x11_window.cc ui/ozone/platform/x11/x11_window.cc
+|index 7af34829238f6294cd88fa0cd3b75714f4849ed8..d0476ad2f4688fd10330a7c840623d926f1c122e 100644
+|--- ui/ozone/platform/x11/x11_window.cc
+|+++ ui/ozone/platform/x11/x11_window.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 287
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/widget/desktop_aura/desktop_screen_win.cc ui/views/widget/desktop_aura/desktop_screen_win.cc
+|index 077855979045d4862abd099ec16befa0fcecff65..69f369b06c29e65dead98a52cc8b743ee81b2b7c 100644
+|--- ui/views/widget/desktop_aura/desktop_screen_win.cc
+|+++ ui/views/widget/desktop_aura/desktop_screen_win.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 300
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/widget/desktop_aura/desktop_window_tree_host_linux.cc ui/views/widget/desktop_aura/desktop_window_tree_host_linux.cc
+|index 90154f1dd6fea35baf9795488a327b894b2f86e7..374a57321e45695474e5eb997fbf140c50aca1d2 100644
+|--- ui/views/widget/desktop_aura/desktop_window_tree_host_linux.cc
+|+++ ui/views/widget/desktop_aura/desktop_window_tree_host_linux.cc
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 347
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/widget/desktop_aura/desktop_window_tree_host_linux.h ui/views/widget/desktop_aura/desktop_window_tree_host_linux.h
+|index c773bbe351260d958de222cd4e7942d757a53c25..2d4c1a17a0b3fc9b5fd929361873bfea00610dac 100644
+|--- ui/views/widget/desktop_aura/desktop_window_tree_host_linux.h
+|+++ ui/views/widget/desktop_aura/desktop_window_tree_host_linux.h
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 379
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/widget/desktop_aura/desktop_window_tree_host_platform.cc ui/views/widget/desktop_aura/desktop_window_tree_host_platform.cc
+|index 942e685096b8577bd0e48918aa65a4d15b4f51bc..e10b6ca41aaed98def5b1e507d324485b3d44f99 100644
+|--- ui/views/widget/desktop_aura/desktop_window_tree_host_platform.cc
+|+++ ui/views/widget/desktop_aura/desktop_window_tree_host_platform.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 394
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/widget/desktop_aura/desktop_window_tree_host_win.cc ui/views/widget/desktop_aura/desktop_window_tree_host_win.cc
+|index c9edcfeb4df4a52dd744b43f04ff1675f566a620..8b8add99c0184cb9d44eecdc6cdff6561fbf65f2 100644
+|--- ui/views/widget/desktop_aura/desktop_window_tree_host_win.cc
+|+++ ui/views/widget/desktop_aura/desktop_window_tree_host_win.cc
+--------------------------
+No file to patch.  Skipping patch.
+7 out of 7 hunks ignored
+can't find file to patch at input line 527
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/widget/desktop_aura/desktop_window_tree_host_win.h ui/views/widget/desktop_aura/desktop_window_tree_host_win.h
+|index b65ced55f997d5064b9d9338190567f8c264fce8..84fabb840d681b53f81881b17b2618faf569f51c 100644
+|--- ui/views/widget/desktop_aura/desktop_window_tree_host_win.h
+|+++ ui/views/widget/desktop_aura/desktop_window_tree_host_win.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 549
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/widget/native_widget_mac.mm ui/views/widget/native_widget_mac.mm
+|index 86af53817f0e84c1e9a6aaaf302d67c6fb5298ab..248ec0b489758e1b071887fc00daf6d5f6091165 100644
+|--- ui/views/widget/native_widget_mac.mm
+|+++ ui/views/widget/native_widget_mac.mm
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 561
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/widget/widget.cc ui/views/widget/widget.cc
+|index e62f180fd782f29c25cf47a4e6be0cce46c99b17..682bc9f6498876165dc554ccb040d7dc0b1d3cbf 100644
+|--- ui/views/widget/widget.cc
+|+++ ui/views/widget/widget.cc
+--------------------------
+No file to patch.  Skipping patch.
+6 out of 6 hunks ignored
+can't find file to patch at input line 642
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/widget/widget.h ui/views/widget/widget.h
+|index 285cd57cf18d7cb5cbe787194def75efbd0ceacb..296689991ad14e319fc1e67dc13ef6fb277ab874 100644
+|--- ui/views/widget/widget.h
+|+++ ui/views/widget/widget.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 664
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/widget/widget_delegate.h ui/views/widget/widget_delegate.h
+|index 07ba390764528c414f356adaf8dc423fcdb23a89..f0c35f3105ba855238f776dd06073ca7ceb61eaa 100644
+|--- ui/views/widget/widget_delegate.h
+|+++ ui/views/widget/widget_delegate.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 679
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/widget/widget_hwnd_utils.cc ui/views/widget/widget_hwnd_utils.cc
+|index 55e5b8a832c9c298066206737f97710ad501945a..9353f74c2ec2fe92a8f7eacf9fa065c0f921a735 100644
+|--- ui/views/widget/widget_hwnd_utils.cc
+|+++ ui/views/widget/widget_hwnd_utils.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 693
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/win/hwnd_message_handler.cc ui/views/win/hwnd_message_handler.cc
+|index 6a4f780c6921d901e9f954d1f7ba18c40d8847b9..f02cbc98c87492b2665848bccfd9505641d81d5d 100644
+|--- ui/views/win/hwnd_message_handler.cc
+|+++ ui/views/win/hwnd_message_handler.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply views_widget, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/web_contents_1257_1565.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/browser/web_contents/web_contents_impl.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/public/browser/web_contents.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/public/browser/web_contents_delegate.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/public/browser/web_contents_observer.h
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/browser/web_contents/web_contents_impl.cc content/browser/web_contents/web_contents_impl.cc
+|index 382b9ad9c6e8df480f6b36df04f799318233e249..70c5521fd5fdd8d8b7cc80efd86a7ca56b39f8e7 100644
+|--- content/browser/web_contents/web_contents_impl.cc
+|+++ content/browser/web_contents/web_contents_impl.cc
+--------------------------
+No file to patch.  Skipping patch.
+5 out of 5 hunks ignored
+can't find file to patch at input line 66
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/public/browser/web_contents.h content/public/browser/web_contents.h
+|index f071103d3b15d46c96dc193bdbd657e00eb1083e..c5d0d99b4688d00e46d985435be678d14456b222 100644
+|--- content/public/browser/web_contents.h
+|+++ content/public/browser/web_contents.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 96
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/public/browser/web_contents_delegate.h content/public/browser/web_contents_delegate.h
+|index 0650197909d484b8a0f48ab61b22471c71bce0e8..e51845d055b8488c27148409bf503fe8b4268f22 100644
+|--- content/public/browser/web_contents_delegate.h
+|+++ content/public/browser/web_contents_delegate.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 128
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/public/browser/web_contents_observer.h content/public/browser/web_contents_observer.h
+|index f1ec6796b2e987ab1e6c0e62e9edc075ceff1214..7d7e6447ee7c23a6b43b0a91e9147a8a38f8e7d0 100644
+|--- content/public/browser/web_contents_observer.h
+|+++ content/public/browser/web_contents_observer.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply web_contents_1257_1565, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/mime_handler_view_guest_1565_2727.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/browser/web_contents/web_contents_view.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest_delegate.h
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/browser/web_contents/web_contents_view.h content/browser/web_contents/web_contents_view.h
+|index 654fb9d77d1678dd5bd31692a94c14d644d0775a..f3fadcb127f5ad5380196426da1ceb8b82e525ce 100644
+|--- content/browser/web_contents/web_contents_view.h
+|+++ content/browser/web_contents/web_contents_view.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 18
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest.cc extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest.cc
+|index 850e8688c769e62e6ed88182e1d46d00495d1a49..648eb2805418580ed83d8378f4d5ceab89a5907e 100644
+|--- extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest.cc
+|+++ extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 31
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest_delegate.h extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest_delegate.h
+|index 2fb8a60c1f56d01ae5853fd5c92afd3e61106c80..edd275135e60d47ad45d3063508544a0d1003dca 100644
+|--- extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest_delegate.h
+|+++ extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest_delegate.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply mime_handler_view_guest_1565_2727, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/ui_dragdrop_355390.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/base/x/x11_os_exchange_data_provider.cc
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/base/x/x11_os_exchange_data_provider.cc ui/base/x/x11_os_exchange_data_provider.cc
+|index 33a69713ff1aa35363d47fca08765edb90e8f0bf..43f3a365bbaf312421955ac84e3857888350c699 100644
+|--- ui/base/x/x11_os_exchange_data_provider.cc
+|+++ ui/base/x/x11_os_exchange_data_provider.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply ui_dragdrop_355390, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/content_main_654986.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/base/process/set_process_title.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/app/content_main.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/app/content_main_runner_impl.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/app/content_main_runner_impl.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/content/public/app/content_main.h
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git base/process/set_process_title.cc base/process/set_process_title.cc
+|index aacd4a841f3940c27c5c73c03fa9bcc6e56448cc..f4488f8259836a8f3bb5c465df28ca40f2bdd455 100644
+|--- base/process/set_process_title.cc
+|+++ base/process/set_process_title.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 19
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/app/content_main.cc content/app/content_main.cc
+|index f2b1cdff827eae3726febe590f2f30b5f6d89046..cb18a6fe7c76483fe79abf64bbec8ad21f55fa57 100644
+|--- content/app/content_main.cc
+|+++ content/app/content_main.cc
+--------------------------
+No file to patch.  Skipping patch.
+4 out of 4 hunks ignored
+can't find file to patch at input line 114
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/app/content_main_runner_impl.cc content/app/content_main_runner_impl.cc
+|index b795a9dbf898570a7cd8469ee386c4edf4bfa275..62ba4b56ff59fe1f20615df0bb24bf0d3f15e6c1 100644
+|--- content/app/content_main_runner_impl.cc
+|+++ content/app/content_main_runner_impl.cc
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 160
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/app/content_main_runner_impl.h content/app/content_main_runner_impl.h
+|index e3d6621ec75a1b02c75fb0f4ad764339aea622f6..4ca2cc3de1fc428cfc0ff58865c81ed4a44597e0 100644
+|--- content/app/content_main_runner_impl.h
+|+++ content/app/content_main_runner_impl.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 182
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git content/public/app/content_main.h content/public/app/content_main.h
+|index 7f9b51529735789778df928b06ac5e8f1c564a42..5606867e437806bc94a64aca0e61d21dfbd31a8d 100644
+|--- content/public/app/content_main.h
+|+++ content/public/app/content_main.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply content_main_654986, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/views_1749_2102_3330.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/toolbar/app_menu.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/base/models/menu_model.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/gfx/render_text.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/gfx/render_text.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/animation/ink_drop_host.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/button/label_button.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/button/label_button.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/label.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/label.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_controller.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_controller.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_delegate.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_host.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_host.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_item_view.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_model_adapter.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_model_adapter.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_adapter.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_adapter.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_cocoa.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_cocoa.mm
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_interface.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_mac.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_mac.mm
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_remote_cocoa.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_runner_impl_remote_cocoa.mm
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/controls/menu/menu_scroll_view_container.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/test/ui_controls_factory_desktop_aura_ozone.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/ui/views/view.h
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/toolbar/app_menu.cc chrome/browser/ui/views/toolbar/app_menu.cc
+|index dad17aa686837c8db98877352d8d4f9a35b3b325..fb91ce9014d3eafd163c6ac71ce94551a4d28bae 100644
+|--- chrome/browser/ui/views/toolbar/app_menu.cc
+|+++ chrome/browser/ui/views/toolbar/app_menu.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 40
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/base/models/menu_model.h ui/base/models/menu_model.h
+|index 3f92c25f3273a6ea4ac17380884becee8068c4ba..b2fadfd39ddaa586d1d5255716e682b8e756c9a4 100644
+|--- ui/base/models/menu_model.h
+|+++ ui/base/models/menu_model.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 84
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/gfx/render_text.cc ui/gfx/render_text.cc
+|index bf767df8582347995d648c017be28af50dc8f40b..d1898db9fc449fee830be6f6679ff1ebc32e3a79 100644
+|--- ui/gfx/render_text.cc
+|+++ ui/gfx/render_text.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 122
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/gfx/render_text.h ui/gfx/render_text.h
+|index 0a92a68b672a8b982bf51a9151bb4a8c362180f4..dc6ee6bc90cdcd01c658ec250409623c85e171e7 100644
+|--- ui/gfx/render_text.h
+|+++ ui/gfx/render_text.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 146
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/animation/ink_drop_host.h ui/views/animation/ink_drop_host.h
+|index 551b709d2620d4e3c43d9ee1fa31a00c4532efb9..53875cea7f5225cb53a23c2591fbdf1810027657 100644
+|--- ui/views/animation/ink_drop_host.h
+|+++ ui/views/animation/ink_drop_host.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 159
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/button/label_button.cc ui/views/controls/button/label_button.cc
+|index ee2db8da9091822ab821b320ec1cfdb89f17c1c1..b1512e80c994a919465750293e16eec36d5c5a19 100644
+|--- ui/views/controls/button/label_button.cc
+|+++ ui/views/controls/button/label_button.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 176
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/button/label_button.h ui/views/controls/button/label_button.h
+|index 0177c78be91e7b51fdda6efcf7c7a9fd2f684b8a..c719b78918641abdb1e18d8b94aa93af82fde062 100644
+|--- ui/views/controls/button/label_button.h
+|+++ ui/views/controls/button/label_button.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 190
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/label.cc ui/views/controls/label.cc
+|index ac350ea7f8b740653d957e08f053cd3ee5d4a96e..f570a4a35c0d635ca61e9159ea0e4a0fcf47530b 100644
+|--- ui/views/controls/label.cc
+|+++ ui/views/controls/label.cc
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 257
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/label.h ui/views/controls/label.h
+|index 0d89a9cd05ec22adf56cb0aaf0593b644abeb560..f05bcc3d41aa2322fbe4ba253dcfe555961aecae 100644
+|--- ui/views/controls/label.h
+|+++ ui/views/controls/label.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 280
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_controller.cc ui/views/controls/menu/menu_controller.cc
+|index c58f75ab1bfbac5613f6ff6edefe97ee0ea2e62b..51cda10821b75e8da62284d449eb007a4b5b7962 100644
+|--- ui/views/controls/menu/menu_controller.cc
+|+++ ui/views/controls/menu/menu_controller.cc
+--------------------------
+No file to patch.  Skipping patch.
+5 out of 5 hunks ignored
+can't find file to patch at input line 331
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_controller.h ui/views/controls/menu/menu_controller.h
+|index 7e9541332db5cecd38e4eb0888f5d4520bebcf34..0c653f339dfdeb4934511a151dce5fe70502f284 100644
+|--- ui/views/controls/menu/menu_controller.h
+|+++ ui/views/controls/menu/menu_controller.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 354
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_delegate.h ui/views/controls/menu/menu_delegate.h
+|index ea82da6dc2f45625c9e8fe958715399e127699d8..575bd9484c2bf3bb72577136e2afae0ea4f84f66 100644
+|--- ui/views/controls/menu/menu_delegate.h
+|+++ ui/views/controls/menu/menu_delegate.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 393
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_host.cc ui/views/controls/menu/menu_host.cc
+|index 29c2f1dc3c11220a25dac6af2877cbfb82fae70d..8e8b0162a1936df3624cf6ce4d23adaebcc0a6e3 100644
+|--- ui/views/controls/menu/menu_host.cc
+|+++ ui/views/controls/menu/menu_host.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 416
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_host.h ui/views/controls/menu/menu_host.h
+|index fc1d5fccc3845b204d2a85bc5e00c0ffb4aee0d7..c065cafcd537c4e28a633569e170d65cde97b0b8 100644
+|--- ui/views/controls/menu/menu_host.h
+|+++ ui/views/controls/menu/menu_host.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 429
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_item_view.cc ui/views/controls/menu/menu_item_view.cc
+|index e22ac23452a500820fc50677d51aeead67cded1c..007fc67447ae3d2d7e6acf8ac6593e90ff1822b2 100644
+|--- ui/views/controls/menu/menu_item_view.cc
+|+++ ui/views/controls/menu/menu_item_view.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 463
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_model_adapter.cc ui/views/controls/menu/menu_model_adapter.cc
+|index 9f78999dcb3eac59c67ec373357849cd504d2f23..64aba76516a5da1b5ef264b3b370653f36d24135 100644
+|--- ui/views/controls/menu/menu_model_adapter.cc
+|+++ ui/views/controls/menu/menu_model_adapter.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 547
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_model_adapter.h ui/views/controls/menu/menu_model_adapter.h
+|index 7f561eab31316bd36d626ab19c7b0f3a7822ffbf..96b0a16b877a2acc22ab521556c447f830faea68 100644
+|--- ui/views/controls/menu/menu_model_adapter.h
+|+++ ui/views/controls/menu/menu_model_adapter.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 572
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_runner.cc ui/views/controls/menu/menu_runner.cc
+|index 87739aa15210faf8666d28199f393532ec580a57..e785faf160c2ef01bd0b1bcf3d734e8f1e72e270 100644
+|--- ui/views/controls/menu/menu_runner.cc
+|+++ ui/views/controls/menu/menu_runner.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 593
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_runner.h ui/views/controls/menu/menu_runner.h
+|index 95efc9eb0c5226c433957834abc32ce19517c702..5d643290ba9287a00e90fa3f2ccb8916306bd349 100644
+|--- ui/views/controls/menu/menu_runner.h
+|+++ ui/views/controls/menu/menu_runner.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 606
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_runner_impl.cc ui/views/controls/menu/menu_runner_impl.cc
+|index 4550aba6ee0ebbdfa508119846a8dc3a5815e7d4..0f4e54de553961d448afae5c3d4b828d9b07ce06 100644
+|--- ui/views/controls/menu/menu_runner_impl.cc
+|+++ ui/views/controls/menu/menu_runner_impl.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 627
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_runner_impl.h ui/views/controls/menu/menu_runner_impl.h
+|index 539eb9e7294f933b4de4415609a758e6bd9fdfe0..9435bf2b08eb376b2f4ebbac45cdd8ff2f64503b 100644
+|--- ui/views/controls/menu/menu_runner_impl.h
+|+++ ui/views/controls/menu/menu_runner_impl.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 639
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_runner_impl_adapter.cc ui/views/controls/menu/menu_runner_impl_adapter.cc
+|index d23190775a306c3db4bed95398bc8c525e4b20e5..8a1467a1f828f5b3b27533bebed28ba96a42768d 100644
+|--- ui/views/controls/menu/menu_runner_impl_adapter.cc
+|+++ ui/views/controls/menu/menu_runner_impl_adapter.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 656
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_runner_impl_adapter.h ui/views/controls/menu/menu_runner_impl_adapter.h
+|index 2390a23fb35fa16fadd48c691856bc04a44c1835..1dea074a16a580b7b14f14d4f2122efa8c684665 100644
+|--- ui/views/controls/menu/menu_runner_impl_adapter.h
+|+++ ui/views/controls/menu/menu_runner_impl_adapter.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 668
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_runner_impl_cocoa.h ui/views/controls/menu/menu_runner_impl_cocoa.h
+|index f5b0936aac647f931aad9a83fcc80812d84e98c5..20f476c9abd93e89ad1e79729371660fdad3a193 100644
+|--- ui/views/controls/menu/menu_runner_impl_cocoa.h
+|+++ ui/views/controls/menu/menu_runner_impl_cocoa.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 680
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_runner_impl_cocoa.mm ui/views/controls/menu/menu_runner_impl_cocoa.mm
+|index 05322e627acabef3dd9c498b9fea4ee07cd1799a..a866a76c5037276de78ce1f1efdf9ce7d5a20553 100644
+|--- ui/views/controls/menu/menu_runner_impl_cocoa.mm
+|+++ ui/views/controls/menu/menu_runner_impl_cocoa.mm
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 692
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_runner_impl_interface.h ui/views/controls/menu/menu_runner_impl_interface.h
+|index e217fa433b71e62a16e8adb5072dab853f8ee3b6..45c46ad8de76a06da40c7d825f4f59fb9463e0df 100644
+|--- ui/views/controls/menu/menu_runner_impl_interface.h
+|+++ ui/views/controls/menu/menu_runner_impl_interface.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 717
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_runner_impl_mac.h ui/views/controls/menu/menu_runner_impl_mac.h
+|index 5a010f50503112c231d9e093bfcc299af8672335..9babff4d43dc8acad72eac6726a459296b5b5237 100644
+|--- ui/views/controls/menu/menu_runner_impl_mac.h
+|+++ ui/views/controls/menu/menu_runner_impl_mac.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 729
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_runner_impl_mac.mm ui/views/controls/menu/menu_runner_impl_mac.mm
+|index 1b5d97c3f6b49dbd4daa6dff81e44b1e3d56e283..3da7b69d6f7d073d6a9a3812f829ee661762c7d7 100644
+|--- ui/views/controls/menu/menu_runner_impl_mac.mm
+|+++ ui/views/controls/menu/menu_runner_impl_mac.mm
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 751
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_runner_impl_remote_cocoa.h ui/views/controls/menu/menu_runner_impl_remote_cocoa.h
+|index 3f3f6c44bc323354008a118b023507e14f39f4df..2c7224db5584d13cb472b2c42b69ed4d12163ed1 100644
+|--- ui/views/controls/menu/menu_runner_impl_remote_cocoa.h
+|+++ ui/views/controls/menu/menu_runner_impl_remote_cocoa.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 763
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_runner_impl_remote_cocoa.mm ui/views/controls/menu/menu_runner_impl_remote_cocoa.mm
+|index da772edd48c0029b2672e3af0a07e1e695d383e6..43c930e932287a4ee597c5c8b6a35a3e5bd30a22 100644
+|--- ui/views/controls/menu/menu_runner_impl_remote_cocoa.mm
+|+++ ui/views/controls/menu/menu_runner_impl_remote_cocoa.mm
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 775
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/controls/menu/menu_scroll_view_container.cc ui/views/controls/menu/menu_scroll_view_container.cc
+|index 62a1a111377b6ea228a4bd0f31009d76bec0e281..e44ce4040583f4b3f66452fbd207ae86d246ed59 100644
+|--- ui/views/controls/menu/menu_scroll_view_container.cc
+|+++ ui/views/controls/menu/menu_scroll_view_container.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 791
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/test/ui_controls_factory_desktop_aura_ozone.cc ui/views/test/ui_controls_factory_desktop_aura_ozone.cc
+|index 8038c157ff59292c242c41b86394e5e19cf6d640..ca46ede189e018c9ed571717e9a7e084b0288fe2 100644
+|--- ui/views/test/ui_controls_factory_desktop_aura_ozone.cc
+|+++ ui/views/test/ui_controls_factory_desktop_aura_ozone.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 815
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git ui/views/view.h ui/views/view.h
+|index 97c8014fadf2231321c05a1f74d91418946bf9fc..68a849650d095268f5e96da04315e05344aa3f7b 100644
+|--- ui/views/view.h
+|+++ ui/views/view.h
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply views_1749_2102_3330, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/chrome_browser.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/BUILD.gn
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/BUILD.gn chrome/browser/BUILD.gn
+|index 589d635d17884050b20b491d65833b7893f5e3e6..e6358a16b4e496c07d05fdf3fb51dce1b28adae6 100644
+|--- chrome/browser/BUILD.gn
+|+++ chrome/browser/BUILD.gn
+--------------------------
+No file to patch.  Skipping patch.
+4 out of 4 hunks ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply chrome_browser, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/chrome_renderer.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/renderer/BUILD.gn
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/renderer/BUILD.gn chrome/renderer/BUILD.gn
+|index 70577180b6c1d2a819bab63f8bbd0a09847a4b9e..851ec35ad4f1ad0abdd7887359e73c363b1015cd 100644
+|--- chrome/renderer/BUILD.gn
+|+++ chrome/renderer/BUILD.gn
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply chrome_renderer, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/chrome_renderer_print_preview.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/renderer/printing/chrome_print_render_frame_helper_delegate.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/renderer/printing/chrome_print_render_frame_helper_delegate.h
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/renderer/printing/chrome_print_render_frame_helper_delegate.cc chrome/renderer/printing/chrome_print_render_frame_helper_delegate.cc
+|index 8dd724e489aeacafd1eb7cc902cfa5dc90deec60..e0d1887373cd813962ebb76feb3c021c1fff05d4 100644
+|--- chrome/renderer/printing/chrome_print_render_frame_helper_delegate.cc
+|+++ chrome/renderer/printing/chrome_print_render_frame_helper_delegate.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 54
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/renderer/printing/chrome_print_render_frame_helper_delegate.h chrome/renderer/printing/chrome_print_render_frame_helper_delegate.h
+|index ab12b010c13d95efdec9e4d2234fed54423734f1..48850a94ae255f29c0b8590229d6c1e861a3d415 100644
+|--- chrome/renderer/printing/chrome_print_render_frame_helper_delegate.h
+|+++ chrome/renderer/printing/chrome_print_render_frame_helper_delegate.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply chrome_renderer_print_preview, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/chrome_runtime.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/app/chrome_main_delegate.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/app/chrome_main_delegate.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/app_shim/BUILD.gn
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/app_shim/app_shim_main_delegate.mm
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/chrome_browser_main.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/chrome_browser_main_mac.mm
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/chrome_browser_main_win.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/chrome_content_browser_client.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/chrome_content_browser_client.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/prefs/browser_prefs.cc
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/app/chrome_main_delegate.cc chrome/app/chrome_main_delegate.cc
+|index a77f835b4640b811181df2fbd02ad2f299c078e4..449a06f4f384dd5d2f6f5d565b5001f675ff498d 100644
+|--- chrome/app/chrome_main_delegate.cc
+|+++ chrome/app/chrome_main_delegate.cc
+--------------------------
+No file to patch.  Skipping patch.
+18 out of 18 hunks ignored
+can't find file to patch at input line 166
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/app/chrome_main_delegate.h chrome/app/chrome_main_delegate.h
+|index 75976668b29b853cf2b916e159bf204a25691b1b..2fd606512faa7fc33557cad835abca2a51c8c5c9 100644
+|--- chrome/app/chrome_main_delegate.h
+|+++ chrome/app/chrome_main_delegate.h
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 206
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/app_shim/BUILD.gn chrome/app_shim/BUILD.gn
+|index f18aa0465d5e4245f58f4ee47a79943d48ea38bb..20f7337e01f2841a7cf26bf12f714d3b905974c1 100644
+|--- chrome/app_shim/BUILD.gn
+|+++ chrome/app_shim/BUILD.gn
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 218
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/app_shim/app_shim_main_delegate.mm chrome/app_shim/app_shim_main_delegate.mm
+|index 08d5f94dc6617d22b325400c55038e7caa802913..4c1878a931be06faae6f89970a2ff23b4f169ecb 100644
+|--- chrome/app_shim/app_shim_main_delegate.mm
+|+++ chrome/app_shim/app_shim_main_delegate.mm
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 240
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/chrome_browser_main.cc chrome/browser/chrome_browser_main.cc
+|index b4160da8ba3764f3d0233f6c8228e3978df4f1dd..a4abde22b559c9c22da5508b4a1c288986a8958f 100644
+|--- chrome/browser/chrome_browser_main.cc
+|+++ chrome/browser/chrome_browser_main.cc
+--------------------------
+No file to patch.  Skipping patch.
+16 out of 16 hunks ignored
+can't find file to patch at input line 396
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/chrome_browser_main_mac.mm chrome/browser/chrome_browser_main_mac.mm
+|index 72445161880b95b6ce7f5ea25692d63c774fca70..78485f3e7d8d7196ab9e00c64f12522c8fdba056 100644
+|--- chrome/browser/chrome_browser_main_mac.mm
+|+++ chrome/browser/chrome_browser_main_mac.mm
+--------------------------
+No file to patch.  Skipping patch.
+4 out of 4 hunks ignored
+can't find file to patch at input line 432
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/chrome_browser_main_win.cc chrome/browser/chrome_browser_main_win.cc
+|index 2046ce35ca62ec3ab54e985642f97e5b42b799f8..2d8abf4fb29aebeced9c14cd42ad5749b1192f6b 100644
+|--- chrome/browser/chrome_browser_main_win.cc
+|+++ chrome/browser/chrome_browser_main_win.cc
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 460
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/chrome_content_browser_client.cc chrome/browser/chrome_content_browser_client.cc
+|index 25458578a830674aac9f57e55257c5f2fb2314ec..1ebe02f5f78f2c52056d74779a0873ba2473d30c 100644
+|--- chrome/browser/chrome_content_browser_client.cc
+|+++ chrome/browser/chrome_content_browser_client.cc
+--------------------------
+No file to patch.  Skipping patch.
+9 out of 9 hunks ignored
+can't find file to patch at input line 556
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/chrome_content_browser_client.h chrome/browser/chrome_content_browser_client.h
+|index 6b3458257b496282540d09607ceff2c1b2151637..d80d74c4404582f0102f58c7a7ae7d17dd6c7061 100644
+|--- chrome/browser/chrome_content_browser_client.h
+|+++ chrome/browser/chrome_content_browser_client.h
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 587
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/prefs/browser_prefs.cc chrome/browser/prefs/browser_prefs.cc
+|index ad6b592b4740392044d151801c80bbf92e7c0f55..f273b6e12f636d1521463e825af36585462c513f 100644
+|--- chrome/browser/prefs/browser_prefs.cc
+|+++ chrome/browser/prefs/browser_prefs.cc
+--------------------------
+No file to patch.  Skipping patch.
+4 out of 4 hunks ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply chrome_runtime, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/chrome_runtime_views.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/browser_command_controller.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/toolbar/app_menu_model.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/toolbar/app_menu_model.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/browser_view.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/browser_view.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/browser_widget.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/browser_widget.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/layout/browser_view_layout.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/layout/browser_view_layout.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/layout/browser_view_layout_delegate.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/layout/browser_view_layout_impl.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/picture_in_picture_browser_frame_view.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/shadow_overlay_view.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/omnibox/omnibox_popup_closer.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/page_action/page_action_icon_controller.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/toolbar/toolbar_view.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/toolbar/toolbar_view.h
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/browser_command_controller.cc chrome/browser/ui/browser_command_controller.cc
+|index 2ab2f2caa836ec20fa057717d27ce807f8c02406..92e4a58efd80a4b939d6daa4f961db189a12937c 100644
+|--- chrome/browser/ui/browser_command_controller.cc
+|+++ chrome/browser/ui/browser_command_controller.cc
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 48
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/toolbar/app_menu_model.cc chrome/browser/ui/toolbar/app_menu_model.cc
+|index d78191142185dd2481949e883dccc054496d11c8..e2f707bc387c78759a9e7db73228a5446c412f96 100644
+|--- chrome/browser/ui/toolbar/app_menu_model.cc
+|+++ chrome/browser/ui/toolbar/app_menu_model.cc
+--------------------------
+No file to patch.  Skipping patch.
+6 out of 6 hunks ignored
+can't find file to patch at input line 186
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/toolbar/app_menu_model.h chrome/browser/ui/toolbar/app_menu_model.h
+|index 19660398cc4f550fbd99f77bd44082aae3dbb186..81e1918c430268e28d79f3b2f30f20bf9dd60c2b 100644
+|--- chrome/browser/ui/toolbar/app_menu_model.h
+|+++ chrome/browser/ui/toolbar/app_menu_model.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 207
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/frame/browser_view.cc chrome/browser/ui/views/frame/browser_view.cc
+|index f97fa82af19060541b058277a3fb10a8bb66d74e..5768fe9ecebdc1183ec6e3267ac34ef889307e3a 100644
+|--- chrome/browser/ui/views/frame/browser_view.cc
+|+++ chrome/browser/ui/views/frame/browser_view.cc
+--------------------------
+No file to patch.  Skipping patch.
+18 out of 18 hunks ignored
+can't find file to patch at input line 502
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/frame/browser_view.h chrome/browser/ui/views/frame/browser_view.h
+|index 79feee7f43dd9c283da48a238f0915e4c06561a4..61ded8a215a61135961790ee072f101f9ea7732a 100644
+|--- chrome/browser/ui/views/frame/browser_view.h
+|+++ chrome/browser/ui/views/frame/browser_view.h
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 549
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/frame/browser_widget.cc chrome/browser/ui/views/frame/browser_widget.cc
+|index d825bc7cb582898807504ff76123b8cf7090f428..f22893cf9f029a354f41ba99d3be756c4cc5b9c7 100644
+|--- chrome/browser/ui/views/frame/browser_widget.cc
+|+++ chrome/browser/ui/views/frame/browser_widget.cc
+--------------------------
+No file to patch.  Skipping patch.
+7 out of 7 hunks ignored
+can't find file to patch at input line 689
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/frame/browser_widget.h chrome/browser/ui/views/frame/browser_widget.h
+|index 8c71e1f938484e703afe19eee3c7b0c10a94e5f5..195119e9511ee27f57bb89ae7a22b9d475d1e0fc 100644
+|--- chrome/browser/ui/views/frame/browser_widget.h
+|+++ chrome/browser/ui/views/frame/browser_widget.h
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 743
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/frame/layout/browser_view_layout.cc chrome/browser/ui/views/frame/layout/browser_view_layout.cc
+|index 4c11e8bdea1e5a1bc45c274a45024068f7e11698..8cb87d26fc8cf0dfd0a8a1a92a2b01206e7fcc6f 100644
+|--- chrome/browser/ui/views/frame/layout/browser_view_layout.cc
+|+++ chrome/browser/ui/views/frame/layout/browser_view_layout.cc
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 801
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/frame/layout/browser_view_layout.h chrome/browser/ui/views/frame/layout/browser_view_layout.h
+|index c6d1a3fe5bf70be55b1bc7f38a0aaba30020c8d9..89bb0ea02062b61f80d0e2673c71543aa85f2609 100644
+|--- chrome/browser/ui/views/frame/layout/browser_view_layout.h
+|+++ chrome/browser/ui/views/frame/layout/browser_view_layout.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 814
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/frame/layout/browser_view_layout_delegate.h chrome/browser/ui/views/frame/layout/browser_view_layout_delegate.h
+|index 0fb2932ac6a5768ff53c69f2e5ad08af7e373d0c..75ea22fd8b9318d5c17ca651c057ec8c715fa6f4 100644
+|--- chrome/browser/ui/views/frame/layout/browser_view_layout_delegate.h
+|+++ chrome/browser/ui/views/frame/layout/browser_view_layout_delegate.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 826
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.cc chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.cc
+|index 6fa2362cd278527882fb70a80cca6b23a1c4addb..e1d0bed546f1e7fbc343584e93dba99321ab9723 100644
+|--- chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.cc
+|+++ chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 846
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.h chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.h
+|index b302b461ac5946b99356b25a5baca2844bcd3a04..e259acd2b6878377788c794d2e1e190835b57bc6 100644
+|--- chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.h
+|+++ chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 858
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/frame/layout/browser_view_layout_impl.cc chrome/browser/ui/views/frame/layout/browser_view_layout_impl.cc
+|index 9772955f288b583b2ec87971b4e8ef3bddcdb9ab..f86c8e221a50e1338b3f8a2f6600a81816870298 100644
+|--- chrome/browser/ui/views/frame/layout/browser_view_layout_impl.cc
+|+++ chrome/browser/ui/views/frame/layout/browser_view_layout_impl.cc
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 900
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/frame/picture_in_picture_browser_frame_view.cc chrome/browser/ui/views/frame/picture_in_picture_browser_frame_view.cc
+|index e47fdcb93813433b3c95467b7daeba91b0ee3f70..255da76974c8ac8806394fd35391f0af48f1a959 100644
+|--- chrome/browser/ui/views/frame/picture_in_picture_browser_frame_view.cc
+|+++ chrome/browser/ui/views/frame/picture_in_picture_browser_frame_view.cc
+--------------------------
+No file to patch.  Skipping patch.
+4 out of 4 hunks ignored
+can't find file to patch at input line 987
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/frame/shadow_overlay_view.cc chrome/browser/ui/views/frame/shadow_overlay_view.cc
+|index f5de9348a07f481c3e103ea20fdad929837c7a71..0e47057626816304423e9edd941bd616f294eb55 100644
+|--- chrome/browser/ui/views/frame/shadow_overlay_view.cc
+|+++ chrome/browser/ui/views/frame/shadow_overlay_view.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 1001
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/omnibox/omnibox_popup_closer.cc chrome/browser/ui/views/omnibox/omnibox_popup_closer.cc
+|index d4fd7c425a50c3a356807e7aed0a6a897f169959..a347c3b5416a98c1a5f2fa58850a4e3dfea25713 100644
+|--- chrome/browser/ui/views/omnibox/omnibox_popup_closer.cc
+|+++ chrome/browser/ui/views/omnibox/omnibox_popup_closer.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 1015
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/page_action/page_action_icon_controller.cc chrome/browser/ui/views/page_action/page_action_icon_controller.cc
+|index 4bf996ee32d74bb52c045694aed40c3903fd5bec..96ca540ec612afc0d633e361f728bc8e948639b1 100644
+|--- chrome/browser/ui/views/page_action/page_action_icon_controller.cc
+|+++ chrome/browser/ui/views/page_action/page_action_icon_controller.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 1034
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/toolbar/toolbar_view.cc chrome/browser/ui/views/toolbar/toolbar_view.cc
+|index ffe9df783632b5944466dca37e021a5a71bb2565..dd5103ece29662a74862f807144f8429d421e6f3 100644
+|--- chrome/browser/ui/views/toolbar/toolbar_view.cc
+|+++ chrome/browser/ui/views/toolbar/toolbar_view.cc
+--------------------------
+No file to patch.  Skipping patch.
+7 out of 7 hunks ignored
+can't find file to patch at input line 1133
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/toolbar/toolbar_view.h chrome/browser/ui/views/toolbar/toolbar_view.h
+|index 047c3847f7dfbbb2f4974e617d45849e711b0e08..2337cc81dd4f1961d8e12f1f2b36da925d19b870 100644
+|--- chrome/browser/ui/views/toolbar/toolbar_view.h
+|+++ chrome/browser/ui/views/toolbar/toolbar_view.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply chrome_runtime_views, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/chrome_browser_browser.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/browser_about_handler.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/devtools/devtools_window.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/BUILD.gn
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/browser.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/browser.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/browser_finder.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/browser_manager_service.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/browser_navigator.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/browser_tabstrip.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/browser_window/internal/browser_window_features.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/browser_window/public/browser_window_features.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/browser_window/public/browser_window_interface.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/frame/horizontal_tab_strip_region_view.cc
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/browser_about_handler.cc chrome/browser/browser_about_handler.cc
+|index 08949a69415dfa9f836e00929a34330a34546ce2..e417f50fa68e274b80c0d45bdaa45c7b22fd6dcd 100644
+|--- chrome/browser/browser_about_handler.cc
+|+++ chrome/browser/browser_about_handler.cc
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 40
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/devtools/devtools_window.cc chrome/browser/devtools/devtools_window.cc
+|index 2fc43cab979927dcac35fdc01e79c4f333ae95c8..75609a8a989cae6b3644ba3afccb3f3c52224139 100644
+|--- chrome/browser/devtools/devtools_window.cc
+|+++ chrome/browser/devtools/devtools_window.cc
+--------------------------
+No file to patch.  Skipping patch.
+4 out of 4 hunks ignored
+can't find file to patch at input line 114
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/BUILD.gn chrome/browser/ui/BUILD.gn
+|index dc0ae5ff387f876e3712412c763f64748f4b8c06..49bc82fdf7aa66658a864a777f0e81648b080378 100644
+|--- chrome/browser/ui/BUILD.gn
+|+++ chrome/browser/ui/BUILD.gn
+--------------------------
+No file to patch.  Skipping patch.
+5 out of 5 hunks ignored
+can't find file to patch at input line 167
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/browser.cc chrome/browser/ui/browser.cc
+|index dd77f2fda3db2e7974003085a22981cad3f6c794..0df30170309e12185348f2a7b20d0e6b4a210499 100644
+|--- chrome/browser/ui/browser.cc
+|+++ chrome/browser/ui/browser.cc
+--------------------------
+No file to patch.  Skipping patch.
+27 out of 27 hunks ignored
+can't find file to patch at input line 578
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/browser.h chrome/browser/ui/browser.h
+|index e92caadbec713996d7eb0af9e59ed4a3f14ea148..505ca2ac9937586d9ba789a6f5ee61d9b5ffbaf3 100644
+|--- chrome/browser/ui/browser.h
+|+++ chrome/browser/ui/browser.h
+--------------------------
+No file to patch.  Skipping patch.
+11 out of 11 hunks ignored
+can't find file to patch at input line 703
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/browser_finder.cc chrome/browser/ui/browser_finder.cc
+|index a7e0eb934caaa63e4eda432eba2a3e15c7f8bd3d..ba5de50e3d92d05e1848a5f56850007c804a8e4d 100644
+|--- chrome/browser/ui/browser_finder.cc
+|+++ chrome/browser/ui/browser_finder.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 723
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/browser_manager_service.cc chrome/browser/ui/browser_manager_service.cc
+|index 06cf1924df5126b78f54e3a3ccddd4889a758daf..e44b5a2dbd2db58982685c4a817a34299ef88f6d 100644
+|--- chrome/browser/ui/browser_manager_service.cc
+|+++ chrome/browser/ui/browser_manager_service.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 761
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/browser_navigator.cc chrome/browser/ui/browser_navigator.cc
+|index dab09c63a53bbe0abd8ef305a1991df8eb3f9cc8..0380d2592b7148e0c977f9ff926692c5d6f07c72 100644
+|--- chrome/browser/ui/browser_navigator.cc
+|+++ chrome/browser/ui/browser_navigator.cc
+--------------------------
+No file to patch.  Skipping patch.
+4 out of 4 hunks ignored
+can't find file to patch at input line 813
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/browser_tabstrip.cc chrome/browser/ui/browser_tabstrip.cc
+|index 8fcba62fa159924eaa33f5c9f1b57dc8ab5db863..25b96e03a9e2598a6c5a6dbf0ad60bf73fb89378 100644
+|--- chrome/browser/ui/browser_tabstrip.cc
+|+++ chrome/browser/ui/browser_tabstrip.cc
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 859
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/browser_window/internal/browser_window_features.cc chrome/browser/ui/browser_window/internal/browser_window_features.cc
+|index 6497e66236effbea107b4c58030babb83d55e02f..7fa24ea0990d143652bc3eac3e3d507b1b83b6f2 100644
+|--- chrome/browser/ui/browser_window/internal/browser_window_features.cc
+|+++ chrome/browser/ui/browser_window/internal/browser_window_features.cc
+--------------------------
+No file to patch.  Skipping patch.
+7 out of 7 hunks ignored
+can't find file to patch at input line 974
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/browser_window/public/browser_window_features.h chrome/browser/ui/browser_window/public/browser_window_features.h
+|index 2bdba2a8de29e3e097b03bcc5d53558fcc7783f6..e3c14bfbee4f19d9fd71fac6d2c732cd0a99c581 100644
+|--- chrome/browser/ui/browser_window/public/browser_window_features.h
+|+++ chrome/browser/ui/browser_window/public/browser_window_features.h
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 1014
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/browser_window/public/browser_window_interface.h chrome/browser/ui/browser_window/public/browser_window_interface.h
+|index 6a856b5aa45896e747c6b4f0f3d4c3286778f29b..9916b2e992ebe760126a50f9886425f889bd1f59 100644
+|--- chrome/browser/ui/browser_window/public/browser_window_interface.h
+|+++ chrome/browser/ui/browser_window/public/browser_window_interface.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 1029
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/frame/horizontal_tab_strip_region_view.cc chrome/browser/ui/views/frame/horizontal_tab_strip_region_view.cc
+|index f58acb61576d77fd77303344c098de4ed67134b2..77aa593f535d847b4ff8d4ec54148006ec754f50 100644
+|--- chrome/browser/ui/views/frame/horizontal_tab_strip_region_view.cc
+|+++ chrome/browser/ui/views/frame/horizontal_tab_strip_region_view.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply chrome_browser_browser, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/chrome_browser_content_settings.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/components/content_settings/renderer/content_settings_agent_impl.cc
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git components/content_settings/renderer/content_settings_agent_impl.cc components/content_settings/renderer/content_settings_agent_impl.cc
+|index 4c1b6f39d1a059e26b610097c8b91ef85c3bcc13..707fb25732498eeb2055e5b32e297f151a0ebaa0 100644
+|--- components/content_settings/renderer/content_settings_agent_impl.cc
+|+++ components/content_settings/renderer/content_settings_agent_impl.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply chrome_browser_content_settings, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/chrome_browser_context_menus.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/renderer_context_menu/render_view_context_menu.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/renderer_context_menu/render_view_context_menu.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.mm
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.mm
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.mm
+--> Skipping non-existing file /tmp/phase_ab_worktree/components/renderer_context_menu/context_menu_delegate.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/components/renderer_context_menu/render_view_context_menu_base.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/components/renderer_context_menu/render_view_context_menu_base.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/components/renderer_context_menu/render_view_context_menu_observer.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/components/renderer_context_menu/render_view_context_menu_observer.h
+--> Skipping non-existing file /tmp/phase_ab_worktree/components/renderer_context_menu/views/toolkit_delegate_views.cc
+--> Skipping non-existing file /tmp/phase_ab_worktree/components/renderer_context_menu/views/toolkit_delegate_views.h
+--> Applying patch to /tmp/phase_ab_worktree
+can't find file to patch at input line 5
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/renderer_context_menu/render_view_context_menu.cc chrome/browser/renderer_context_menu/render_view_context_menu.cc
+|index febf3d8e4c4fb0fa773fd531a00f22685c5a4081..f8cc9e03092c4cb23236f31c14ee5b092a24bf90 100644
+|--- chrome/browser/renderer_context_menu/render_view_context_menu.cc
+|+++ chrome/browser/renderer_context_menu/render_view_context_menu.cc
+--------------------------
+No file to patch.  Skipping patch.
+5 out of 5 hunks ignored
+can't find file to patch at input line 94
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/renderer_context_menu/render_view_context_menu.h chrome/browser/renderer_context_menu/render_view_context_menu.h
+|index 5bc2716727784a62cb63f07860bedcba54d6c642..6c8d74e4cd5a5b4e9b2e7c76e740a8f599ad13bc 100644
+|--- chrome/browser/renderer_context_menu/render_view_context_menu.h
+|+++ chrome/browser/renderer_context_menu/render_view_context_menu.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 130
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.h chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.h
+|index 87a03fab0aa911720537c3bdcc9fa4c3b7bdeac2..64f222dd5babf919473437bb8e7b10fa6f198a3a 100644
+|--- chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.h
+|+++ chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 142
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.mm chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.mm
+|index 31e09fcc1565eae518ecfeda46bf723678012d3b..7b0dbafc2dc58c4df4b4ecc8f7fd088d878163c4 100644
+|--- chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.mm
+|+++ chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.mm
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 168
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.h chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.h
+|index 125950349131339601bdfb13266ac28098f61ae0..7a06d48ba04f842768b22a4d673a2214a25d5615 100644
+|--- chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.h
+|+++ chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 180
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.mm chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.mm
+|index e16ab11bee4e62c81b57e332dde8dfb36fd11d55..e1868164a1ae148e8f84a7813b1de2a8583d303a 100644
+|--- chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.mm
+|+++ chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.mm
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 195
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
+|index 547d32b46faf503af7d5f30f55db49a3a1ad98b3..6661551e9624cbe4c2c29749a60617179c0704f4 100644
+|--- chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
+|+++ chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
+--------------------------
+No file to patch.  Skipping patch.
+3 out of 3 hunks ignored
+can't find file to patch at input line 232
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.h chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.h
+|index d5c63e61873c68b19b2b8302751b95e941ed77ef..a0e57996e613a4daaf88e79a6a76107f83ef723f 100644
+|--- chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.h
+|+++ chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 244
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.cc chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.cc
+|index 2e0e7fa3371d395d8f349173b6e0760d19880931..adfcf10ca85f7b6868067ffba8bf70d70bcc3405 100644
+|--- chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.cc
+|+++ chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 259
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.h chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.h
+|index 1b547af23a0f7d4153c5c977673ee4330c1328df..659ec952f245c47fe6f767f3fd7a71dedc1b38dc 100644
+|--- chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.h
+|+++ chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 271
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.h chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.h
+|index e8c2f471b20e976bde66bad2110445543d4f6ded..3e0704e53bc38bd441ac4c7baeeb1e7ea117a042 100644
+|--- chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.h
+|+++ chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 283
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.mm chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.mm
+|index 436da7e01a4fe38ae3b96f31f6fa6736742aa9ba..8b83b1d919b0399798a551b32e382a3577b89d6f 100644
+|--- chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.mm
+|+++ chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.mm
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 298
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git components/renderer_context_menu/context_menu_delegate.h components/renderer_context_menu/context_menu_delegate.h
+|index 042428f77f4ad021d82db228772d82dc9cd9216c..e4efd98ca45d5be49b17d75533719b3ac157767d 100644
+|--- components/renderer_context_menu/context_menu_delegate.h
+|+++ components/renderer_context_menu/context_menu_delegate.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 311
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git components/renderer_context_menu/render_view_context_menu_base.cc components/renderer_context_menu/render_view_context_menu_base.cc
+|index ad4a62e7b52962fd2cd7babba369d1a8ac474a39..3a8b295fa8fa4951aeabc9d19d98d08fd10ae18b 100644
+|--- components/renderer_context_menu/render_view_context_menu_base.cc
+|+++ components/renderer_context_menu/render_view_context_menu_base.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 333
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git components/renderer_context_menu/render_view_context_menu_base.h components/renderer_context_menu/render_view_context_menu_base.h
+|index 72615bbf56a5157421f7abf5ff0c3f6c3131db35..3a7a5050cbbaec34683a70116796873a4556d324 100644
+|--- components/renderer_context_menu/render_view_context_menu_base.h
+|+++ components/renderer_context_menu/render_view_context_menu_base.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 361
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git components/renderer_context_menu/render_view_context_menu_observer.cc components/renderer_context_menu/render_view_context_menu_observer.cc
+|index 9fdda1636003df5f0981f6073bc459fa5b5056ae..538bd05a412961e54214833fad915de7104b5154 100644
+|--- components/renderer_context_menu/render_view_context_menu_observer.cc
+|+++ components/renderer_context_menu/render_view_context_menu_observer.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 374
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git components/renderer_context_menu/render_view_context_menu_observer.h components/renderer_context_menu/render_view_context_menu_observer.h
+|index b2aa338c76cd36031abe49190c1f43db4e2b6f03..233c34003bbc5a3e3588bdd60b3ba6ea4c426ea9 100644
+|--- components/renderer_context_menu/render_view_context_menu_observer.h
+|+++ components/renderer_context_menu/render_view_context_menu_observer.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 398
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git components/renderer_context_menu/views/toolkit_delegate_views.cc components/renderer_context_menu/views/toolkit_delegate_views.cc
+|index 0be2640c8173c86720b44a8ad4ab10fdf9e6686e..8bfdc6185690fbe01ba0aaab8c7bc6973a78a37c 100644
+|--- components/renderer_context_menu/views/toolkit_delegate_views.cc
+|+++ components/renderer_context_menu/views/toolkit_delegate_views.cc
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 413
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git components/renderer_context_menu/views/toolkit_delegate_views.h components/renderer_context_menu/views/toolkit_delegate_views.h
+|index 7762b3e6673d91edd01858bfd325ee57e3d9f766..5bd1544aaaa6229bd20955e0e0ded1360d1395b2 100644
+|--- components/renderer_context_menu/views/toolkit_delegate_views.h
+|+++ components/renderer_context_menu/views/toolkit_delegate_views.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+--------------------------------------------------------------------------------
+!!!! WARNING: Failed to apply chrome_browser_context_menus, fix manually and run with --resave
+--------------------------------------------------------------------------------
+
+--> Reading patch file /tmp/phase_ab_worktree/cef/patch/patches/chrome_browser_devtools_osr.patch
+--> Skipping non-existing file /tmp/phase_ab_worktree/chrome/browser/devtools/chrome_devtools_manager_delegate.cc
+--> Applying patch to /tmp/phase_ab_worktree
+Traceback (most recent call last):
+  File "/tmp/phase_ab_worktree/cef/tools/patch_updater.py", line 254, in <module>
+    raise Exception('Failed to apply patch file: %s' % result['err'])
+Exception: Failed to apply patch file: patch: **** malformed patch at line 49:  
+
+

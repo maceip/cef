@@ -80,6 +80,12 @@ When `build_analysis.txt` exists:
 3. Defer full target rebuild until all listed files compile.
 4. Re-run full build, re-analyze, repeat.
 
+## Current Bootstrap Artifacts
+
+- `tools/claude/build_output.txt` (captured command failure output)
+- `tools/claude/patch_output.txt`
+- `tools/claude/patch_analysis.txt`
+
 ## Runtime Evidence (terminal excerpts)
 
 Patch baseline:
@@ -104,4 +110,9 @@ bash: autoninja: command not found
 gn.py: Unable to find gn in your $PATH
 Hint: `which -a gn` should output two entries
 ERROR: gn not found. Add depot_tools to PATH: export PATH=$HOME/depot_tools:$PATH
+```
+
+```text
+$ autoninja -k 0 -C out/Debug_GN_x64 cef
+--: line 1: autoninja: command not found
 ```

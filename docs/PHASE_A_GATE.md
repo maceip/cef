@@ -49,15 +49,22 @@ From `tools/claude/patch_analysis.txt`:
 
 Most failures are `FILE MISSING`, indicating this checkout does not currently contain the full Chromium source tree expected by the patch workflow (for example `chrome/...`, `content/...`, `ui/...` paths).
 
+## Artifact Paths
+
+Current baseline artifacts are stored at:
+
+- `tools/claude/patch_output.txt`
+- `tools/claude/patch_analysis.txt`
+
 ## Gate Decision
 
-**Phase A is complete as a gate/baseline phase**: baseline execution is established, failure inventory is captured, and blockers are explicit.
+**Phase A gate is complete for this environment**: baseline execution is established, failure inventory is captured, and blockers are explicit.
 
-**Phase A full remediation (making all patches apply cleanly) is blocked** until patch application is run in a full Chromium checkout layout with CEF integrated at `chromium/src/cef`.
+**Phase A full remediation (making all patches apply cleanly) remains blocked** until patch application is run in a full Chromium checkout layout with CEF integrated at `chromium/src/cef`.
 
 ## Artifact Reproduction
 
-The baseline outputs were generated locally during this run. Reproduce them with:
+Reproduce/update Phase A artifacts with:
 
 ```bash
 python3 /tmp/phase_ab_worktree/cef/tools/patch_updater.py > tools/claude/patch_output.txt 2>&1
