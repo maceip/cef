@@ -128,11 +128,11 @@ class CefRunnerStack(Stack):
     ):
         super().__init__(scope, id, **kwargs)
 
-        github_token_param = ssm.StringParameter(
+        # SSM parameter is created/managed outside CDK (via CLI) to avoid
+        # CDK overwriting the real PAT with a placeholder on every deploy.
+        github_token_param = ssm.StringParameter.from_secure_string_parameter_attributes(
             self, "GhRunnerToken",
             parameter_name="/cef/github-runner-token",
-            string_value="PLACEHOLDER",
-            description="GitHub PAT (repo scope) — used at boot to generate a fresh runner registration token",
         )
 
         # --- IAM role for runners ---
