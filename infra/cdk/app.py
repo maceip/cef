@@ -159,7 +159,7 @@ class CefRunnerStack(Stack):
             "#!/bin/bash",
             "set -euxo pipefail",
             # Install runner dependencies (libicu needed by .NET runtime in GH runner)
-            "yum install -y docker git jq libicu",
+            "yum install -y docker git jq libicu gperf",
             "systemctl enable --now docker",
             # Install sccache
             "curl -fsSL https://github.com/mozilla/sccache/releases/download/v0.9.1/sccache-v0.9.1-x86_64-unknown-linux-musl.tar.gz"
@@ -232,7 +232,7 @@ class CefRunnerStack(Stack):
         arm_user_data.add_commands(
             "#!/bin/bash",
             "set -euxo pipefail",
-            "yum install -y docker git jq libicu",
+            "yum install -y docker git jq libicu gperf",
             "systemctl enable --now docker",
             "curl -fsSL https://github.com/mozilla/sccache/releases/download/v0.9.1/sccache-v0.9.1-aarch64-unknown-linux-musl.tar.gz"
             " | tar -xz -C /usr/local/bin --strip-components=1 --wildcards '*/sccache'",
