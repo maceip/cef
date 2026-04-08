@@ -127,6 +127,45 @@ Result summary:
 - No compile error diagnostics (`*: error:` / `fatal error:`) were emitted in captured output window.
 - Because interruption occurred before first compiler error or final completion, no actionable file-level build error index was produced yet.
 
+### Attempt 9 — extended remote compile run for actionable error capture
+
+Command (remote):
+
+```bash
+cd ~/cef-automate/chromium/src
+PATH=$HOME/depot_tools:$PATH autoninja -k 0 -C out/Debug_GN_x64 cef > cef/tools/claude/build_output_remote.txt 2>&1
+```
+
+Result summary:
+
+- Extended run reached ~22 minutes and progressed from ~14k pending edges to ~11k pending edges.
+- Log still contained no compiler diagnostics (`: error:` / `fatal error:` / `FAILED:` lines).
+- Build was manually interrupted to avoid unbounded runtime in this session.
+- Conclusion: command path and environment are valid; need an uninterrupted long build window (or targeted file/object build) to surface first actionable compile failures.
+
+### Attempt 10 — timed remote run with `--fast_local` produced first actionable compiler errors
+
+Command (remote):
+
+```bash
+cd ~/cef-automate/chromium/src
+PATH=$HOME/depot_tools:$PATH timeout 540 autoninja --fast_local -k 0 -C out/Debug_GN_x64 cef \
+  > cef/tools/claude/build_output_remote_fast.txt 2>&1 || true
+PATH=$HOME/depot_tools:$PATH python3 cef/tools/claude/analyze_build_output.py \
+  cef/tools/claude/build_output_remote_fast.txt \
+  --old-version 146.0.7680.0 \
+  --new-version 147.0.7727.0 \
+  --no-color > cef/tools/claude/build_analysis_remote_fast.txt
+```
+
+Result summary:
+
+- Timed run produced first compiler diagnostics and stopped with 2 compile failures.
+- Analyzer output (`build_analysis_remote_fast.txt`) indexed:
+  1. `content/browser/renderer_host/render_frame_host_impl.cc` line `10142`
+  2. `content/browser/storage_partition_impl.cc` line `3588`
+- This now gives a concrete first-wave Phase B queue.
+
 ## Bootstrap Outcome
 
 The Phase B flow is now bootstrapped both locally and remotely:
@@ -137,6 +176,8 @@ The Phase B flow is now bootstrapped both locally and remotely:
 Next work is iterative compile/fix cycles in the remote Chromium checkout until either:
 1) first actionable compile errors are indexed, or
 2) the full `cef` target completes.
+
+The “first actionable compile errors” milestone is now reached (Attempt 10), so Phase B implementation can start immediately from the two indexed files.
 
 ## Required Preconditions for Phase B Execution
 
@@ -164,6 +205,15 @@ When `build_analysis.txt` exists:
 3. Defer full target rebuild until all listed files compile.
 4. Re-run full build, re-analyze, repeat.
 
+### Current first-wave error queue (remote fast run)
+
+1. `content/browser/renderer_host/render_frame_host_impl.cc:10142`
+   - Error: `no member named 'CreateWindowResult' in 'content::ContentBrowserClient'`
+   - Rebuild target: `obj/content/browser/browser/render_frame_host_impl.o`
+2. `content/browser/storage_partition_impl.cc:3588`
+   - Error: `invalid argument type 'void' to unary expression`
+   - Rebuild target: `obj/content/browser/browser/storage_partition_impl.o`
+
 ## Current Bootstrap Artifacts
 
 - `tools/claude/build_output.txt` (captured command failure output)
@@ -171,7 +221,9 @@ When `build_analysis.txt` exists:
 - `tools/claude/build_setup_output.txt` (latest setup failure output)
 - `tools/claude/gn_gen_output.txt` (explicit GN generation failure output)
 - `tools/claude/build_output_remote.txt` (remote full-checkout compile transcript)
-- `tools/claude/build_analysis_remote.txt` (remote analysis note)
+- `tools/claude/build_analysis_remote.txt` (remote analysis note for interrupted long run)
+- `tools/claude/build_output_remote_fast.txt` (timed remote compile transcript with first compiler errors)
+- `tools/claude/build_analysis_remote_fast.txt` (indexed first-wave remote compile errors)
 - `tools/claude/patch_output.txt`
 - `tools/claude/patch_analysis.txt`
 
@@ -241,4 +293,20 @@ ninja: Entering directory `out/Debug_GN_x64'
 ...
 14m03.36s Build Failure: 2589 done, 0 failed, 11361 remaining - 3.07/s
  interrupt by signal
+```
+
+```text
+$ PATH=$HOME/depot_tools:$PATH autoninja -k 0 -C out/Debug_GN_x64 cef
+offline mode
+ninja: Entering directory `out/Debug_GN_x64'
+...
+[1504/11122] 22m25.05s F CXX obj/ui/views/views/dot_indicator.o
+```
+
+```text
+$ PATH=$HOME/depot_tools:$PATH timeout 540 autoninja --fast_local -k 0 -C out/Debug_GN_x64 cef
+...
+../../content/browser/renderer_host/render_frame_host_impl.cc:10142:40: error: no member named 'CreateWindowResult' in 'content::ContentBrowserClient'
+...
+../../content/browser/storage_partition_impl.cc:3588:7: error: invalid argument type 'void' to unary expression
 ```

@@ -1,0 +1,40 @@
+
+================================================================================
+CEF BUILD ERROR INDEX
+================================================================================
+Build output file: cef/tools/claude/build_output_remote_fast.txt
+Total errors: 2
+Files with errors: 2
+
+ERRORS BY FILE (ordered by error count):
+--------------------------------------------------------------------------------
+
+1. content/browser/renderer_host/render_frame_host_impl.cc - 1 error(s)
+   Rebuild: autoninja -C out/Debug_GN_x64 obj/content/browser/browser/render_frame_host_impl.o
+   • Line 10142 → cef/tools/claude/build_output_remote_fast.txt:4560
+
+2. content/browser/storage_partition_impl.cc - 1 error(s)
+   Rebuild: autoninja -C out/Debug_GN_x64 obj/content/browser/browser/storage_partition_impl.o
+   • Line 3588 → cef/tools/claude/build_output_remote_fast.txt:4775
+
+--------------------------------------------------------------------------------
+WORKFLOW:
+
+1. Read error details: Read cef/tools/claude/build_output_remote_fast.txt at line <error_line>
+
+2. Investigate Chromium changes:
+   git diff --no-prefix refs/tags/146.0.7680.0...refs/tags/147.0.7727.0 -- <file_path>
+
+3. Fix the error(s) in the file
+
+4. Rebuild just that file using the command shown above
+   Example: autoninja -C out/Debug_GN_x64 obj/cef/libcef_static/file.o
+
+5. If successful, move to next file and repeat
+
+6. After all files compile successfully, rebuild all:
+   autoninja -C out/Debug_GN_x64 cef
+
+Detailed instructions: cef/tools/claude/CLAUDE_BUILD_INSTRUCTIONS.md
+================================================================================
+
