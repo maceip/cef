@@ -95,6 +95,7 @@ jobs:
 
           python3 cef-src/tools/automate/automate-git.py \
             --download-dir="$DOWNLOAD_DIR" \
+            --url=https://github.com/maceip/cef.git \
             --branch="$CEF_BRANCH" \
             --x64-build \
             --build-target=cef \
