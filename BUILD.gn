@@ -337,7 +337,7 @@ group("cef") {
     ]
   }
 
-  if (!is_linux || ozone_platform_x11) {
+  if (!is_linux || (ozone_platform_x11 && cef_use_gtk)) {
     deps += [ ":cefclient" ]
   }
 }

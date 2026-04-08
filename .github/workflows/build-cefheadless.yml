@@ -97,7 +97,7 @@ jobs:
             --download-dir="$DOWNLOAD_DIR" \
             --branch="$CEF_BRANCH" \
             --x64-build \
-            --build-target=cef/cefheadless \
+            --build-target=cef \
             --with-pgo-profiles \
             --no-chromium-history \
             $BUILD_FLAGS \
