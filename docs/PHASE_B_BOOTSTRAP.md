@@ -65,16 +65,44 @@ Result excerpt:
 - `- If your project has DEPS, add a CIPD Ninja dependency to DEPS.`
 - `- Otherwise, add Ninja to your PATH *after* depot_tools.`
 
+### Attempt 5 — install system Ninja/GN and retry baseline build
+
+Commands:
+
+```bash
+sudo apt-get install -y ninja-build generate-ninja
+PATH=/home/ubuntu/depot_tools:$PATH autoninja -k 0 -C out/Debug_GN_x64 cef > tools/claude/build_output.txt 2>&1
+```
+
+Result excerpt:
+
+- `ninja: Entering directory \`out/Debug_GN_x64'`
+- `ninja: fatal: chdir to 'out/Debug_GN_x64' - No such file or directory`
+
+### Attempt 6 — retry setup after GN/Ninja install
+
+Command:
+
+```bash
+PATH=/home/ubuntu/depot_tools:$PATH CHROMIUM_DIR=/tmp/phase_ab_worktree ./tools/claude/build.sh setup > tools/claude/build_setup_output.txt 2>&1
+```
+
+Result excerpt:
+
+- `ERROR Can't find source root.`
+- `I could not find a ".gn" file in the current directory or any parent`
+- `ERROR: gn not found. Add depot_tools to PATH: export PATH=$HOME/depot_tools:$PATH`
+
 ## Bootstrap Outcome
 
-The Phase B capture flow is now clearly defined and partially wired (depot_tools cloned, setup command path validated), but a full ninja build baseline cannot yet run in this checkout due environment/source-layout prerequisites.
+The Phase B capture flow is now clearly defined and partially wired. Tooling improved enough to invoke Ninja, but the build cannot progress because this workspace is not a full Chromium source-root layout (missing generated out dir and expected source-root semantics for GN setup).
 
 ## Required Preconditions for Phase B Execution
 
 1. Full Chromium checkout exists (not CEF-only tree).
 2. CEF is integrated as `chromium/src/cef`.
 3. GN and autoninja are operational for that checkout.
-4. Build output dir generated (`out/Debug_GN_x64` or platform equivalent).
+4. Build output dir generated (`out/Debug_GN_x64` or platform equivalent) from the real Chromium source root.
 
 ## First Commands Once Preconditions Are Met
 
@@ -98,7 +126,8 @@ When `build_analysis.txt` exists:
 ## Current Bootstrap Artifacts
 
 - `tools/claude/build_output.txt` (captured command failure output)
-- `tools/claude/build_analysis.txt` (captured analyzer failure output showing why parse cannot proceed)
+- `tools/claude/build_analysis.txt` (captured analyzer limitation note for this bootstrap state)
+- `tools/claude/build_setup_output.txt` (latest setup failure output)
 - `tools/claude/patch_output.txt`
 - `tools/claude/patch_analysis.txt`
 
@@ -139,4 +168,18 @@ depot_tools/ninja.py: Could not find Ninja in the third_party of the current pro
 Please take one of the following actions to install Ninja:
 - If your project has DEPS, add a CIPD Ninja dependency to DEPS.
 - Otherwise, add Ninja to your PATH *after* depot_tools.
+```
+
+```text
+$ PATH=/home/ubuntu/depot_tools:$PATH autoninja -k 0 -C out/Debug_GN_x64 cef
+ninja: Entering directory `out/Debug_GN_x64'
+ninja: fatal: chdir to 'out/Debug_GN_x64' - No such file or directory
+```
+
+```text
+==> Setting up CEF build environment
+ERROR Can't find source root.
+I could not find a ".gn" file in the current directory or any parent,
+and the --root command-line argument was not specified.
+ERROR: gn not found. Add depot_tools to PATH: export PATH=$HOME/depot_tools:$PATH
 ```
