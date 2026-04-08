@@ -175,7 +175,7 @@ class CefRunnerStack(Stack):
             "usermod -aG docker runner",
             "mkdir -p /opt/actions-runner && chown runner:runner /opt/actions-runner",
             "cd /opt/actions-runner",
-            "curl -fsSL https://github.com/actions/runner/releases/download/v2.322.0/actions-runner-linux-x64-2.322.0.tar.gz"
+            "curl -fsSL https://github.com/actions/runner/releases/download/v2.322.0/actions-runner-linux-x64-2.333.1.tar.gz"
             " | tar -xz",
             "chown -R runner:runner /opt/actions-runner",
             'RUNNER_NAME="cef-x86-$(hostname)"',
@@ -245,7 +245,7 @@ class CefRunnerStack(Stack):
             "usermod -aG docker runner",
             "mkdir -p /opt/actions-runner && chown runner:runner /opt/actions-runner",
             "cd /opt/actions-runner",
-            "curl -fsSL https://github.com/actions/runner/releases/download/v2.322.0/actions-runner-linux-arm64-2.322.0.tar.gz"
+            "curl -fsSL https://github.com/actions/runner/releases/download/v2.322.0/actions-runner-linux-arm64-2.333.1.tar.gz"
             " | tar -xz",
             "chown -R runner:runner /opt/actions-runner",
             'RUNNER_NAME="cef-arm-$(hostname)"',
