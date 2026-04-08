@@ -49,18 +49,27 @@ From `tools/claude/patch_analysis.txt`:
 
 Most failures are `FILE MISSING`, indicating this checkout does not currently contain the full Chromium source tree expected by the patch workflow (for example `chrome/...`, `content/...`, `ui/...` paths).
 
+From remote full Chromium checkout baseline (`~/cef-automate/chromium/src` on the `cory_ssh_host` machine):
+
+- Total patches: **45**
+- Successful: **45**
+- Failed: **0**
+- Success rate: **100.0%**
+
 ## Artifact Paths
 
 Current baseline artifacts are stored at:
 
 - `tools/claude/patch_output.txt`
 - `tools/claude/patch_analysis.txt`
+- `tools/claude/patch_output_remote.txt`
+- `tools/claude/patch_analysis_remote.txt`
 
 ## Gate Decision
 
 **Phase A gate is complete for this environment**: baseline execution is established, failure inventory is captured, and blockers are explicit.
 
-**Phase A full remediation (making all patches apply cleanly) remains blocked** until patch application is run in a full Chromium checkout layout with CEF integrated at `chromium/src/cef`.
+**Phase A full remediation is now confirmed in the remote full Chromium environment** (`~/cef-automate/chromium/src`) where patch update reports 45/45 successful patches.
 
 ## Artifact Reproduction
 

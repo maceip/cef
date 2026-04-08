@@ -106,9 +106,37 @@ Result excerpt:
 - `ERROR Could not load dotfile.`
 - `The file "/workspace/.gn" couldn't be loaded`
 
+### Attempt 8 — run in remote full Chromium checkout via `cory_*` environment
+
+Commands (executed on remote host):
+
+```bash
+cd ~/cef-automate/chromium/src
+PATH=$HOME/depot_tools:$PATH autoninja -k 0 -C out/Debug_GN_x64 cef > cef/tools/claude/build_output_remote.txt 2>&1
+PATH=$HOME/depot_tools:$PATH python3 cef/tools/claude/analyze_build_output.py \
+  cef/tools/claude/build_output_remote.txt \
+  --old-version 146.0.7680.0 \
+  --new-version 147.0.7727.0 \
+  --no-color > cef/tools/claude/build_analysis_remote.txt
+```
+
+Result summary:
+
+- Build started successfully in a full Chromium checkout (`ninja: Entering directory \`out/Debug_GN_x64'`).
+- Build ran for ~14 minutes and compiled thousands of targets before interruption.
+- No compile error diagnostics (`*: error:` / `fatal error:`) were emitted in captured output window.
+- Because interruption occurred before first compiler error or final completion, no actionable file-level build error index was produced yet.
+
 ## Bootstrap Outcome
 
-The Phase B capture flow is now clearly defined and partially wired. Tooling improved enough to invoke Ninja, but the build cannot progress because this workspace is not a full Chromium source-root layout (missing generated out dir and expected source-root semantics for GN setup).
+The Phase B flow is now bootstrapped both locally and remotely:
+
+- Local workspace confirms expected CEF-only limitations.
+- Remote full Chromium environment confirms command path correctness and real compile execution.
+
+Next work is iterative compile/fix cycles in the remote Chromium checkout until either:
+1) first actionable compile errors are indexed, or
+2) the full `cef` target completes.
 
 ## Required Preconditions for Phase B Execution
 
@@ -142,6 +170,8 @@ When `build_analysis.txt` exists:
 - `tools/claude/build_analysis.txt` (captured analyzer limitation note for this bootstrap state)
 - `tools/claude/build_setup_output.txt` (latest setup failure output)
 - `tools/claude/gn_gen_output.txt` (explicit GN generation failure output)
+- `tools/claude/build_output_remote.txt` (remote full-checkout compile transcript)
+- `tools/claude/build_analysis_remote.txt` (remote analysis note)
 - `tools/claude/patch_output.txt`
 - `tools/claude/patch_analysis.txt`
 
@@ -202,4 +232,13 @@ ERROR: gn not found. Add depot_tools to PATH: export PATH=$HOME/depot_tools:$PAT
 $ PATH=/home/ubuntu/depot_tools:$PATH gn gen out/Debug_GN_x64 --root=/workspace
 ERROR Could not load dotfile.
 The file "/workspace/.gn" couldn't be loaded
+```
+
+```text
+$ PATH=$HOME/depot_tools:$PATH autoninja -k 0 -C out/Debug_GN_x64 cef
+offline mode
+ninja: Entering directory `out/Debug_GN_x64'
+...
+14m03.36s Build Failure: 2589 done, 0 failed, 11361 remaining - 3.07/s
+ interrupt by signal
 ```

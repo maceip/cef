@@ -1,0 +1,23 @@
+Remote build analysis run was interrupted before completion.
+
+Observed facts from `build_output_remote.txt`:
+- Build entered directory `out/Debug_GN_x64`.
+- Build advanced deep into compile graph (thousands of actions).
+- Session ended with:
+  - `Build Failure: 2589 done, 0 failed, 11361 remaining`
+  - `interrupt by signal`
+- No compiler error lines (`: error:` / `fatal error:`) were emitted before interruption.
+
+Interpretation:
+- This is an incomplete build snapshot, not a compile-success signal.
+- A full uninterrupted run is required to obtain actionable file-indexed errors.
+
+Next command to continue remotely:
+```bash
+cd ~/cef-automate/chromium/src
+PATH=$HOME/depot_tools:$PATH autoninja -k 0 -C out/Debug_GN_x64 cef 2>&1 | tee cef/tools/claude/build_output_remote.txt
+python3 cef/tools/claude/analyze_build_output.py cef/tools/claude/build_output_remote.txt \
+  --old-version 146.0.7680.0 \
+  --new-version 147.0.7727.0 \
+  --no-color > cef/tools/claude/build_analysis_remote.txt
+```

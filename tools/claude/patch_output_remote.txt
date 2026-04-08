@@ -1,0 +1,722 @@
+--> Reading patch config /home/cory/cef-automate/chromium/src/cef/patch/patch.cfg
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/gritsettings.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/tools/gritsettings/resource_ids.spec
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file tools/gritsettings/resource_ids.spec
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/gritsettings.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/gn_config.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/.gn
+--> Reverting changes to /home/cory/cef-automate/chromium/src/BUILD.gn
+--> Reverting changes to /home/cory/cef-automate/chromium/src/build/config/win/visual_studio_version.gni
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/chrome_paks.gni
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/chrome_repack_locales.gni
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/installer/mini_installer/BUILD.gn
+--> Reverting changes to /home/cory/cef-automate/chromium/src/tools/grit/grit_args.gni
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file .gn
+patching file BUILD.gn
+patching file build/config/win/visual_studio_version.gni
+patching file chrome/chrome_paks.gni
+patching file chrome/chrome_repack_locales.gni
+patching file chrome/installer/mini_installer/BUILD.gn
+patching file tools/grit/grit_args.gni
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/gn_config.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/runhooks.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/build/toolchain/win/setup_toolchain.py
+--> Reverting changes to /home/cory/cef-automate/chromium/src/build/vs_toolchain.py
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file build/toolchain/win/setup_toolchain.py
+patching file build/vs_toolchain.py
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/runhooks.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/component_build.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/devtools/devtools_instrumentation.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/renderer_host/input/mouse_wheel_phase_handler.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/renderer_host/input/synthetic_gesture_target_base.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/blink/renderer/controller/BUILD.gn
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/events/keycodes/BUILD.gn
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/events/keycodes/keyboard_code_conversion_xkb.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file content/browser/devtools/devtools_instrumentation.h
+patching file content/browser/renderer_host/input/mouse_wheel_phase_handler.h
+patching file content/browser/renderer_host/input/synthetic_gesture_target_base.h
+patching file third_party/blink/renderer/controller/BUILD.gn
+patching file ui/events/keycodes/BUILD.gn
+patching file ui/events/keycodes/keyboard_code_conversion_xkb.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/component_build.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/message_loop.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/base/message_loop/message_pump_win.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/base/task/current_thread.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/base/task/current_thread.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file base/message_loop/message_pump_win.cc
+patching file base/task/current_thread.cc
+patching file base/task/current_thread.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/message_loop.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/trace_event.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/base/trace_event/builtin_categories.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file base/trace_event/builtin_categories.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/trace_event.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/webkit_move_pip.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/picture_in_picture/picture_in_picture_window_manager.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/renderer/render_frame_impl.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/blink/public/mojom/picture_in_picture_window_options/picture_in_picture_window_options.mojom
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/blink/public/web/web_picture_in_picture_window_options.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/blink/public/web/web_view.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/blink/renderer/bindings/generated_in_modules.gni
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/blink/renderer/core/exported/web_view_impl.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/blink/renderer/core/frame/local_dom_window.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/blink/renderer/core/frame/local_dom_window.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/blink/renderer/modules/document_picture_in_picture/document_picture_in_picture_options.idl
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/blink/renderer/modules/document_picture_in_picture/picture_in_picture_controller_impl.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/blink/renderer/platform/runtime_enabled_features.override.json5
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/picture_in_picture/picture_in_picture_window_manager.cc
+patching file content/renderer/render_frame_impl.cc
+patching file third_party/blink/public/mojom/picture_in_picture_window_options/picture_in_picture_window_options.mojom
+patching file third_party/blink/public/web/web_picture_in_picture_window_options.h
+patching file third_party/blink/public/web/web_view.h
+patching file third_party/blink/renderer/bindings/generated_in_modules.gni
+patching file third_party/blink/renderer/core/exported/web_view_impl.h
+patching file third_party/blink/renderer/core/frame/local_dom_window.cc
+patching file third_party/blink/renderer/core/frame/local_dom_window.h
+patching file third_party/blink/renderer/modules/document_picture_in_picture/document_picture_in_picture_options.idl
+patching file third_party/blink/renderer/modules/document_picture_in_picture/picture_in_picture_controller_impl.cc
+patching file third_party/blink/renderer/platform/runtime_enabled_features.override.json5
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/webkit_move_pip.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/views_widget.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/extensions/api/sessions/sessions_api.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/apps/chrome_native_app_window_views_aura.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/sessions/core/session_service_commands.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/sessions/core/tab_restore_service_impl.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/renderer_host/render_widget_host_view_base.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/renderer_host/render_widget_host_view_base.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/renderer_host/render_widget_host_view_event_handler.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/public/browser/render_widget_host_view.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/blink/renderer/core/exported/web_view_impl.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/aura/native_window_occlusion_tracker_win.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/base/mojom/window_show_state.mojom
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/ozone/platform/x11/x11_window.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/widget/desktop_aura/desktop_screen_win.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/widget/desktop_aura/desktop_window_tree_host_linux.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/widget/desktop_aura/desktop_window_tree_host_linux.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/widget/desktop_aura/desktop_window_tree_host_platform.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/widget/desktop_aura/desktop_window_tree_host_win.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/widget/desktop_aura/desktop_window_tree_host_win.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/widget/native_widget_mac.mm
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/widget/widget.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/widget/widget.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/widget/widget_delegate.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/widget/widget_hwnd_utils.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/win/hwnd_message_handler.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/extensions/api/sessions/sessions_api.cc
+patching file chrome/browser/ui/views/apps/chrome_native_app_window_views_aura.cc
+patching file components/sessions/core/session_service_commands.cc
+patching file components/sessions/core/tab_restore_service_impl.cc
+patching file content/browser/renderer_host/render_widget_host_view_base.cc
+patching file content/browser/renderer_host/render_widget_host_view_base.h
+patching file content/browser/renderer_host/render_widget_host_view_event_handler.cc
+patching file content/public/browser/render_widget_host_view.h
+patching file third_party/blink/renderer/core/exported/web_view_impl.cc
+patching file ui/aura/native_window_occlusion_tracker_win.cc
+patching file ui/base/mojom/window_show_state.mojom
+patching file ui/ozone/platform/x11/x11_window.cc
+patching file ui/views/widget/desktop_aura/desktop_screen_win.cc
+patching file ui/views/widget/desktop_aura/desktop_window_tree_host_linux.cc
+patching file ui/views/widget/desktop_aura/desktop_window_tree_host_linux.h
+patching file ui/views/widget/desktop_aura/desktop_window_tree_host_platform.cc
+patching file ui/views/widget/desktop_aura/desktop_window_tree_host_win.cc
+patching file ui/views/widget/desktop_aura/desktop_window_tree_host_win.h
+patching file ui/views/widget/native_widget_mac.mm
+patching file ui/views/widget/widget.cc
+patching file ui/views/widget/widget.h
+patching file ui/views/widget/widget_delegate.h
+patching file ui/views/widget/widget_hwnd_utils.cc
+patching file ui/views/win/hwnd_message_handler.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/views_widget.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/web_contents_1257_1565.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/web_contents/web_contents_impl.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/public/browser/web_contents.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/public/browser/web_contents_delegate.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/public/browser/web_contents_observer.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file content/browser/web_contents/web_contents_impl.cc
+patching file content/public/browser/web_contents.h
+patching file content/public/browser/web_contents_delegate.h
+patching file content/public/browser/web_contents_observer.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/web_contents_1257_1565.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/mime_handler_view_guest_1565_2727.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/web_contents/web_contents_view.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest_delegate.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file content/browser/web_contents/web_contents_view.h
+patching file extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest.cc
+patching file extensions/browser/guest_view/mime_handler_view/mime_handler_view_guest_delegate.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/mime_handler_view_guest_1565_2727.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/ui_dragdrop_355390.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/base/x/x11_os_exchange_data_provider.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file ui/base/x/x11_os_exchange_data_provider.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/ui_dragdrop_355390.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/content_main_654986.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/base/process/set_process_title.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/app/content_main.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/app/content_main_runner_impl.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/app/content_main_runner_impl.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/public/app/content_main.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file base/process/set_process_title.cc
+patching file content/app/content_main.cc
+patching file content/app/content_main_runner_impl.cc
+patching file content/app/content_main_runner_impl.h
+patching file content/public/app/content_main.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/content_main_654986.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/views_1749_2102_3330.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/toolbar/app_menu.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/base/models/menu_model.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/gfx/render_text.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/gfx/render_text.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/animation/ink_drop_host.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/button/label_button.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/button/label_button.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/label.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/label.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_controller.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_controller.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_delegate.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_host.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_host.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_item_view.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_model_adapter.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_model_adapter.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_runner.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_runner.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_runner_impl.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_runner_impl.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_runner_impl_adapter.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_runner_impl_adapter.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_runner_impl_cocoa.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_runner_impl_cocoa.mm
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_runner_impl_interface.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_runner_impl_mac.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_runner_impl_mac.mm
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_runner_impl_remote_cocoa.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_runner_impl_remote_cocoa.mm
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/controls/menu/menu_scroll_view_container.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/test/ui_controls_factory_desktop_aura_ozone.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/view.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/ui/views/toolbar/app_menu.cc
+patching file ui/base/models/menu_model.h
+patching file ui/gfx/render_text.cc
+patching file ui/gfx/render_text.h
+patching file ui/views/animation/ink_drop_host.h
+patching file ui/views/controls/button/label_button.cc
+patching file ui/views/controls/button/label_button.h
+patching file ui/views/controls/label.cc
+patching file ui/views/controls/label.h
+patching file ui/views/controls/menu/menu_controller.cc
+patching file ui/views/controls/menu/menu_controller.h
+patching file ui/views/controls/menu/menu_delegate.h
+patching file ui/views/controls/menu/menu_host.cc
+patching file ui/views/controls/menu/menu_host.h
+patching file ui/views/controls/menu/menu_item_view.cc
+patching file ui/views/controls/menu/menu_model_adapter.cc
+patching file ui/views/controls/menu/menu_model_adapter.h
+patching file ui/views/controls/menu/menu_runner.cc
+patching file ui/views/controls/menu/menu_runner.h
+patching file ui/views/controls/menu/menu_runner_impl.cc
+patching file ui/views/controls/menu/menu_runner_impl.h
+patching file ui/views/controls/menu/menu_runner_impl_adapter.cc
+patching file ui/views/controls/menu/menu_runner_impl_adapter.h
+patching file ui/views/controls/menu/menu_runner_impl_cocoa.h
+patching file ui/views/controls/menu/menu_runner_impl_cocoa.mm
+patching file ui/views/controls/menu/menu_runner_impl_interface.h
+patching file ui/views/controls/menu/menu_runner_impl_mac.h
+patching file ui/views/controls/menu/menu_runner_impl_mac.mm
+patching file ui/views/controls/menu/menu_runner_impl_remote_cocoa.h
+patching file ui/views/controls/menu/menu_runner_impl_remote_cocoa.mm
+patching file ui/views/controls/menu/menu_scroll_view_container.cc
+patching file ui/views/test/ui_controls_factory_desktop_aura_ozone.cc
+patching file ui/views/view.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/views_1749_2102_3330.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/BUILD.gn
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/BUILD.gn
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_renderer.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/renderer/BUILD.gn
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/renderer/BUILD.gn
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_renderer.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_renderer_print_preview.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/renderer/printing/chrome_print_render_frame_helper_delegate.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/renderer/printing/chrome_print_render_frame_helper_delegate.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/renderer/printing/chrome_print_render_frame_helper_delegate.cc
+patching file chrome/renderer/printing/chrome_print_render_frame_helper_delegate.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_renderer_print_preview.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_runtime.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/app/chrome_main_delegate.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/app/chrome_main_delegate.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/app_shim/BUILD.gn
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/app_shim/app_shim_main_delegate.mm
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/chrome_browser_main.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/chrome_browser_main_mac.mm
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/chrome_browser_main_win.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/chrome_content_browser_client.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/chrome_content_browser_client.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/prefs/browser_prefs.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/app/chrome_main_delegate.cc
+patching file chrome/app/chrome_main_delegate.h
+patching file chrome/app_shim/BUILD.gn
+patching file chrome/app_shim/app_shim_main_delegate.mm
+patching file chrome/browser/chrome_browser_main.cc
+patching file chrome/browser/chrome_browser_main_mac.mm
+patching file chrome/browser/chrome_browser_main_win.cc
+patching file chrome/browser/chrome_content_browser_client.cc
+patching file chrome/browser/chrome_content_browser_client.h
+patching file chrome/browser/prefs/browser_prefs.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_runtime.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_runtime_views.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/browser_command_controller.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/toolbar/app_menu_model.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/toolbar/app_menu_model.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/browser_view.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/browser_view.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/browser_widget.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/browser_widget.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/layout/browser_view_layout.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/layout/browser_view_layout.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/layout/browser_view_layout_delegate.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/layout/browser_view_layout_impl.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/picture_in_picture_browser_frame_view.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/shadow_overlay_view.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/omnibox/omnibox_popup_closer.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/page_action/page_action_icon_controller.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/toolbar/toolbar_view.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/toolbar/toolbar_view.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/ui/browser_command_controller.cc
+patching file chrome/browser/ui/toolbar/app_menu_model.cc
+patching file chrome/browser/ui/toolbar/app_menu_model.h
+patching file chrome/browser/ui/views/frame/browser_view.cc
+patching file chrome/browser/ui/views/frame/browser_view.h
+patching file chrome/browser/ui/views/frame/browser_widget.cc
+patching file chrome/browser/ui/views/frame/browser_widget.h
+patching file chrome/browser/ui/views/frame/layout/browser_view_layout.cc
+patching file chrome/browser/ui/views/frame/layout/browser_view_layout.h
+patching file chrome/browser/ui/views/frame/layout/browser_view_layout_delegate.h
+patching file chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.cc
+patching file chrome/browser/ui/views/frame/layout/browser_view_layout_delegate_impl.h
+patching file chrome/browser/ui/views/frame/layout/browser_view_layout_impl.cc
+patching file chrome/browser/ui/views/frame/picture_in_picture_browser_frame_view.cc
+patching file chrome/browser/ui/views/frame/shadow_overlay_view.cc
+patching file chrome/browser/ui/views/omnibox/omnibox_popup_closer.cc
+patching file chrome/browser/ui/views/page_action/page_action_icon_controller.cc
+patching file chrome/browser/ui/views/toolbar/toolbar_view.cc
+patching file chrome/browser/ui/views/toolbar/toolbar_view.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_runtime_views.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_browser.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/browser_about_handler.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/devtools/devtools_window.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/BUILD.gn
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/browser.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/browser.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/browser_finder.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/browser_manager_service.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/browser_navigator.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/browser_tabstrip.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/browser_window/internal/browser_window_features.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/browser_window/public/browser_window_features.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/browser_window/public/browser_window_interface.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/horizontal_tab_strip_region_view.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/browser_about_handler.cc
+patching file chrome/browser/devtools/devtools_window.cc
+patching file chrome/browser/ui/BUILD.gn
+patching file chrome/browser/ui/browser.cc
+patching file chrome/browser/ui/browser.h
+patching file chrome/browser/ui/browser_finder.cc
+patching file chrome/browser/ui/browser_manager_service.cc
+patching file chrome/browser/ui/browser_navigator.cc
+patching file chrome/browser/ui/browser_tabstrip.cc
+patching file chrome/browser/ui/browser_window/internal/browser_window_features.cc
+patching file chrome/browser/ui/browser_window/public/browser_window_features.h
+patching file chrome/browser/ui/browser_window/public/browser_window_interface.h
+patching file chrome/browser/ui/views/frame/horizontal_tab_strip_region_view.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_browser.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_content_settings.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/content_settings/renderer/content_settings_agent_impl.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file components/content_settings/renderer/content_settings_agent_impl.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_content_settings.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_context_menus.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/renderer_context_menu/render_view_context_menu.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/renderer_context_menu/render_view_context_menu.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.mm
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.mm
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.mm
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/renderer_context_menu/context_menu_delegate.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/renderer_context_menu/render_view_context_menu_base.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/renderer_context_menu/render_view_context_menu_base.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/renderer_context_menu/render_view_context_menu_observer.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/renderer_context_menu/render_view_context_menu_observer.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/renderer_context_menu/views/toolkit_delegate_views.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/renderer_context_menu/views/toolkit_delegate_views.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/renderer_context_menu/render_view_context_menu.cc
+patching file chrome/browser/renderer_context_menu/render_view_context_menu.h
+patching file chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.h
+patching file chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_cocoa.mm
+patching file chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.h
+patching file chrome/browser/ui/cocoa/renderer_context_menu/render_view_context_menu_mac_remote_cocoa.mm
+patching file chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.cc
+patching file chrome/browser/ui/views/renderer_context_menu/render_view_context_menu_views.h
+patching file chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.cc
+patching file chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views.h
+patching file chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.h
+patching file chrome/browser/ui/views/tab_contents/chrome_web_contents_view_delegate_views_mac.mm
+patching file components/renderer_context_menu/context_menu_delegate.h
+patching file components/renderer_context_menu/render_view_context_menu_base.cc
+patching file components/renderer_context_menu/render_view_context_menu_base.h
+patching file components/renderer_context_menu/render_view_context_menu_observer.cc
+patching file components/renderer_context_menu/render_view_context_menu_observer.h
+patching file components/renderer_context_menu/views/toolkit_delegate_views.cc
+patching file components/renderer_context_menu/views/toolkit_delegate_views.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_context_menus.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_devtools_osr.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/devtools/chrome_devtools_manager_delegate.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/devtools/chrome_devtools_manager_delegate.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_devtools_osr.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_dialogs_native.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/file_select_helper.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/file_select_helper.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/chrome_select_file_policy.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/shell_dialogs/execute_select_file_win.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/shell_dialogs/select_file_dialog.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/shell_dialogs/select_file_dialog.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/shell_dialogs/select_file_dialog_factory.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/shell_dialogs/select_file_dialog_mac.mm
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/shell_dialogs/select_file_dialog_win.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/file_select_helper.cc
+patching file chrome/browser/file_select_helper.h
+patching file chrome/browser/ui/chrome_select_file_policy.h
+patching file ui/shell_dialogs/execute_select_file_win.cc
+patching file ui/shell_dialogs/select_file_dialog.cc
+patching file ui/shell_dialogs/select_file_dialog.h
+patching file ui/shell_dialogs/select_file_dialog_factory.h
+patching file ui/shell_dialogs/select_file_dialog_mac.mm
+patching file ui/shell_dialogs/select_file_dialog_win.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_dialogs_native.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_dialogs_jsmodal.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/javascript_dialogs/javascript_tab_modal_dialog_manager_delegate_desktop.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/javascript_tab_modal_dialog_view_views.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/ui/javascript_dialogs/javascript_tab_modal_dialog_manager_delegate_desktop.cc
+patching file chrome/browser/ui/views/javascript_tab_modal_dialog_view_views.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_dialogs_jsmodal.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_dialogs_widget.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/chrome_javascript_app_modal_view_factory_views.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/constrained_window/constrained_window_views.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/constrained_window/native_web_contents_modal_dialog_manager_views.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/web_modal/modal_dialog_host.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/window/dialog_delegate.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/ui/views/window/dialog_delegate.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/ui/views/chrome_javascript_app_modal_view_factory_views.cc
+patching file components/constrained_window/constrained_window_views.cc
+patching file components/constrained_window/native_web_contents_modal_dialog_manager_views.cc
+patching file components/web_modal/modal_dialog_host.h
+patching file ui/views/window/dialog_delegate.cc
+patching file ui/views/window/dialog_delegate.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_dialogs_widget.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_dialogs_misc.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/extensions/extension_dialog_utils_views.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/certificate_selector.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/ui/extensions/extension_dialog_utils_views.cc
+patching file chrome/browser/ui/views/certificate_selector.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_dialogs_misc.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_download.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/download/chrome_download_manager_delegate.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/download/chrome_download_manager_delegate.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/download/chrome_download_manager_delegate.cc
+patching file chrome/browser/download/chrome_download_manager_delegate.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_download.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_extensions.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/extensions/api/chrome_extensions_api_client.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/extensions/api/tabs/tabs_api.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/extensions/extension_tab_util.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/tab_helpers.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/extensions/api/chrome_extensions_api_client.cc
+patching file chrome/browser/extensions/api/tabs/tabs_api.cc
+patching file chrome/browser/extensions/extension_tab_util.cc
+patching file chrome/browser/ui/tab_helpers.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_extensions.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_frame_mac.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/browser_native_widget_mac.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/frame/browser_native_widget_mac.mm
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/ui/views/frame/browser_native_widget_mac.h
+patching file chrome/browser/ui/views/frame/browser_native_widget_mac.mm
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_frame_mac.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_permission_prompt.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/permission_bubble/permission_prompt.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/permissions/permission_prompt_factory.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/ui/permission_bubble/permission_prompt.h
+patching file chrome/browser/ui/views/permissions/permission_prompt_factory.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_permission_prompt.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_policy.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/policy/BUILD.gn
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/policy/browser_dm_token_storage_linux.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/policy/browser_dm_token_storage_mac.mm
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/policy/chrome_browser_policy_connector.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/policy/chrome_browser_policy_connector.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/policy/policy_path_parser_mac.mm
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/policy/policy_path_parser_win.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/common/chrome_paths.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/common/chrome_paths.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/policy/BUILD.gn
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/policy/tools/generate_policy_source.py
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/policy/BUILD.gn
+patching file chrome/browser/policy/browser_dm_token_storage_linux.cc
+patching file chrome/browser/policy/browser_dm_token_storage_mac.mm
+patching file chrome/browser/policy/chrome_browser_policy_connector.cc
+patching file chrome/browser/policy/chrome_browser_policy_connector.h
+patching file chrome/browser/policy/policy_path_parser_mac.mm
+patching file chrome/browser/policy/policy_path_parser_win.cc
+patching file chrome/common/chrome_paths.cc
+patching file chrome/common/chrome_paths.h
+patching file components/policy/BUILD.gn
+patching file components/policy/tools/generate_policy_source.py
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_policy.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_printing_oop_osr.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/printing/print_backend_service_manager.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/printing/print_backend_service_manager.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_printing_oop_osr.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_startup.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/startup/startup_browser_creator.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/startup/startup_browser_creator.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/ui/startup/startup_browser_creator.cc
+patching file chrome/browser/ui/startup/startup_browser_creator.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_startup.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_profiles.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/profiles/off_the_record_profile_impl.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/profiles/profile.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/profiles/profile.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/profiles/profile_impl.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/profiles/off_the_record_profile_impl.cc
+patching file chrome/browser/profiles/profile.cc
+patching file chrome/browser/profiles/profile.h
+patching file chrome/browser/profiles/profile_impl.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_profiles.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_profile_menu.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/bookmarks/bookmark_stats.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/incognito_clear_browsing_data_dialog.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/incognito_clear_browsing_data_dialog_coordinator.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/profiles/incognito_menu_view.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/views/profiles/profile_menu_coordinator.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/ui/bookmarks/bookmark_stats.cc
+patching file chrome/browser/ui/views/incognito_clear_browsing_data_dialog.cc
+patching file chrome/browser/ui/views/incognito_clear_browsing_data_dialog_coordinator.cc
+patching file chrome/browser/ui/views/profiles/incognito_menu_view.cc
+patching file chrome/browser/ui/views/profiles/profile_menu_coordinator.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_profile_menu.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_common_logging.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/common/features.gni
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/common/features.gni
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_common_logging.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/embedder_product_override.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/embedder_support/user_agent_utils.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file components/embedder_support/user_agent_utils.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/embedder_product_override.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_safe_browsing.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/safe_browsing/BUILD.gn
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/safe_browsing/BUILD.gn
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_safe_browsing.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_webui_license.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/webui/about/about_ui.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/webui/about/about_ui.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/webui/chrome_web_ui_configs.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/common/webui_url_constants.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/common/webui_url_constants.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/ui/webui/about/about_ui.cc
+patching file chrome/browser/ui/webui/about/about_ui.h
+patching file chrome/browser/ui/webui/chrome_web_ui_configs.cc
+patching file chrome/common/webui_url_constants.cc
+patching file chrome/common/webui_url_constants.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_webui_license.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_webui_version.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/webui/version/version_handler.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/webui/version/version_handler.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/browser/ui/webui/version/version_ui.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/version_ui_strings.grdp
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/webui/version/BUILD.gn
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/webui/version/resources/about_version.css
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/webui/version/resources/about_version.html
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/webui/version/resources/about_version.ts
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/webui/version/version_ui_constants.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/webui/version/version_ui_constants.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/browser/ui/webui/version/version_handler.cc
+patching file chrome/browser/ui/webui/version/version_handler.h
+patching file chrome/browser/ui/webui/version/version_ui.cc
+patching file components/version_ui_strings.grdp
+patching file components/webui/version/BUILD.gn
+patching file components/webui/version/resources/about_version.css
+patching file components/webui/version/resources/about_version.html
+patching file components/webui/version/resources/about_version.ts
+patching file components/webui/version/version_ui_constants.cc
+patching file components/webui/version/version_ui_constants.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_browser_webui_version.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_plugins.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/browser_plugin/browser_plugin_embedder.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/browser_plugin/browser_plugin_guest.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/browser_plugin/browser_plugin_guest.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file content/browser/browser_plugin/browser_plugin_embedder.h
+patching file content/browser/browser_plugin/browser_plugin_guest.cc
+patching file content/browser/browser_plugin/browser_plugin_guest.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/chrome_plugins.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/crashpad_1995.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/chrome_elf/BUILD.gn
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/chrome_elf/crash/crash_helper.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/common/crash_keys.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/chrome/common/crash_keys.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/crash/core/app/crash_reporter_client.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/crash/core/app/crash_reporter_client.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/crash/core/app/crashpad.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/crash/core/app/crashpad_linux.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/crash/core/app/crashpad_mac.mm
+--> Reverting changes to /home/cory/cef-automate/chromium/src/components/crash/core/app/crashpad_win.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file chrome/chrome_elf/BUILD.gn
+patching file chrome/chrome_elf/crash/crash_helper.cc
+patching file chrome/common/crash_keys.cc
+patching file chrome/common/crash_keys.h
+patching file components/crash/core/app/crash_reporter_client.cc
+patching file components/crash/core/app/crash_reporter_client.h
+patching file components/crash/core/app/crashpad.cc
+patching file components/crash/core/app/crashpad_linux.cc
+patching file components/crash/core/app/crashpad_mac.mm
+patching file components/crash/core/app/crashpad_win.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/crashpad_1995.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/crashpad_tp_1995.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/crashpad/crashpad/client/prune_crash_reports.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/crashpad/crashpad/client/prune_crash_reports.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/crashpad/crashpad/client/settings.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/crashpad/crashpad/client/settings.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/crashpad/crashpad/handler/BUILD.gn
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/crashpad/crashpad/handler/crash_report_upload_thread.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/crashpad/crashpad/handler/crash_report_upload_thread.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/third_party/crashpad/crashpad/handler/handler_main.cc
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file third_party/crashpad/crashpad/client/prune_crash_reports.cc
+patching file third_party/crashpad/crashpad/client/prune_crash_reports.h
+patching file third_party/crashpad/crashpad/client/settings.cc
+patching file third_party/crashpad/crashpad/client/settings.h
+patching file third_party/crashpad/crashpad/handler/BUILD.gn
+patching file third_party/crashpad/crashpad/handler/crash_report_upload_thread.cc
+patching file third_party/crashpad/crashpad/handler/crash_report_upload_thread.h
+patching file third_party/crashpad/crashpad/handler/handler_main.cc
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/crashpad_tp_1995.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/renderer_host_aura.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/renderer_host/render_widget_host_view_aura.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/renderer_host/render_widget_host_view_aura.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+patching file content/browser/renderer_host/render_widget_host_view_aura.cc
+patching file content/browser/renderer_host/render_widget_host_view_aura.h
+--> Saving changes to /home/cory/cef-automate/chromium/src/cef/patch/patches/renderer_host_aura.patch
+
+--> Reading patch file /home/cory/cef-automate/chromium/src/cef/patch/patches/content_2015.patch
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/devtools/devtools_http_handler.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/browser/loader/navigation_url_loader_impl.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/public/browser/content_browser_client.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/public/browser/content_browser_client.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/public/renderer/content_renderer_client.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/renderer/render_thread_impl.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/renderer/renderer_blink_platform_impl.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/renderer/renderer_blink_platform_impl.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/shell/browser/shell_content_browser_client.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/content/shell/browser/shell_content_browser_client.h
+--> Reverting changes to /home/cory/cef-automate/chromium/src/headless/lib/browser/headless_content_browser_client.cc
+--> Reverting changes to /home/cory/cef-automate/chromium/src/headless/lib/browser/headless_content_browser_client.h
+--> Applying patch to /home/cory/cef-automate/chromium/src
+Traceback (most recent call last):
+  File "/home/cory/cef-automate/chromium/src/cef/tools/patch_updater.py", line 254, in <module>
+    raise Exception('Failed to apply patch file: %s' % result['err'])
+Exception: Failed to apply patch file: patch: **** malformed patch at line 33: @@ -504,9 +508,10 @@ void ServerWrapper::OnHttpRequest(int connection_id,
+
+
