@@ -1,0 +1,2 @@
+ERROR Could not load dotfile.
+The file "/workspace/.gn" couldn't be loaded
