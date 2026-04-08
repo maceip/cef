@@ -83,6 +83,7 @@ When `build_analysis.txt` exists:
 ## Current Bootstrap Artifacts
 
 - `tools/claude/build_output.txt` (captured command failure output)
+- `tools/claude/build_analysis.txt` (captured analyzer failure output showing why parse cannot proceed)
 - `tools/claude/patch_output.txt`
 - `tools/claude/patch_analysis.txt`
 

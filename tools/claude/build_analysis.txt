@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/workspace/tools/claude/analyze_build_output.py", line 296, in <module>
+    main()
+  File "/workspace/tools/claude/analyze_build_output.py", line 286, in main
+    analyzer.parse(output_text)
+  File "/workspace/tools/claude/analyze_build_output.py", line 82, in parse
+    raise ValueError(
+ValueError: Could not detect build directory from build output. Expected to find a line like: ninja: Entering directory `out/Debug_GN_x64'
+Make sure the build output file contains the full ninja output.
