@@ -104,7 +104,12 @@ jobs:
             --force-build \
             --no-distrib \
             --build-log-file \
-            2>&1 | tee /tmp/cef-build.log
+            2>&1 | tee /tmp/cef-build.log || {
+              echo "::group::Build error log (last 200 lines)"
+              tail -200 "$DOWNLOAD_DIR/build-master-release.log" 2>/dev/null || true
+              echo "::endgroup::"
+              exit 1
+            }
 
           echo "OUT_DIR=$OUT_DIR" >> "$GITHUB_ENV"
 
@@ -133,7 +138,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cef-build-log
-          path: /tmp/cef-build.log
+          path: |
+            /tmp/cef-build.log
+            ${{ env.DOWNLOAD_DIR }}/build-master-*.log
 
       - name: Upload bench results
         if: always()
