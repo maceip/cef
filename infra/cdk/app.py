@@ -132,7 +132,7 @@ class CefRunnerStack(Stack):
             self, "GhRunnerToken",
             parameter_name="/cef/github-runner-token",
             string_value="PLACEHOLDER",
-            description="GitHub PAT for runner registration (replace via console/CLI)",
+            description="GitHub PAT (repo scope) — used at boot to generate a fresh runner registration token",
         )
 
         # --- IAM role for runners ---
@@ -164,9 +164,12 @@ class CefRunnerStack(Stack):
             # Install sccache
             "curl -fsSL https://github.com/mozilla/sccache/releases/download/v0.9.1/sccache-v0.9.1-x86_64-unknown-linux-musl.tar.gz"
             " | tar -xz -C /usr/local/bin --strip-components=1 --wildcards '*/sccache'",
-            # Fetch GitHub runner token from SSM
-            f"RUNNER_TOKEN=$(aws ssm get-parameter --name /cef/github-runner-token"
+            # Fetch GitHub PAT from SSM, then generate a fresh runner registration token
+            f"GH_PAT=$(aws ssm get-parameter --name /cef/github-runner-token"
             f" --with-decryption --query Parameter.Value --output text --region {self.region})",
+            'RUNNER_TOKEN=$(curl -sX POST -H "Authorization: token $GH_PAT"'
+            " https://api.github.com/repos/maceip/cef/actions/runners/registration-token"
+            " | jq -r .token)",
             # Create runner user and install GitHub Actions runner
             "useradd -m -s /bin/bash runner",
             "usermod -aG docker runner",
@@ -233,8 +236,11 @@ class CefRunnerStack(Stack):
             "systemctl enable --now docker",
             "curl -fsSL https://github.com/mozilla/sccache/releases/download/v0.9.1/sccache-v0.9.1-aarch64-unknown-linux-musl.tar.gz"
             " | tar -xz -C /usr/local/bin --strip-components=1 --wildcards '*/sccache'",
-            f"RUNNER_TOKEN=$(aws ssm get-parameter --name /cef/github-runner-token"
+            f"GH_PAT=$(aws ssm get-parameter --name /cef/github-runner-token"
             f" --with-decryption --query Parameter.Value --output text --region {self.region})",
+            'RUNNER_TOKEN=$(curl -sX POST -H "Authorization: token $GH_PAT"'
+            " https://api.github.com/repos/maceip/cef/actions/runners/registration-token"
+            " | jq -r .token)",
             "useradd -m -s /bin/bash runner",
             "usermod -aG docker runner",
             "mkdir -p /opt/actions-runner && chown runner:runner /opt/actions-runner",
