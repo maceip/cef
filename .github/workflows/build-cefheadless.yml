@@ -24,7 +24,7 @@ env:
   SCCACHE_BUCKET: ${{ vars.SCCACHE_BUCKET || format('cef-build-cache-{0}', secrets.AWS_ACCOUNT_ID) }}
   SCCACHE_REGION: ${{ vars.AWS_REGION || 'eu-central-1' }}
   SCCACHE_S3_KEY_PREFIX: sccache/
-  GN_DEFINES: "is_official_build=true use_sysroot=true proprietary_codecs=true ffmpeg_branding=Chrome cc_wrapper=sccache"
+  GN_DEFINES: "is_official_build=true use_sysroot=true proprietary_codecs=true ffmpeg_branding=Chrome cc_wrapper=sccache ozone_platform_x11=false use_x11=false"
 
 jobs:
   pre-warm:
@@ -95,7 +95,6 @@ jobs:
 
           python3 cef-src/tools/automate/automate-git.py \
             --download-dir="$DOWNLOAD_DIR" \
-            --url=https://github.com/maceip/cef.git \
             --branch="$CEF_BRANCH" \
             --x64-build \
             --build-target=cef \
