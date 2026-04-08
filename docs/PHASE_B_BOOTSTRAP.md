@@ -50,6 +50,21 @@ Result excerpt:
 - `gn.py: Unable to find gn in your $PATH`
 - `Hint: which -a gn should output two entries`
 
+### Attempt 4 — `autoninja` via depot_tools in PATH
+
+Command:
+
+```bash
+PATH=/home/ubuntu/depot_tools:$PATH autoninja -k 0 -C out/Debug_GN_x64 cef > tools/claude/build_output.txt 2>&1
+```
+
+Result excerpt:
+
+- `depot_tools/ninja.py: Could not find Ninja in the third_party of the current project, nor in your PATH.`
+- `Please take one of the following actions to install Ninja:`
+- `- If your project has DEPS, add a CIPD Ninja dependency to DEPS.`
+- `- Otherwise, add Ninja to your PATH *after* depot_tools.`
+
 ## Bootstrap Outcome
 
 The Phase B capture flow is now clearly defined and partially wired (depot_tools cloned, setup command path validated), but a full ninja build baseline cannot yet run in this checkout due environment/source-layout prerequisites.
@@ -116,4 +131,12 @@ ERROR: gn not found. Add depot_tools to PATH: export PATH=$HOME/depot_tools:$PAT
 ```text
 $ autoninja -k 0 -C out/Debug_GN_x64 cef
 --: line 1: autoninja: command not found
+```
+
+```text
+$ PATH=/home/ubuntu/depot_tools:$PATH autoninja -k 0 -C out/Debug_GN_x64 cef
+depot_tools/ninja.py: Could not find Ninja in the third_party of the current project, nor in your PATH.
+Please take one of the following actions to install Ninja:
+- If your project has DEPS, add a CIPD Ninja dependency to DEPS.
+- Otherwise, add Ninja to your PATH *after* depot_tools.
 ```

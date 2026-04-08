@@ -1,9 +1,16 @@
-Traceback (most recent call last):
-  File "/workspace/tools/claude/analyze_build_output.py", line 296, in <module>
-    main()
-  File "/workspace/tools/claude/analyze_build_output.py", line 286, in main
-    analyzer.parse(output_text)
-  File "/workspace/tools/claude/analyze_build_output.py", line 82, in parse
-    raise ValueError(
-ValueError: Could not detect build directory from build output. Expected to find a line like: ninja: Entering directory `out/Debug_GN_x64'
-Make sure the build output file contains the full ninja output.
+Build analysis unavailable in this environment.
+
+Reason:
+- `tools/claude/analyze_build_output.py` expects full Ninja output that includes:
+  `ninja: Entering directory 'out/Debug_GN_x64'`
+- Current `tools/claude/build_output.txt` contains only a toolchain precondition failure:
+  `depot_tools/ninja.py: Could not find Ninja in the third_party of the current project, nor in your PATH.`
+
+Next step once preconditions are met:
+```bash
+autoninja -k 0 -C out/Debug_GN_x64 cef 2>&1 | tee tools/claude/build_output.txt
+python3 tools/claude/analyze_build_output.py tools/claude/build_output.txt \
+  --old-version 146.0.7680.0 \
+  --new-version 147.0.7727.0 \
+  --no-color > tools/claude/build_analysis.txt
+```
