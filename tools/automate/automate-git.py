@@ -1490,6 +1490,12 @@ if not options.nochromiumupdate and not os.path.exists(chromium_src_dir):
   else:
     sync_args += '--with_branch_heads'
 
+  # Throttle parallel fetches to avoid 429 rate limits from
+  # chromium.googlesource.com on fresh checkouts.
+  sync_jobs = os.environ.get('GCLIENT_SYNC_JOBS', '')
+  if sync_jobs:
+    sync_args += ' --jobs=%s' % sync_jobs
+
   run("gclient sync %s" % sync_args, chromium_dir)
 else:
   chromium_checkout_new = False
@@ -1577,8 +1583,12 @@ if chromium_checkout_changed:
 
   if not options.nochromiumhistory:
     # Update third-party dependencies including branch/tag information.
-    run("gclient sync %s--nohooks --with_branch_heads" %
-        ('--reset ' if discard_local_changes else ''), chromium_dir)
+    sync_update_args = '%s--nohooks --with_branch_heads' % (
+        '--reset ' if discard_local_changes else '')
+    sync_jobs = os.environ.get('GCLIENT_SYNC_JOBS', '')
+    if sync_jobs:
+      sync_update_args += ' --jobs=%s' % sync_jobs
+    run("gclient sync %s" % sync_update_args, chromium_dir)
 
   # Patch the Chromium runhooks scripts if necessary.
   apply_runhooks_patch()
