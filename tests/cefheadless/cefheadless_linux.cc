@@ -55,14 +55,21 @@ int main(int argc, char* argv[]) {
   // Alloy OSR path which has no compositor surface and hangs on CDP.
   settings.windowless_rendering_enabled = bad_windowless_mode;
 
-  settings.multi_threaded_message_loop = false;
-  // content_2015.patch (DevTools HTTP) posts /json/* work to the UI thread and
-  // calls CefScheduleExternalMessagePumpWork. That helper only runs when
-  // |external_message_pump| is true (see browser_message_loop.cc). Match the
-  // known-good cefsimple OSR+Xvfb configuration here so /json and websockets
-  // stay responsive. Pass --cdp-std-message-loop to reproduce the old stall
-  // for A/B tracing.
-  settings.external_message_pump = !std_message_loop;
+  // Use Chromium's native message loop on a dedicated thread. This avoids
+  // the external pump (GLib idle-priority source + pipe wakeup) which adds
+  // latency to every CDP round-trip. CDP events like domContentEventFired
+  // fire immediately instead of waiting for GLib poll.
+  // Pass --cdp-std-message-loop to fall back to the old external pump for
+  // A/B tracing.
+  if (std_message_loop) {
+    // Legacy: external pump for A/B comparison
+    settings.multi_threaded_message_loop = false;
+    settings.external_message_pump = true;
+  } else {
+    // Fast path: Chromium's own message loop, no external pump overhead
+    settings.multi_threaded_message_loop = true;
+    settings.external_message_pump = false;
+  }
 
   // Suppress verbose logging.
   settings.log_severity = LOGSEVERITY_WARNING;
@@ -76,7 +83,11 @@ int main(int argc, char* argv[]) {
                << " cdp_std_message_loop=" << std_message_loop;
 
   std::unique_ptr<client::MainMessageLoop> message_loop;
-  if (settings.external_message_pump) {
+  if (settings.multi_threaded_message_loop) {
+    // With multi_threaded_message_loop, CEF runs its own message loop
+    // internally. We just need a simple loop that blocks until shutdown.
+    message_loop = std::make_unique<client::MainMessageLoopStd>();
+  } else if (settings.external_message_pump) {
     message_loop = client::MainMessageLoopExternalPump::Create();
   } else {
     message_loop = std::make_unique<client::MainMessageLoopStd>();
