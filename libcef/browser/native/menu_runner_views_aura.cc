@@ -14,7 +14,9 @@
 
 #if BUILDFLAG(IS_LINUX)
 #include "ui/display/screen.h"
+#if defined(USE_X11)
 #include "ui/gfx/x/connection.h"
+#endif
 #endif
 
 CefMenuRunnerViewsAura::CefMenuRunnerViewsAura() = default;
@@ -41,7 +43,7 @@ bool CefMenuRunnerViewsAura::RunContextMenu(
   gfx::Point screen_point = browser->GetScreenPoint(
       gfx::Point(params.x, params.y), /*want_dip_coords=*/true);
 
-#if BUILDFLAG(IS_LINUX)
+#if BUILDFLAG(IS_LINUX) && defined(USE_X11)
   if (browser->IsWindowless() && parent_widget) {
     // On Linux/X11 with OSR, menus are displayed as top-level override-redirect
     // windows parented to the root window (to avoid clipping). The menu system
