@@ -65,6 +65,10 @@ jobs:
           export PATH="$DOWNLOAD_DIR/depot_tools:$PATH"
 
           cd "$DOWNLOAD_DIR/chromium/src"
+
+          # GN gen (--no-build skips this)
+          gn gen out/Release_GN_x64 --args="$GN_DEFINES"
+
           autoninja -C out/Release_GN_x64 cef chrome_sandbox \
             2>&1 | tee /tmp/cef-ninja.log || {
               echo "=== LAST 100 LINES ==="
