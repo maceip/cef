@@ -5,7 +5,7 @@ on:
 
 env:
   DOWNLOAD_DIR: /home/runner/cef-build
-  GN_DEFINES: "is_official_build=true use_sysroot=true proprietary_codecs=true ffmpeg_branding=Chrome use_x11=false ozone_platform_x11=false"
+  GN_DEFINES: "is_official_build=true use_sysroot=true proprietary_codecs=true ffmpeg_branding=Chrome ozone_platform_x11=false"
   AWS_REGION: eu-central-1
 
 jobs:
@@ -32,7 +32,7 @@ jobs:
         with:
           path: cef-src
 
-      - name: Fetch + sync + patch (no build)
+      - name: Fetch + sync + patch + GN gen (no build)
         run: |
           set -euxo pipefail
           export PATH="$DOWNLOAD_DIR/depot_tools:$PATH"
@@ -54,20 +54,19 @@ jobs:
       - name: Patch X11 out of menu_runner_views_aura.cc
         run: |
           F="$DOWNLOAD_DIR/chromium/src/cef/libcef/browser/native/menu_runner_views_aura.cc"
-          # Gate X11 connection include on USE_X11
           sed -i 's|^#include "ui/gfx/x/connection.h"|#if defined(USE_X11)\n#include "ui/gfx/x/connection.h"\n#endif|' "$F"
-          # Gate the X11 coordinate translation block
           sed -i 's|^#if BUILDFLAG(IS_LINUX)$|#if BUILDFLAG(IS_LINUX) \&\& defined(USE_X11)|' "$F"
+          head -20 "$F"
 
-      - name: Build
+      - name: GN gen + build
         run: |
           set -euxo pipefail
           export PATH="$DOWNLOAD_DIR/depot_tools:$PATH"
-
           cd "$DOWNLOAD_DIR/chromium/src"
 
-          # GN gen (--no-build skips this)
-          gn gen out/Release_GN_x64 --args="$GN_DEFINES"
+          # Run gclient_hook.py which does GN gen with proper CEF args
+          export GN_DEFINES
+          python3 cef/tools/gclient_hook.py
 
           autoninja -C out/Release_GN_x64 cef chrome_sandbox \
             2>&1 | tee /tmp/cef-ninja.log || {
