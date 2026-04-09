@@ -1,144 +1,59 @@
-name: Build Chromium + CEF (cefheadless)
+name: Build CEF
 
 on:
   workflow_dispatch:
-    inputs:
-      branch:
-        description: "CEF branch (master or numeric)"
-        required: false
-        default: "master"
-      build_type:
-        description: "Build type"
-        required: false
-        default: "Release"
-        type: choice
-        options: [Release, Debug]
-      run_bench:
-        description: "Run real-bench after build"
-        required: false
-        default: true
-        type: boolean
 
 env:
   DOWNLOAD_DIR: /home/runner/cef-build
-  SCCACHE_BUCKET: ${{ vars.SCCACHE_BUCKET || format('cef-build-cache-{0}', secrets.AWS_ACCOUNT_ID) }}
-  SCCACHE_REGION: ${{ vars.AWS_REGION || 'eu-central-1' }}
-  SCCACHE_S3_KEY_PREFIX: sccache/
-  GN_DEFINES: "is_official_build=true use_sysroot=true proprietary_codecs=true ffmpeg_branding=Chrome cc_wrapper=sccache ozone_platform_x11=false use_x11=false"
+  GN_DEFINES: "is_official_build=true use_sysroot=true proprietary_codecs=true ffmpeg_branding=Chrome use_x11=false ozone_platform_x11=false"
+  AWS_REGION: eu-central-1
 
 jobs:
   pre-warm:
     runs-on: ubuntu-latest
     steps:
-      - name: Scale up x86 runner
+      - name: Scale up runner
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ vars.AWS_REGION || 'eu-central-1' }}
         run: |
           pip install -q awscli
           X86_ASG=$(aws cloudformation describe-stacks --region "$AWS_REGION" --stack-name CefRunners \
             --query "Stacks[0].Outputs[?OutputKey=='X86AsgName'].OutputValue" --output text)
           aws autoscaling update-auto-scaling-group --region "$AWS_REGION" \
             --auto-scaling-group-name "$X86_ASG" --min-size 1 --desired-capacity 1
-          echo "Scaled $X86_ASG to 1, waiting for runner..."
 
   build:
     needs: [pre-warm]
     runs-on: [self-hosted, linux, x64, cef-builder]
-    timeout-minutes: 120
-    defaults:
-      run:
-        shell: bash
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v6
         with:
           path: cef-src
 
-      - name: Configure sccache
+      - name: Build
         run: |
-          # Verify sccache can reach S3
-          sccache --start-server || true
-          sccache --show-stats
-          echo "SCCACHE_BUCKET=$SCCACHE_BUCKET"
-          echo "SCCACHE_REGION=$SCCACHE_REGION"
-          echo "AWS credentials: $([ -n \"$AWS_ACCESS_KEY_ID\" ] && echo 'set' || echo 'MISSING')"
-
-      - name: Restore Chromium checkout from EBS snapshot
-        run: |
-          # If /home/ubuntu/cef-build/chromium/src exists from a prior run or
-          # snapshot restore, skip the full fetch.
-          if [[ -d "$DOWNLOAD_DIR/chromium/src/.git" ]]; then
-            echo "Existing Chromium checkout found, will do incremental update"
-          else
-            echo "No existing checkout — automate-git.py will do a full fetch"
-            mkdir -p "$DOWNLOAD_DIR"
-          fi
-
-      - name: Run automate-git.py (fetch + sync + patch + build)
-        env:
-          CEF_BRANCH: ${{ github.event.inputs.branch || 'master' }}
-          BUILD_TYPE: ${{ github.event.inputs.build_type || 'Release' }}
-        run: |
-          set -euo pipefail
-          export PATH="/opt/depot_tools:$PATH"
-
-          BUILD_FLAGS=""
-          if [[ "$BUILD_TYPE" == "Release" ]]; then
-            BUILD_FLAGS="--no-debug-build"
-            OUT_DIR="Release_GN_x64"
-          else
-            BUILD_FLAGS="--no-release-build"
-            OUT_DIR="Debug_GN_x64"
-          fi
-
-          # Throttle gclient sync parallelism to avoid 429 rate limits
-          # from chromium.googlesource.com on fresh checkouts.
+          set -euxo pipefail
+          export PATH="$DOWNLOAD_DIR/depot_tools:$PATH"
           export GCLIENT_SYNC_JOBS=8
+          mkdir -p "$DOWNLOAD_DIR"
 
           python3 cef-src/tools/automate/automate-git.py \
             --download-dir="$DOWNLOAD_DIR" \
-            --branch="$CEF_BRANCH" \
+            --branch=master \
             --x64-build \
             --build-target=cef \
-            --with-pgo-profiles \
-            --no-chromium-history \
-            $BUILD_FLAGS \
+            --no-debug-build \
             --force-build \
             --no-distrib \
+            --no-chromium-history \
             --build-log-file \
             2>&1 | tee /tmp/cef-build.log || {
-              echo "::group::Build error log (last 200 lines)"
+              echo "=== NINJA BUILD LOG (last 200 lines) ==="
               tail -200 "$DOWNLOAD_DIR/build-master-release.log" 2>/dev/null || true
-              echo "::endgroup::"
               exit 1
             }
-
-          echo "OUT_DIR=$OUT_DIR" >> "$GITHUB_ENV"
-
-      - name: sccache stats
-        if: always()
-        run: sccache --show-stats
-
-      - name: Verify build (CDP smoke test)
-        run: |
-          export CEF_OUT="$DOWNLOAD_DIR/chromium/src/out/$OUT_DIR"
-          export CEF_BIN="$CEF_OUT/cefheadless"
-          pip install -q websockets
-          bash cef-src/tools/verify-custom-cef-build.sh
-
-      - name: Run real-bench
-        if: ${{ github.event.inputs.run_bench == 'true' || github.event.inputs.run_bench == '' }}
-        run: |
-          export PATH="/opt/depot_tools:$PATH"
-          export LD_LIBRARY_PATH="$DOWNLOAD_DIR/chromium/src/out/$OUT_DIR"
-          pip install -q playwright websockets
-          python3 -m playwright install chromium
-          python3 cef-src/bench/real-bench.py 2>&1 | tee /tmp/bench-results.txt
 
       - name: Upload build log
         if: always()
@@ -149,25 +64,15 @@ jobs:
             /tmp/cef-build.log
             ${{ env.DOWNLOAD_DIR }}/build-master-*.log
 
-      - name: Upload bench results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: bench-results
-          path: |
-            /tmp/bench-results.txt
-            /tmp/bench-screenshots/
-
   scale-down:
     needs: [build]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Scale down runners
+      - name: Scale down
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ vars.AWS_REGION || 'eu-central-1' }}
         run: |
           pip install -q awscli
           X86_ASG=$(aws cloudformation describe-stacks --region "$AWS_REGION" --stack-name CefRunners \
