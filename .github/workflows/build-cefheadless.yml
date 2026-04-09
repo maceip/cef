@@ -26,7 +26,7 @@ jobs:
   build:
     needs: [pre-warm]
     runs-on: [self-hosted, linux, x64, cef-builder]
-    timeout-minutes: 90
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v6
         with:
