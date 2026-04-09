@@ -44,8 +44,8 @@ jobs:
             --branch=master \
             --x64-build \
             --build-target=cef \
+            --with-pgo-profiles \
             --no-debug-build \
-            --force-build \
             --no-distrib \
             --no-chromium-history \
             --build-log-file \
