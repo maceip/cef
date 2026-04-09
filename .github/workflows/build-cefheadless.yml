@@ -32,7 +32,7 @@ jobs:
         with:
           path: cef-src
 
-      - name: Build
+      - name: Fetch + sync + patch (no build)
         run: |
           set -euxo pipefail
           export PATH="$DOWNLOAD_DIR/depot_tools:$PATH"
@@ -41,7 +41,6 @@ jobs:
 
           python3 cef-src/tools/automate/automate-git.py \
             --download-dir="$DOWNLOAD_DIR" \
-            --url=https://github.com/maceip/cef.git \
             --branch=master \
             --x64-build \
             --build-target=cef \
@@ -49,10 +48,27 @@ jobs:
             --no-debug-build \
             --no-distrib \
             --no-chromium-history \
-            --build-log-file \
-            2>&1 | tee /tmp/cef-build.log || {
-              echo "=== NINJA BUILD LOG (last 200 lines) ==="
-              tail -200 "$DOWNLOAD_DIR/build-master-release.log" 2>/dev/null || true
+            --no-build \
+            2>&1 | tee /tmp/cef-build.log
+
+      - name: Patch X11 out of menu_runner_views_aura.cc
+        run: |
+          F="$DOWNLOAD_DIR/chromium/src/cef/libcef/browser/native/menu_runner_views_aura.cc"
+          # Gate X11 connection include on USE_X11
+          sed -i 's|^#include "ui/gfx/x/connection.h"|#if defined(USE_X11)\n#include "ui/gfx/x/connection.h"\n#endif|' "$F"
+          # Gate the X11 coordinate translation block
+          sed -i 's|^#if BUILDFLAG(IS_LINUX)$|#if BUILDFLAG(IS_LINUX) \&\& defined(USE_X11)|' "$F"
+
+      - name: Build
+        run: |
+          set -euxo pipefail
+          export PATH="$DOWNLOAD_DIR/depot_tools:$PATH"
+
+          cd "$DOWNLOAD_DIR/chromium/src"
+          autoninja -C out/Release_GN_x64 cef chrome_sandbox \
+            2>&1 | tee /tmp/cef-ninja.log || {
+              echo "=== LAST 100 LINES ==="
+              tail -100 /tmp/cef-ninja.log
               exit 1
             }
 
@@ -63,7 +79,7 @@ jobs:
           name: cef-build-log
           path: |
             /tmp/cef-build.log
-            ${{ env.DOWNLOAD_DIR }}/build-master-*.log
+            /tmp/cef-ninja.log
 
   scale-down:
     needs: [build]
