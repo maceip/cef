@@ -64,9 +64,19 @@ jobs:
           mkdir -p "$CEF_SRC/tests/cefheadless"
           cp cef-src/tests/cefheadless/*.cc cef-src/tests/cefheadless/*.h "$CEF_SRC/tests/cefheadless/"
 
-          # Add cefheadless to cef_paths2.gypi if not already there
+          # Add cefheadless entries to cef_paths2.gypi if not already there
           if ! grep -q "cefheadless_sources" "$CEF_SRC/cef_paths2.gypi"; then
-            cp cef-src/cef_paths2.gypi "$CEF_SRC/cef_paths2.gypi"
+            # Insert before the closing brace of the top-level dict
+            sed -i '/^}$/i\
+    '"'"'cefheadless_sources_common'"'"': [\
+      '"'"'tests/cefheadless/headless_app.cc'"'"',\
+      '"'"'tests/cefheadless/headless_app.h'"'"',\
+      '"'"'tests/cefheadless/headless_handler.cc'"'"',\
+      '"'"'tests/cefheadless/headless_handler.h'"'"',\
+    ],\
+    '"'"'cefheadless_sources_linux'"'"': [\
+      '"'"'tests/cefheadless/cefheadless_linux.cc'"'"',\
+    ],' "$CEF_SRC/cef_paths2.gypi"
           fi
 
           # Add cefheadless executable target to BUILD.gn if not already there
