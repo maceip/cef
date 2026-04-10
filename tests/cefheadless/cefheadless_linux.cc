@@ -84,9 +84,10 @@ int main(int argc, char* argv[]) {
 
   std::unique_ptr<client::MainMessageLoop> message_loop;
   if (settings.multi_threaded_message_loop) {
-    // With multi_threaded_message_loop, CEF runs its own message loop
-    // internally. We just need a simple loop that blocks until shutdown.
-    message_loop = std::make_unique<client::MainMessageLoopStd>();
+    // With multi_threaded_message_loop, CEF runs its own message loop on a
+    // background thread. We don't create a MainMessageLoop — just block the
+    // main thread until SIGINT/SIGTERM after CefInitialize.
+    message_loop = nullptr;
   } else if (settings.external_message_pump) {
     message_loop = client::MainMessageLoopExternalPump::Create();
   } else {
@@ -117,7 +118,22 @@ int main(int argc, char* argv[]) {
                << command_line->GetSwitchValue("remote-debugging-address")
                       .ToString();
 
-  const int run_result = message_loop->Run();
+  int run_result = 0;
+  if (message_loop) {
+    run_result = message_loop->Run();
+  } else {
+    // multi_threaded_message_loop: CEF runs its own loop on a background
+    // thread. Block the main thread until a signal is received.
+    LOG(WARNING) << "CDPTRACE_HEADLESS_BLOCKING_MAIN_THREAD (multi_threaded)";
+    sigset_t waitset;
+    sigemptyset(&waitset);
+    sigaddset(&waitset, SIGINT);
+    sigaddset(&waitset, SIGTERM);
+    sigprocmask(SIG_BLOCK, &waitset, nullptr);
+    int sig;
+    sigwait(&waitset, &sig);
+    LOG(WARNING) << "CDPTRACE_HEADLESS_SIGNAL_RECEIVED sig=" << sig;
+  }
 
   LOG(WARNING) << "CDPTRACE_HEADLESS_MESSAGE_LOOP_EXIT result=" << run_result;
   CefShutdown();
