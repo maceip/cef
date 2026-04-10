@@ -68,12 +68,10 @@ jobs:
           sed -i 's|^#include "ui/gfx/x/connection.h"|#if defined(USE_X11)\n#include "ui/gfx/x/connection.h"\n#endif|' "$F"
           sed -i 's|^#if BUILDFLAG(IS_LINUX)$|#if BUILDFLAG(IS_LINUX) \&\& defined(USE_X11)|' "$F"
 
-          # Copy our cefheadless sources into the upstream CEF checkout
-          cp -a cef-src/tests/cefheadless "$CEF_SRC/tests/cefheadless"
-
-          # Copy our BUILD.gn and cef_paths2.gypi (which register cefheadless target)
-          cp cef-src/BUILD.gn "$CEF_SRC/BUILD.gn"
-          cp cef-src/cef_paths2.gypi "$CEF_SRC/cef_paths2.gypi"
+          # Overlay our fork's files on top of the upstream CEF checkout.
+          # This brings in cefheadless, BUILD.gn changes, custom APIs, etc.
+          # Use rsync to merge without deleting upstream-only files.
+          rsync -a --exclude='.git' cef-src/ "$CEF_SRC/"
 
       - name: GN gen + build
         run: |
