@@ -59,12 +59,21 @@ jobs:
               2>&1 | tee /tmp/cef-build.log
           fi
 
-      - name: Patch X11 out of menu_runner_views_aura.cc
+      - name: Patch CEF source for headless build
         run: |
-          F="$DOWNLOAD_DIR/chromium/src/cef/libcef/browser/native/menu_runner_views_aura.cc"
+          CEF_SRC="$DOWNLOAD_DIR/chromium/src/cef"
+
+          # Patch X11 out of menu_runner_views_aura.cc
+          F="$CEF_SRC/libcef/browser/native/menu_runner_views_aura.cc"
           sed -i 's|^#include "ui/gfx/x/connection.h"|#if defined(USE_X11)\n#include "ui/gfx/x/connection.h"\n#endif|' "$F"
           sed -i 's|^#if BUILDFLAG(IS_LINUX)$|#if BUILDFLAG(IS_LINUX) \&\& defined(USE_X11)|' "$F"
-          head -20 "$F"
+
+          # Copy our cefheadless sources into the upstream CEF checkout
+          cp -a cef-src/tests/cefheadless "$CEF_SRC/tests/cefheadless"
+
+          # Copy our BUILD.gn and cef_paths2.gypi (which register cefheadless target)
+          cp cef-src/BUILD.gn "$CEF_SRC/BUILD.gn"
+          cp cef-src/cef_paths2.gypi "$CEF_SRC/cef_paths2.gypi"
 
       - name: GN gen + build
         run: |
