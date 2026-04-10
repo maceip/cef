@@ -53,7 +53,6 @@ class HeadlessHandler : public CefClient,
 
   using BrowserList = std::list<CefRefPtr<CefBrowser>>;
   BrowserList browser_list_;
-  bool is_closing_ = false;
 
   IMPLEMENT_REFCOUNTING(HeadlessHandler);
 };
