@@ -97,8 +97,8 @@ jobs:
           fi
 
           # Add cefheadless to the cef group deps
-          if ! grep -q 'cefheadless' "$CEF_SRC/BUILD.gn" | grep -q 'group("cef")'; then
-            sed -i '/group("cef")/{n;n;/deps = \[/a\    ":cefheadless",}' "$CEF_SRC/BUILD.gn"
+          if ! grep -q ':cefheadless' "$CEF_SRC/BUILD.gn"; then
+            sed -i '/:cefsimple/a\    ":cefheadless",' "$CEF_SRC/BUILD.gn"
           fi
 
       - name: GN gen + build
