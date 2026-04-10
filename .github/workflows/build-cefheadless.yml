@@ -109,7 +109,12 @@ jobs:
           ARGS
           gn gen out/Release_GN_x64
 
-          autoninja -C out/Release_GN_x64 cef chrome_sandbox \
+          # Debug: check if //cef is wired into root BUILD.gn
+          grep -c '//cef' BUILD.gn || echo "WARNING: //cef not in root BUILD.gn"
+          # List available cef targets
+          gn ls out/Release_GN_x64 '//cef:*' 2>&1 | head -20 || true
+
+          autoninja -C out/Release_GN_x64 cef/cefheadless cefsimple chrome_sandbox \
             2>&1 | tee /tmp/cef-ninja.log || {
               echo "=== LAST 100 LINES ==="
               tail -100 /tmp/cef-ninja.log
