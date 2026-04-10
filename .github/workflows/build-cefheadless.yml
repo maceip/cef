@@ -79,9 +79,33 @@ jobs:
           export PATH="$DOWNLOAD_DIR/depot_tools:$PATH"
           cd "$DOWNLOAD_DIR/chromium/src"
 
-          # Run gclient_hook.py which does GN gen with proper CEF args
-          export GN_DEFINES
-          python3 cef/tools/gclient_hook.py
+          # Write args.gn directly (gclient_hook.py fails with our fork's version stamps)
+          mkdir -p out/Release_GN_x64
+          cat > out/Release_GN_x64/args.gn << 'ARGS'
+          blink_heap_inside_shared_library=true
+          clang_use_chrome_plugins=false
+          disable_fieldtrial_testing_config=true
+          enable_background_mode=false
+          enable_backup_ref_ptr_support=false
+          enable_downgrade_processing=false
+          enable_linux_installer=false
+          enable_resource_allowlist_generation=false
+          enable_widevine=true
+          ffmpeg_branding="Chrome"
+          forbid_non_component_debug_builds=false
+          is_component_build=false
+          is_debug=false
+          is_official_build=true
+          ozone_platform_x11=false
+          optimize_webui=true
+          proprietary_codecs=true
+          target_cpu="x64"
+          use_partition_alloc_as_malloc=false
+          use_qt5=false
+          use_qt6=false
+          use_sysroot=true
+          ARGS
+          gn gen out/Release_GN_x64
 
           autoninja -C out/Release_GN_x64 cef chrome_sandbox \
             2>&1 | tee /tmp/cef-ninja.log || {
