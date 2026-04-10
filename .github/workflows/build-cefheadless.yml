@@ -80,6 +80,8 @@ jobs:
           cd "$DOWNLOAD_DIR/chromium/src"
 
           # Write args.gn directly (gclient_hook.py fails with our fork's version stamps)
+          # Force GN to regenerate build.ninja (prior build used different BUILD.gn)
+          rm -f out/Release_GN_x64/build.ninja out/Release_GN_x64/args.gn
           mkdir -p out/Release_GN_x64
           cat > out/Release_GN_x64/args.gn << 'ARGS'
           blink_heap_inside_shared_library=true
