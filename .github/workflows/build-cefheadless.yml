@@ -75,6 +75,21 @@ jobs:
               exit 1
             }
 
+      - name: Upload binary to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          cd "$DOWNLOAD_DIR/chromium/src/out/Release_GN_x64"
+          tar czf /tmp/cefheadless-dist.tar.gz \
+            cefheadless libcef.so chrome_sandbox \
+            icudtl.dat v8_context_snapshot.bin \
+            *.pak locales/
+          aws s3 cp /tmp/cefheadless-dist.tar.gz \
+            s3://cef-build-cache-${{ secrets.AWS_ACCOUNT_ID }}/dist/cefheadless-latest.tar.gz \
+            --region "$AWS_REGION"
+          echo "Uploaded cefheadless-dist.tar.gz to S3"
+
       - name: Upload build log
         if: always()
         uses: actions/upload-artifact@v4
