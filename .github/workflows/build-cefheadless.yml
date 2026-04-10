@@ -112,6 +112,7 @@ jobs:
           # Apply CEF patches to Chromium if not already applied
           if ! grep -q '//cef' BUILD.gn; then
             echo "Applying CEF patches to Chromium..."
+            which patch || sudo yum install -y patch
             python3 cef/tools/patch_updater.py
           fi
 
