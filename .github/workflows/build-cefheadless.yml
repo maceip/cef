@@ -36,7 +36,7 @@ jobs:
         run: |
           set -euxo pipefail
           export PATH="$DOWNLOAD_DIR/depot_tools:$PATH"
-          export GCLIENT_SYNC_JOBS=8
+          export GCLIENT_SYNC_JOBS=4
           mkdir -p "$DOWNLOAD_DIR"
 
           # Skip full automate-git.py if checkout already exists (avoids gclient sync)
