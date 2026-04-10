@@ -38,6 +38,15 @@ def main():
       'tests/cefheadless/headless_handler.h',
     ],
     'cefheadless_sources_linux': [
+      'tests/shared/browser/main_message_loop.cc',
+      'tests/shared/browser/main_message_loop.h',
+      'tests/shared/browser/main_message_loop_external_pump.cc',
+      'tests/shared/browser/main_message_loop_external_pump.h',
+      'tests/shared/browser/main_message_loop_external_pump_linux.cc',
+      'tests/shared/browser/main_message_loop_std.cc',
+      'tests/shared/browser/main_message_loop_std.h',
+      'tests/shared/common/client_switches.cc',
+      'tests/shared/common/client_switches.h',
       'tests/cefheadless/cefheadless_linux.cc',
     ],"""
         # Insert before the last closing brace+newline
