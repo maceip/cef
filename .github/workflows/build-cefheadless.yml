@@ -89,10 +89,12 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           cd "$DOWNLOAD_DIR/chromium/src/out/Release_GN_x64"
+          ls -la cefheadless cefsimple libcef.so chrome_sandbox 2>&1 || true
           tar czf /tmp/cefheadless-dist.tar.gz \
-            cefheadless libcef.so chrome_sandbox \
+            --ignore-failed-read \
+            cefheadless cefsimple libcef.so chrome_sandbox \
             icudtl.dat v8_context_snapshot.bin \
-            *.pak locales/
+            *.pak locales/ 2>&1 || true
           aws s3 cp /tmp/cefheadless-dist.tar.gz \
             s3://cef-build-cache-${{ secrets.AWS_ACCOUNT_ID }}/dist/cefheadless-latest.tar.gz \
             --region "$AWS_REGION"
