@@ -39,17 +39,25 @@ jobs:
           export GCLIENT_SYNC_JOBS=8
           mkdir -p "$DOWNLOAD_DIR"
 
-          python3 cef-src/tools/automate/automate-git.py \
-            --download-dir="$DOWNLOAD_DIR" \
-            --branch=master \
-            --x64-build \
-            --build-target=cef \
-            --with-pgo-profiles \
-            --no-debug-build \
-            --no-distrib \
-            --no-chromium-history \
-            --no-build \
-            2>&1 | tee /tmp/cef-build.log
+          # Skip full automate-git.py if checkout already exists (avoids gclient sync)
+          if [[ -d "$DOWNLOAD_DIR/chromium/src/cef" ]]; then
+            echo "Existing checkout found — skipping sync, just re-copying CEF source"
+            # Re-copy our CEF fork into the checkout
+            rm -rf "$DOWNLOAD_DIR/chromium/src/cef"
+            cp -a "$DOWNLOAD_DIR/cef" "$DOWNLOAD_DIR/chromium/src/cef"
+          else
+            python3 cef-src/tools/automate/automate-git.py \
+              --download-dir="$DOWNLOAD_DIR" \
+              --branch=master \
+              --x64-build \
+              --build-target=cef \
+              --with-pgo-profiles \
+              --no-debug-build \
+              --no-distrib \
+              --no-chromium-history \
+              --no-build \
+              2>&1 | tee /tmp/cef-build.log
+          fi
 
       - name: Patch X11 out of menu_runner_views_aura.cc
         run: |
