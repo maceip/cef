@@ -38,7 +38,6 @@ jobs:
           export PATH="$DOWNLOAD_DIR/depot_tools:$PATH"
           export GCLIENT_SYNC_JOBS=4
           mkdir -p "$DOWNLOAD_DIR"
-
           python3 cef-src/tools/automate/automate-git.py \
             --download-dir="$DOWNLOAD_DIR" \
             --branch=master \
@@ -51,75 +50,17 @@ jobs:
             --no-build \
             2>&1 | tee /tmp/cef-build.log
 
-      - name: Overlay fork-specific files
+      - name: Add cefheadless to upstream CEF
         run: |
-          CEF_SRC="$DOWNLOAD_DIR/chromium/src/cef"
-
-          # Patch X11 out of menu_runner_views_aura.cc
-          F="$CEF_SRC/libcef/browser/native/menu_runner_views_aura.cc"
-          sed -i 's|^#include "ui/gfx/x/connection.h"|#if defined(USE_X11)\n#include "ui/gfx/x/connection.h"\n#endif|' "$F"
-          sed -i 's|^#if BUILDFLAG(IS_LINUX)$|#if BUILDFLAG(IS_LINUX) \&\& defined(USE_X11)|' "$F"
-
-          # Add cefheadless target: copy sources + register in BUILD.gn and gypi
-          mkdir -p "$CEF_SRC/tests/cefheadless"
-          cp cef-src/tests/cefheadless/*.cc cef-src/tests/cefheadless/*.h "$CEF_SRC/tests/cefheadless/"
-
-          # Add cefheadless entries to cef_paths2.gypi if not already there
-          if ! grep -q "cefheadless_sources" "$CEF_SRC/cef_paths2.gypi"; then
-            # Insert before the closing brace of the top-level dict
-            sed -i '/^}$/i\
-    '"'"'cefheadless_sources_common'"'"': [\
-      '"'"'tests/cefheadless/headless_app.cc'"'"',\
-      '"'"'tests/cefheadless/headless_app.h'"'"',\
-      '"'"'tests/cefheadless/headless_handler.cc'"'"',\
-      '"'"'tests/cefheadless/headless_handler.h'"'"',\
-    ],\
-    '"'"'cefheadless_sources_linux'"'"': [\
-      '"'"'tests/cefheadless/cefheadless_linux.cc'"'"',\
-    ],' "$CEF_SRC/cef_paths2.gypi"
-          fi
-
-          # Add cefheadless executable target to BUILD.gn if not already there
-          if ! grep -q 'executable("cefheadless")' "$CEF_SRC/BUILD.gn"; then
-            cat >> "$CEF_SRC/BUILD.gn" << 'BUILDGN'
-
-          # cefheadless target (appended by CI)
-          executable("cefheadless") {
-            testonly = true
-            sources = includes_common +
-                      gypi_paths2.includes_wrapper +
-                      gypi_paths2.cefheadless_sources_common
-            deps = [
-              ":libcef",
-              ":libcef_dll_wrapper",
-            ]
-            defines = [ "CEF_USE_SANDBOX" ]
-            use_libcxx_modules = false
-            if (is_linux) {
-              sources += includes_linux +
-                         gypi_paths2.cefheadless_sources_linux
-              if (!is_component_build) {
-                configs += [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
-              }
-            }
-          }
-          BUILDGN
-          fi
-
-          # Add cefheadless to the cef group deps
-          if ! grep -q ':cefheadless' "$CEF_SRC/BUILD.gn"; then
-            sed -i '/:cefsimple/a\    ":cefheadless",' "$CEF_SRC/BUILD.gn"
-          fi
+          python3 cef-src/tools/add_cefheadless.py "$DOWNLOAD_DIR/chromium/src/cef" cef-src
 
       - name: GN gen + build
         run: |
           set -euxo pipefail
           export PATH="$DOWNLOAD_DIR/depot_tools:$PATH"
           cd "$DOWNLOAD_DIR/chromium/src"
-
           export GN_DEFINES
           python3 cef/tools/gclient_hook.py
-
           autoninja -C out/Release_GN_x64 cef chrome_sandbox \
             2>&1 | tee /tmp/cef-ninja.log || {
               echo "=== LAST 100 LINES ==="
